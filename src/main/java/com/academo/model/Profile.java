@@ -1,6 +1,5 @@
 package com.academo.model;
 
-import com.academo.controller.dtos.profile.ProfilePutDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,6 +14,11 @@ public class Profile {
     @Id
     @Column(name="id")
     private int id;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    private User user;
 
     @Column(name="name")
     private String fullName;
@@ -36,25 +40,26 @@ public class Profile {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    // @Transient -> O dado não deve ser persistido no Banco de Dados
     @Transient
     private Long usageStorage;
 
-    public Profile() {
-    }
-
-    public Profile(int id, String fullName) {
-        this.id = id;
-        this.fullName = fullName;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public Profile(ProfilePutDTO profilePutDTO) {
-        fullName = profilePutDTO.fullName();
-        birthDate = profilePutDTO.birthDate();
-        gender = profilePutDTO.gender();
-        institution = profilePutDTO.institution();
-    }
+//    public Profile() {
+//    }
+//
+//    public Profile(int id, String fullName) {
+//        this.id = id;
+//        this.fullName = fullName;
+//        this.createdAt = LocalDateTime.now();
+//        this.updatedAt = LocalDateTime.now();
+//    }
+//
+//    public Profile(ProfilePutDTO profilePutDTO) {
+//        fullName = profilePutDTO.fullName();
+//        birthDate = profilePutDTO.birthDate();
+//        gender = profilePutDTO.gender();
+//        institution = profilePutDTO.institution();
+//    }
 
     public int getId() {
         return id;
@@ -115,4 +120,8 @@ public class Profile {
     public Long getUsageStorage() { return usageStorage; }
 
     public void setUsageStorage(Long usageStorage) { this.usageStorage = usageStorage; }
+
+    public User getUser() {
+        return user;
+    }
 }
