@@ -34,7 +34,7 @@ public class Activity {
     @Column(name = "value")
     private Double value;
 
-
+    // Adicionar dados para Nota???
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -56,25 +56,25 @@ public class Activity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Activity() {}
-
-    public Activity(ActivityPostDTO dto){
-        this.name = dto.name();
-        this.description = dto.description();
-        this.activityDate = dto.activityDate();
-        this.notificationDate = dto.notificationDate();
-        this.value = dto.value();
-
-    }
-
-    public Activity(ActivityPutDTO dto){
-        this.id = dto.id();
-        this.name = dto.name();
-        this.description = dto.description();
-        this.activityDate = dto.activityDate();
-        this.notificationDate = dto.notificationDate();
-        this.value = dto.value();
-    }
+//    public Activity() {}
+//
+//    public Activity(ActivityPostDTO dto){
+//        this.name = dto.name();
+//        this.description = dto.description();
+//        this.activityDate = dto.activityDate();
+//        this.notificationDate = dto.notificationDate();
+//        this.value = dto.value();
+//
+//    }
+//
+//    public Activity(ActivityPutDTO dto){
+//        this.id = dto.id();
+//        this.name = dto.name();
+//        this.description = dto.description();
+//        this.activityDate = dto.activityDate();
+//        this.notificationDate = dto.notificationDate();
+//        this.value = dto.value();
+//    }
 
     public int getId() {
         return id;

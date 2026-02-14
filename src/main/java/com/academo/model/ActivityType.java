@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name="tb_type_activities")
 public class ActivityType {
-    // id, name, description, userid, createdAt, updatedAt
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -33,13 +33,13 @@ public class ActivityType {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public ActivityType() {
-    }
-
-    public ActivityType(String name, String description) {
-        this.setName(name);
-        this.setDescription(description);
-    }
+//    public ActivityType() {
+//    }
+//
+//    public ActivityType(String name, String description) {
+//        this.setName(name);
+//        this.setDescription(description);
+//    }
 
     public Integer getId() {
         return id;
