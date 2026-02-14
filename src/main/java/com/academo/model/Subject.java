@@ -13,10 +13,12 @@ import java.util.Objects;
 @Entity
 @Table(name = "tb_subjects")
 public class Subject {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
@@ -38,37 +40,42 @@ public class Subject {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToMany(mappedBy = "subjects")
+    /*
+    FetchType.LAZY -> Define que, ao puxar uma Subject, a lista de Grupos não é automaticamente carregada
+     */
+    @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Group> groups;
 
+    /*
+    Cascade.Type.REMOVE -> Indica que ao remover a classe Pai (Subject), as instâncias da classe filha (Activitie) serão removidas
+     */
     @OneToMany(mappedBy = "subject",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            cascade = CascadeType.REMOVE)
     @JsonIgnore 
     private List<Activity> activities;
 
     @OneToMany(mappedBy = "subject",
-             cascade = CascadeType.ALL,
-             orphanRemoval = true)
+             cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<File> files;
 
-    public Subject() {
-        setIsActive(true);
-    }
+//    public Subject() {
+//        setIsActive(true);
+//    }
+//
+//    public Subject(String name, String description) {
+//        this.name = name;
+//        this.description = description;
+//        setIsActive(true);
+//    }
+//    public Subject(SubjectDTO subjectDTO) {
+//        this.id = subjectDTO.id();
+//        this.name = subjectDTO.name();
+//        this.description = subjectDTO.description();
+//        this.isActive = subjectDTO.isActive();
+//    }
 
-    public Subject(String name, String description) {
-        this.name = name;
-        this.description = description;
-        setIsActive(true);
-    }
-    public Subject(SubjectDTO subjectDTO) {
-        this.id = subjectDTO.id();
-        this.name = subjectDTO.name();
-        this.description = subjectDTO.description();
-        this.isActive = subjectDTO.isActive();
-    }
     public int getId() {
         return id;
     }

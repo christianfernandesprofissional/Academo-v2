@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_activities")
 public class Activity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -32,6 +33,8 @@ public class Activity {
 
     @Column(name = "value")
     private Double value;
+
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
