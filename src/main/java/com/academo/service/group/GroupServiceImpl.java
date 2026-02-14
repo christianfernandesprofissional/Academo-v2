@@ -1,10 +1,13 @@
 package com.academo.service.group;
 
+import com.academo.controller.dtos.group.GroupDTO;
 import com.academo.model.Group;
 import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.repository.GroupRepository;
+import com.academo.service.subject.ISubjectService;
 import com.academo.service.subject.SubjectServiceImpl;
+import com.academo.service.user.IUserService;
 import com.academo.service.user.UserServiceImpl;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
@@ -19,38 +22,36 @@ import java.util.Objects;
 @Service
 public class GroupServiceImpl implements IGroupService {
 
-    @Autowired
-    private GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
+    private final IUserService userService;
+    private final ISubjectService subjectService;
 
-    @Autowired
-    private UserServiceImpl userService;
-
-    @Autowired
-    SubjectServiceImpl subjectService;
-
-    // Lista todos os grupos pelo usuário
-    @Override
-    public List<Group> getGroups(Integer id){
-        return groupRepository.findByUserId(id);
+    public GroupServiceImpl(GroupRepository groupRepository, IUserService userService, ISubjectService subjectService) {
+        this.groupRepository = groupRepository;
+        this.userService = userService;
+        this.subjectService = subjectService;
     }
 
-    // Função para acessar um grupo específico
     @Override
-    public Group getGroupByIdAndUserId(Integer userId, Integer groupId){
+    public List<GroupDTO> findAll(Integer userId){
+        return null;
+    }
+
+    @Override
+    public Group findById(Integer userId, Integer groupId){
         //return groupRepository.findByIdAndUserId(userId,groupId).orElseThrow(GroupNotFoundException::new);
         return groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
     }
 
     @Override
-    // Cria novo grupo
-    public Group insertGroup(Integer userId, Group group){
+    public Group create(Integer userId, Group group){
         User user =  userService.findById(userId);
         group.setUser(user);
         return groupRepository.save(group);
     }
 
     @Override
-    public Group updateGroup(Integer userId, Group group) {
+    public Group update(Integer userId, Group group) {
         Group groupDb = groupRepository.findById(group.getId()).orElseThrow(GroupNotFoundException::new);
         if (!groupDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
         group.setUser(groupDb.getUser());
@@ -58,7 +59,7 @@ public class GroupServiceImpl implements IGroupService {
     }
 
     @Override
-    public void deleteGroup(Integer userId, Integer groupId) {
+    public void remove(Integer userId, Integer groupId) {
         Group groupDb = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
         if (!groupDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException("Deleção inválida!");
         groupRepository.deleteById(groupId);

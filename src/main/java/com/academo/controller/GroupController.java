@@ -6,7 +6,6 @@ import com.academo.controller.dtos.group.GroupPostDTO;
 import com.academo.controller.dtos.group.GroupPutDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.service.subject.ISubjectService;
-import com.academo.service.subject.SubjectServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import com.academo.model.Group;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.group.GroupServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,12 +25,13 @@ import java.util.List;
 @Tag(name = "Grupos")
 public class GroupController {
 
-    // Injeção de dependência da service
-    @Autowired
-    GroupServiceImpl groupService;
+    private final GroupServiceImpl groupService;
+    private final ISubjectService subjectService;
 
-    @Autowired
-    ISubjectService subjectService;
+    public GroupController(GroupServiceImpl groupService, ISubjectService subjectService) {
+        this.groupService = groupService;
+        this.subjectService = subjectService;
+    }
 
     @Operation(summary = "Recupera a lista de todos os grupos de um usuário", method = "GET")
     @ApiResponses(value = {
@@ -41,8 +40,9 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado")
     })
     @GetMapping("/all")
-    public ResponseEntity<List<GroupDTO>> getGroups(Authentication authentication){
+    public ResponseEntity<List<GroupDTO>> findAll(Authentication authentication){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        return ResponseEntity
         List<GroupDTO> groups = groupService.getGroups(userId)
                 .stream()
                 .map(g -> new GroupDTO(

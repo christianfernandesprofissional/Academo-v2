@@ -113,10 +113,6 @@ public class Profile {
         this.createdAt = createdAt;
     }
 
-    public Long getUsageStorage() { return usageStorage; }
-
-    public void setUsageStorage(Long usageStorage) { this.usageStorage = usageStorage; }
-
     public User getUser() {
         return user;
     }

@@ -19,7 +19,7 @@ import java.time.ZoneOffset;
 @Service
 public class UserServiceImpl implements IUserService {
 
-    private static final LocalDateTime EXPIRES_AT = LocalDateTime.now().plusMinutes(30).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
+    private static final LocalDateTime ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
 
     private final UserRepository userRepository;
     private final IMailService mailService;
@@ -40,7 +40,7 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(encryptedPassword);
         user.setName(registerDTO.name());
         user.setStorageUsage(0L);
-        user.setActivationAccountTokenExpiration(EXPIRES_AT);
+        user.setActivationAccountTokenExpiration(ACTIVATION_TOKEN);
         User createdUser = userRepository.save(user);
         var token = tokenService.generateActivationToken(createdUser.getId());
         mailService.sendActivationMail(createdUser.getEmail(), token);
