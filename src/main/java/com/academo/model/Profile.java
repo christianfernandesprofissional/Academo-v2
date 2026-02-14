@@ -40,10 +40,6 @@ public class Profile {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    // @Transient -> O dado não deve ser persistido no Banco de Dados
-    @Transient
-    private Long usageStorage;
-
 //    public Profile() {
 //    }
 //

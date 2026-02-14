@@ -1,7 +1,8 @@
 package com.academo.controller;
 
 
-import com.academo.controller.dtos.profile.ProfilePutDTO;
+import com.academo.controller.dtos.profile.FindProfileDTO;
+import com.academo.controller.dtos.profile.UpdateProfileDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -10,6 +11,7 @@ import com.academo.model.Profile;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.profile.ProfileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +33,9 @@ public class ProfileController {
         @ApiResponse(responseCode = "404", description = "Perfil não encontrado")
     })
     @GetMapping
-    public ResponseEntity<Profile> getProfile(Authentication authentication) {
+    public ResponseEntity<FindProfileDTO> findById(Authentication authentication) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        Profile profile = service.findById(userId);
-        profile.setUsageStorage(((AuthUser) authentication.getPrincipal()).getUser().getStorageUsage());
-        return ResponseEntity.ok(profile);
+        return ResponseEntity.status(HttpStatus.OK).body(service.findById(userId));
     }
 
     @Operation(summary = "Atualiza o perfil do usuário", method = "PUT")
@@ -44,10 +44,8 @@ public class ProfileController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar perfil")
     })
     @PutMapping
-    public ResponseEntity<Profile> updateProfile(Authentication authentication, @RequestBody ProfilePutDTO profileDto) {
+    public ResponseEntity<Profile> updateProfile(Authentication authentication, @RequestBody UpdateProfileDTO profileDto) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        Profile profile = new  Profile(profileDto);
-        Profile savedProfile = service.update(userId, profile);
-        return ResponseEntity.ok(savedProfile);
+        return ResponseEntity.status(HttpStatus.OK).body(service.update(userId, profileDto));
     }
 }

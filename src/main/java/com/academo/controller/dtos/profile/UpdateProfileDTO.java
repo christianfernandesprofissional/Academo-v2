@@ -2,7 +2,7 @@ package com.academo.controller.dtos.profile;
 
 import java.time.LocalDate;
 
-public record ProfilePutDTO(
+public record UpdateProfileDTO(
         String fullName,
         LocalDate birthDate,
         Character gender,

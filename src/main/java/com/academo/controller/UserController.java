@@ -1,33 +1,20 @@
 package com.academo.controller;
 
 import com.academo.model.User;
-import com.academo.repository.UserRepository;
 import com.academo.security.authuser.*;
 import com.academo.security.service.TokenService;
-import com.academo.service.profile.ProfileServiceImpl;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.user.ExistingUserException;
-import com.academo.util.exceptions.user.UserNotFoundException;
-import com.academo.util.exceptions.user.WrongDataException;
-import com.academo.util.mailservice.IMailService;
-import com.academo.util.mailservice.JavaMailApp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 @RestController
 @RequestMapping("/auth")
