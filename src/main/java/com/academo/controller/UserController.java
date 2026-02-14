@@ -5,6 +5,7 @@ import com.academo.repository.UserRepository;
 import com.academo.security.authuser.*;
 import com.academo.security.service.TokenService;
 import com.academo.service.profile.ProfileServiceImpl;
+import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.user.ExistingUserException;
 import com.academo.util.exceptions.user.UserNotFoundException;
 import com.academo.util.exceptions.user.WrongDataException;
@@ -33,20 +34,15 @@ import java.time.ZoneOffset;
 @Tag(name = "Usuários")
 public class UserController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final IUserService userService;
+    private final TokenService tokenService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ProfileServiceImpl profileService;
-
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private IMailService mail;
+    public UserController(AuthenticationManager authenticationManager, IUserService userService, TokenService tokenService) {
+        this.authenticationManager = authenticationManager;
+        this.userService = userService;
+        this.tokenService = tokenService;
+    }
 
     @Operation(summary = "Realiza login do Usuário no sistema", method = "POST")
     @ApiResponses(value = {
@@ -56,16 +52,11 @@ public class UserController {
     })
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody UserAuthDTO user) {
-        try {
-            UsernamePasswordAuthenticationToken userPass = new UsernamePasswordAuthenticationToken(user.username(), user.password());
-            Authentication auth = authenticationManager.authenticate(userPass);
-            var token = tokenService.generateLoginToken((AuthUser) auth.getPrincipal());
-            User u = userRepository.findByEmail(user.username());
-            if(u == null) u = userRepository.findByName(user.username());
-            return ResponseEntity.ok(new LoginResponseDTO(token, u.getId(), u.getName()));
-        } catch (Exception e) {
-            throw new WrongDataException();
-        }
+        UsernamePasswordAuthenticationToken userPass = new UsernamePasswordAuthenticationToken(user.username(), user.password());
+        Authentication auth = authenticationManager.authenticate(userPass);
+        var token = tokenService.generateLoginToken((AuthUser) auth.getPrincipal());
+        User u = userService.findByEmail(user.username());
+        return ResponseEntity.ok(new LoginResponseDTO(token, u.getId(), u.getName()));
     }
 
     @Operation(summary = "Cadastra usuário no sistema", method = "POST")
@@ -75,17 +66,7 @@ public class UserController {
     })
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDTO register) throws ExistingUserException {
-        if(userRepository.findByName(register.name()) != null ||
-                userRepository.findByEmail(register.email()) != null) throw new ExistingUserException();
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(register.password());
-        User user = new  User(register.name(), encryptedPassword,register.email());
-        user.setStorageUsage(0L);
-        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(30).plusSeconds(20).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
-        user.setTokenExpiresAt(expiresAt);
-        User createdUser = userRepository.save(user);
-        profileService.create(createdUser);
-        enviarEmailDeAtivacao(createdUser.getEmail(), createdUser.getId());
+        userService.createUser(register);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -97,25 +78,11 @@ public class UserController {
     })
     @PostMapping("/activate")
     public ResponseEntity<User> activate(@RequestParam("value") String token) {
-        Integer userId = Integer.parseInt(tokenService.validateActivationToken(token));
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        if(!user.getIsActive()) {
-            user.setTokenExpiresAt(LocalDateTime.now());
-            user.setIsActive(true);
-            userRepository.save(user);
-            mail.enviarEmailBoasVindas(user.getEmail());
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).body(userService.activateUser(token));
     }
 
-    /*
-    -------- Métodos Auxiliares
-     */
 
-    private void enviarEmailDeAtivacao(String email, Integer userId) {
-        var token = tokenService.generateActivationToken(userId);
-        mail.enviarEmailDeAtivacao(email, token);
-    }
+
+
 
 }
