@@ -8,6 +8,7 @@ import com.academo.service.profile.ProfileServiceImpl;
 import com.academo.util.exceptions.user.ExistingUserException;
 import com.academo.util.exceptions.user.UserNotFoundException;
 import com.academo.util.exceptions.user.WrongDataException;
+import com.academo.util.mailservice.IMailService;
 import com.academo.util.mailservice.JavaMailApp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,13 +40,13 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
-    ProfileServiceImpl profileService;
+    private ProfileServiceImpl profileService;
 
     @Autowired
     private TokenService tokenService;
 
     @Autowired
-    private JavaMailApp mail;
+    private IMailService mail;
 
     @Operation(summary = "Realiza login do Usuário no sistema", method = "POST")
     @ApiResponses(value = {
