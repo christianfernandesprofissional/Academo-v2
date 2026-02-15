@@ -26,7 +26,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
     }
 
     @Override
-    public List<ActivityTypeDTO> findAll(Integer  userId) {
+    public List<ActivityTypeDTO> findAll(Integer userId) {
         return repository.findAllByUserId(userId).stream()
                 .map(t -> new ActivityTypeDTO(
                         t.getId(),
@@ -36,19 +36,19 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
     }
 
     @Override
-    public ActivityType findByIdAndUserId(Integer ActivityTypeId, Integer userId) {
+    public ActivityType findById(Integer ActivityTypeId, Integer userId) {
         return repository.findByIdAndUserId(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
     }
 
     // Método criado devido a necessidade do retorno de uma entidade em ActivityService no método fillActivity()
     @Override
-    public ActivityTypeDTO getActivityTypeDTO(Integer ActivityTypeId, Integer userId) {
+    public ActivityTypeDTO findDTO(Integer ActivityTypeId, Integer userId) {
         ActivityType activityType =  repository.findByIdAndUserId(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
         return new ActivityTypeDTO(activityType.getId(), activityType.getName(), activityType.getDescription());
     }
 
     @Override
-    public ActivityTypeDTO createActivityType(Integer userId, String name, String description) {
+    public ActivityTypeDTO create(Integer userId, String name, String description) {
 
         if(repository.existsByNameAndUserId(name, userId)) throw new ActivityTypeExistsException();
 
@@ -77,7 +77,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
     }
 
     @Override
-    public void deleteActivityType(Integer userId, Integer activityId){
+    public void delete(Integer userId, Integer activityId){
         ActivityType inDb = repository.findByIdAndUserId(activityId, userId).orElseThrow(ActivityTypeNotFoundException::new);
         if (!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException("Deleção inválida!");
         repository.deleteById(activityId);

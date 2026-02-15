@@ -5,6 +5,7 @@ import com.academo.controller.dtos.group.GroupDTO;
 import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
+import com.academo.service.group.IGroupService;
 import com.academo.service.subject.ISubjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,10 +26,10 @@ import java.util.List;
 @Tag(name = "Grupos")
 public class GroupController {
 
-    private final GroupServiceImpl groupService;
+    private final IGroupService groupService;
     private final ISubjectService subjectService;
 
-    public GroupController(GroupServiceImpl groupService, ISubjectService subjectService) {
+    public GroupController(IGroupService groupService, ISubjectService subjectService) {
         this.groupService = groupService;
         this.subjectService = subjectService;
     }
