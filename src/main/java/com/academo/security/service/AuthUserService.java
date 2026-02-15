@@ -19,7 +19,7 @@ public class AuthUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UserIsNotActiveException {
         User user = username.contains("@") ? userRepository.findByEmail(username) : userRepository.findByName(username);
 
-        if(user.getIsActive()) {
+        if(user.getAccountActivated()) {
             return new AuthUser(user);
         } else {
             throw  new UserIsNotActiveException("O usuário não está ativo", user);
