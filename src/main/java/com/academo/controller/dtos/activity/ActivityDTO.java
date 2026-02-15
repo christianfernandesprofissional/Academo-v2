@@ -1,8 +1,11 @@
 package com.academo.controller.dtos.activity;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 public record ActivityDTO(
+
         Integer id,
         LocalDate notificationDate,
         LocalDate activityDate,
@@ -10,6 +13,5 @@ public record ActivityDTO(
         Double value,
         String description,
         String subjectName,
-        Integer activityTypeId,
-        String ActivityType
+        String activityTypeName
 ) {}

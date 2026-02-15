@@ -44,7 +44,7 @@ public class ProfileController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar perfil")
     })
     @PutMapping
-    public ResponseEntity<Profile> updateProfile(Authentication authentication, @RequestBody UpdateProfileDTO profileDto) {
+    public ResponseEntity<Profile> update(Authentication authentication, @RequestBody UpdateProfileDTO profileDto) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.status(HttpStatus.OK).body(service.update(userId, profileDto));
     }

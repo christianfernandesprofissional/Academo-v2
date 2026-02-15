@@ -1,7 +1,5 @@
 package com.academo.model;
 
-import com.academo.controller.dtos.activity.ActivityPostDTO;
-import com.academo.controller.dtos.activity.ActivityPutDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -25,7 +23,7 @@ public class Activity {
     @Column(name = "notification_date")
     private LocalDate notificationDate;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")

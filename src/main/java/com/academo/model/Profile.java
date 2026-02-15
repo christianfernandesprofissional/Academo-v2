@@ -40,23 +40,6 @@ public class Profile {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-//    public Profile() {
-//    }
-//
-//    public Profile(int id, String fullName) {
-//        this.id = id;
-//        this.fullName = fullName;
-//        this.createdAt = LocalDateTime.now();
-//        this.updatedAt = LocalDateTime.now();
-//    }
-//
-//    public Profile(ProfilePutDTO profilePutDTO) {
-//        fullName = profilePutDTO.fullName();
-//        birthDate = profilePutDTO.birthDate();
-//        gender = profilePutDTO.gender();
-//        institution = profilePutDTO.institution();
-//    }
-
     public int getId() {
         return id;
     }

@@ -29,7 +29,7 @@ public class Subject {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", columnDefinition = "default true")
     private Boolean isActive;
 
     @Column(name = "created_at", updatable = false)
@@ -60,21 +60,6 @@ public class Subject {
     @JsonIgnore
     private List<File> files;
 
-//    public Subject() {
-//        setIsActive(true);
-//    }
-//
-//    public Subject(String name, String description) {
-//        this.name = name;
-//        this.description = description;
-//        setIsActive(true);
-//    }
-//    public Subject(SubjectDTO subjectDTO) {
-//        this.id = subjectDTO.id();
-//        this.name = subjectDTO.name();
-//        this.description = subjectDTO.description();
-//        this.isActive = subjectDTO.isActive();
-//    }
 
     public int getId() {
         return id;

@@ -1,20 +1,17 @@
 package com.academo.controller;
 
 import com.academo.controller.dtos.activity.ActivityDTO;
-import com.academo.controller.dtos.activity.ActivityPostDTO;
-import com.academo.controller.dtos.activity.ActivityPutDTO;
-import com.academo.controller.dtos.notification.NotificationDTO;
+import com.academo.controller.dtos.activity.CreateActivityDTO;
+import com.academo.controller.dtos.activity.UpdateActivityDTO;
 import com.academo.model.Activity;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.activity.ActivityServiceImp;
-import com.academo.util.exceptions.activity.ActivityExistsException;
 import com.academo.util.exceptions.activity.ActivityNotFoundException;
 import com.academo.util.notification.SendNotifications;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -99,7 +96,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar atividade")
     })
     @PostMapping
-    public ResponseEntity<Activity> createActivity(Authentication authentication, @RequestBody ActivityPostDTO activityPostDto) {
+    public ResponseEntity<Activity> createActivity(Authentication authentication, @RequestBody CreateActivityDTO activityPostDto) {
         //if(activityService.existsActivityByName(activityPostDto.name())) throw new ActivityExistsException();
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         Activity activity = new Activity(activityPostDto);
@@ -115,7 +112,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada com este ID")
     })
     @PutMapping
-    public ResponseEntity<Activity> updateActivity(Authentication authentication, @RequestBody ActivityPutDTO activityPutDto) {
+    public ResponseEntity<Activity> updateActivity(Authentication authentication, @RequestBody UpdateActivityDTO activityPutDto) {
         if(!activityService.existsActivityById(activityPutDto.id())) throw new ActivityNotFoundException();
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         Activity activity = new Activity(activityPutDto);
