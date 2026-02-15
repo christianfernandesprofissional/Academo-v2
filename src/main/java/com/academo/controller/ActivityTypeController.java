@@ -1,8 +1,7 @@
 package com.academo.controller;
 
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
-import com.academo.controller.dtos.activityType.ActivityTypePostDTO;
-import com.academo.model.Activity;
+import com.academo.controller.dtos.activityType.CreateActivityTypeDTO;
 import com.academo.model.ActivityType;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.activityType.IActivityTypeService;
@@ -61,7 +60,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar tipo de atividade"),
     })
     @PostMapping
-    public ResponseEntity<ActivityTypeDTO> create(Authentication authentication, @RequestBody ActivityTypePostDTO activityTypeDTO) {
+    public ResponseEntity<ActivityTypeDTO> create(Authentication authentication, @RequestBody CreateActivityTypeDTO activityTypeDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityTypeDTO createdActivityType = activityTypeService.createActivityType(userId, activityTypeDTO.name(), activityTypeDTO.description());
         URI uri = URI.create("/activity-types?id=" + createdActivityType.id());

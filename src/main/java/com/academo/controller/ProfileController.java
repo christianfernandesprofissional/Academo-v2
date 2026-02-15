@@ -1,7 +1,7 @@
 package com.academo.controller;
 
 
-import com.academo.controller.dtos.profile.FindProfileDTO;
+import com.academo.controller.dtos.profile.ProfileDTO;
 import com.academo.controller.dtos.profile.UpdateProfileDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,7 +33,7 @@ public class ProfileController {
         @ApiResponse(responseCode = "404", description = "Perfil não encontrado")
     })
     @GetMapping
-    public ResponseEntity<FindProfileDTO> findById(Authentication authentication) {
+    public ResponseEntity<ProfileDTO> findById(Authentication authentication) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.status(HttpStatus.OK).body(service.findById(userId));
     }

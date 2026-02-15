@@ -1,6 +1,6 @@
 package com.academo.service.profile;
 
-import com.academo.controller.dtos.profile.FindProfileDTO;
+import com.academo.controller.dtos.profile.ProfileDTO;
 import com.academo.controller.dtos.profile.UpdateProfileDTO;
 import com.academo.model.Profile;
 import com.academo.model.User;
@@ -15,10 +15,10 @@ public class ProfileServiceImpl implements IProfileService {
     @Autowired
     private ProfileRepository profileRepository;
 
-    public FindProfileDTO findById(Integer id) {
+    public ProfileDTO findById(Integer id) {
         // Conferir se o User será carregado corretamente, e por consequência, o StorageUsage
         Profile profile = profileRepository.findById(id).orElseThrow(ProfileNotFoundException::new);
-        return new FindProfileDTO(profile, profile.getUser().getStorageUsage());
+        return new ProfileDTO(profile, profile.getUser().getStorageUsage());
     }
 
     @Override

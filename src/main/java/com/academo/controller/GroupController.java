@@ -2,8 +2,8 @@ package com.academo.controller;
 
 import com.academo.controller.dtos.group.AssociateSubjectsDTO;
 import com.academo.controller.dtos.group.GroupDTO;
-import com.academo.controller.dtos.group.GroupPostDTO;
-import com.academo.controller.dtos.group.GroupPutDTO;
+import com.academo.controller.dtos.group.CreateGroupDTO;
+import com.academo.controller.dtos.group.UpdateGroupDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.service.subject.ISubjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -112,7 +112,7 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar grupo")
     })
     @PostMapping
-    public ResponseEntity<Group> createGroup(Authentication authentication, @RequestBody GroupPostDTO groupDTO){
+    public ResponseEntity<Group> createGroup(Authentication authentication, @RequestBody CreateGroupDTO groupDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         groupService.insertGroup(userId, new Group(groupDTO.name(), groupDTO.description()));
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -125,7 +125,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado com este ID")
     })
     @PutMapping
-    public ResponseEntity<Group> updateGroup(Authentication authentication, @RequestBody GroupPutDTO groupDTO){
+    public ResponseEntity<Group> updateGroup(Authentication authentication, @RequestBody UpdateGroupDTO groupDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         Group group = new Group();
         group.setName(groupDTO.name());

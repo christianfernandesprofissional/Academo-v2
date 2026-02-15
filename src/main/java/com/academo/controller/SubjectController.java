@@ -1,7 +1,7 @@
 package com.academo.controller;
 
 import com.academo.controller.dtos.subject.SubjectDTO;
-import com.academo.controller.dtos.subject.SubjectPostDTO;
+import com.academo.controller.dtos.subject.CreateSubjectDTO;
 import com.academo.service.activity.IActivityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,7 +11,6 @@ import com.academo.model.Activity;
 import com.academo.model.Subject;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.subject.ISubjectService;
-import com.academo.service.subject.SubjectServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +39,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar matéria")
     })
     @PostMapping
-    public ResponseEntity<Subject> create(Authentication authentication, @RequestBody SubjectPostDTO subjectDTO) {
+    public ResponseEntity<Subject> create(Authentication authentication, @RequestBody CreateSubjectDTO subjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         Subject createdSubject = service.create(new Subject(subjectDTO.name(), subjectDTO.description()),userId);
         return ResponseEntity.status(HttpStatus.CREATED).build();

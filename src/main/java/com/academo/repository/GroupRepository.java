@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Integer> {
 
-    @Query(nativeQuery = true, )
+
     List<GroupDTO> findAll(Integer userId);
     public Optional<Group> findByIdAndUserId(Integer id, Integer userId);
 }
