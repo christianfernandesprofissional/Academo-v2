@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -60,7 +61,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar tipo de atividade"),
     })
     @PostMapping
-    public ResponseEntity<ActivityTypeDTO> create(Authentication authentication, @RequestBody CreateActivityTypeDTO activityTypeDTO) {
+    public ResponseEntity<ActivityTypeDTO> create(Authentication authentication, @RequestBody @Valid CreateActivityTypeDTO activityTypeDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityTypeDTO createdActivityType = activityTypeService.create(userId, activityTypeDTO);
         URI uri = URI.create("/activity-types?id=" + createdActivityType.id());
@@ -74,7 +75,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
     })
     @PutMapping
-    public ResponseEntity<ActivityTypeDTO> update(Authentication authentication, @RequestBody ActivityTypeDTO activityTypeDTO) {
+    public ResponseEntity<ActivityTypeDTO> update(Authentication authentication, @RequestBody @Valid ActivityTypeDTO activityTypeDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityTypeDTO updated = activityTypeService.update(userId, activityTypeDTO);
         return ResponseEntity.ok(updated);

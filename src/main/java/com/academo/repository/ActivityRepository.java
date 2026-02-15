@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface ActivityRepository extends JpaRepository<Activity, Integer> {
 
     List<Activity> findAllByUserId(Integer userId);
-    Optional<Activity> findByIdAndUserId(Integer userId, Integer activityId);
+    Optional<Activity> findById(Integer userId, Integer activityId);
     Boolean existsActivityByName(String activityName);
     List<Activity> findAllBySubjectId(Integer subjectId);
 

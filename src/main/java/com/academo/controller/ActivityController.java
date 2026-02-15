@@ -5,7 +5,8 @@ import com.academo.controller.dtos.activity.CreateActivityDTO;
 import com.academo.controller.dtos.activity.UpdateActivityDTO;
 import com.academo.model.Activity;
 import com.academo.security.authuser.AuthUser;
-import com.academo.service.activity.ActivityServiceImp;
+import com.academo.service.activity.ActivityServiceImpl;
+import com.academo.service.activity.IActivityService;
 import com.academo.util.exceptions.activity.ActivityNotFoundException;
 import com.academo.util.notification.SendNotifications;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,11 +27,14 @@ import java.util.List;
 @Tag(name = "Atividades")
 public class ActivityController {
 
-    @Autowired
-    private ActivityServiceImp  activityService;
+    private final IActivityService activityService;
 
     @Autowired
     private SendNotifications sendNotifications;
+
+    public ActivityController(IActivityService activityService) {
+        this.activityService = activityService;
+    }
 
 
     @Operation(summary = "Recupera a lista de todas as atividades de um usuário", method = "GET")
@@ -40,7 +44,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada")
     })
     @GetMapping("/all")
-    public ResponseEntity<List<ActivityDTO>> getActivities(Authentication authentication) {
+    public ResponseEntity<List<ActivityDTO>> findAll(Authentication authentication) {
        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
        List<ActivityDTO> activities =activityService.getActivities(userId)
                .stream()
@@ -65,14 +69,14 @@ public class ActivityController {
             @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada com este ID")
     })
     @GetMapping
-    public ResponseEntity<Activity> getActivity(Authentication authentication, @RequestParam Integer activityId) {
+    public ResponseEntity<Activity> findById(Authentication authentication, @RequestParam Integer activityId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         Activity activity = activityService.getActivityByActivityIdAndUserId(userId,activityId);
         return ResponseEntity.ok(activity);
     }
 
     @GetMapping("/by-subject")
-    public ResponseEntity<List<ActivityDTO>> getActivitiesBySubject(Authentication authentication, @RequestParam Integer subjectId) {
+    public ResponseEntity<List<ActivityDTO>> findBySubject(Authentication authentication, @RequestParam Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         List<ActivityDTO> activities =activityService.getBySubjectId(subjectId)
                 .stream()
@@ -96,7 +100,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar atividade")
     })
     @PostMapping
-    public ResponseEntity<Activity> createActivity(Authentication authentication, @RequestBody CreateActivityDTO activityPostDto) {
+    public ResponseEntity<Activity> create(Authentication authentication, @RequestBody CreateActivityDTO activityPostDto) {
         //if(activityService.existsActivityByName(activityPostDto.name())) throw new ActivityExistsException();
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         Activity activity = new Activity(activityPostDto);
@@ -112,7 +116,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada com este ID")
     })
     @PutMapping
-    public ResponseEntity<Activity> updateActivity(Authentication authentication, @RequestBody UpdateActivityDTO activityPutDto) {
+    public ResponseEntity<Activity> update(Authentication authentication, @RequestBody UpdateActivityDTO activityPutDto) {
         if(!activityService.existsActivityById(activityPutDto.id())) throw new ActivityNotFoundException();
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         Activity activity = new Activity(activityPutDto);
@@ -127,7 +131,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada com este ID")
     })
     @DeleteMapping
-    public ResponseEntity<Activity> deleteActivity(Authentication authentication, @RequestParam Integer activityId) {
+    public ResponseEntity<Activity> delete(Authentication authentication, @RequestParam Integer activityId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         activityService.deleteActivity(userId,activityId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

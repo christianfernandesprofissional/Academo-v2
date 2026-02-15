@@ -1,6 +1,6 @@
 package com.academo.service.activity;
 
-import com.academo.controller.dtos.activity.ActivityNotificationDTO;
+import com.academo.controller.dtos.activity.ActivityDTO;
 import com.academo.controller.dtos.notification.NotificationDTO;
 import com.academo.model.Activity;
 import com.academo.model.ActivityType;
@@ -12,7 +12,6 @@ import com.academo.service.subject.SubjectServiceImpl;
 import com.academo.service.user.UserServiceImpl;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.activity.ActivityNotFoundException;
-import com.academo.util.notification.SendNotifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public  class ActivityServiceImp implements IActivityService{
+public  class ActivityServiceImpl implements IActivityService{
     @Autowired
     ActivityRepository activityRepository;
 
@@ -34,13 +33,14 @@ public  class ActivityServiceImp implements IActivityService{
     ActivityTypeServiceImpl activityTypeService;
 
     @Override
-    public List<Activity> getActivities(Integer userId) {
+    public List<ActivityDTO> findAll(Integer userId) {
+
         return activityRepository.findAllByUserId(userId);
     }
 
     @Override
-    public Activity getActivityByActivityIdAndUserId(Integer userId, Integer activityId) {
-        return activityRepository.findByIdAndUserId(userId,activityId).orElseThrow(ActivityNotFoundException::new);
+    public Activity findById(Integer userId, Integer activityId) {
+        return activityRepository.findById(userId,activityId).orElseThrow(ActivityNotFoundException::new);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.academo.model.User;
 import com.academo.repository.UserRepository;
 import com.academo.security.authuser.AuthUser;
 import com.academo.util.exceptions.user.UserIsNotActiveException;
+import com.academo.util.exceptions.user.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +18,7 @@ public class AuthUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UserIsNotActiveException {
-        User user = username.contains("@") ? userRepository.findByEmail(username) : userRepository.findByName(username);
+        User user = userRepository.findByEmail(username).orElseThrow(UserNotFoundException::new);
 
         if(user.getAccountActivated()) {
             return new AuthUser(user);

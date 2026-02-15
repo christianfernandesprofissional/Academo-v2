@@ -1,6 +1,7 @@
 package com.academo.service.activityType;
 
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
+import com.academo.controller.dtos.activityType.CreateActivityTypeDTO;
 import com.academo.model.ActivityType;
 import com.academo.repository.ActivityTypeRepository;
 import com.academo.service.user.IUserService;
@@ -15,19 +16,17 @@ import java.util.List;
 @Service
 public class ActivityTypeServiceImpl implements IActivityTypeService {
 
-    @Autowired
-    private ActivityTypeRepository repository;
-
-
+    private final ActivityTypeRepository repository;
     private final IUserService userService;
 
-    public ActivityTypeServiceImpl(IUserService userService) {
+    public ActivityTypeServiceImpl(IUserService userService, ActivityTypeRepository repository) {
         this.userService = userService;
+        this.repository = repository;
     }
 
     @Override
     public List<ActivityTypeDTO> findAll(Integer userId) {
-        return repository.findAllByUserId(userId).stream()
+        return repository.findAll(userId).stream()
                 .map(t -> new ActivityTypeDTO(
                         t.getId(),
                         t.getName(),
@@ -37,24 +36,24 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
 
     @Override
     public ActivityType findById(Integer ActivityTypeId, Integer userId) {
-        return repository.findByIdAndUserId(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
+        return repository.findById(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
     }
 
     // Método criado devido a necessidade do retorno de uma entidade em ActivityService no método fillActivity()
     @Override
     public ActivityTypeDTO findDTO(Integer ActivityTypeId, Integer userId) {
-        ActivityType activityType =  repository.findByIdAndUserId(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
+        ActivityType activityType =  repository.findById(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
         return new ActivityTypeDTO(activityType.getId(), activityType.getName(), activityType.getDescription());
     }
 
     @Override
-    public ActivityTypeDTO create(Integer userId, String name, String description) {
+    public ActivityTypeDTO create(Integer userId, CreateActivityTypeDTO activityTypeDTO) {
 
-        if(repository.existsByNameAndUserId(name, userId)) throw new ActivityTypeExistsException();
+        if(repository.existsByNameAndUserId(activityTypeDTO.name(), userId)) throw new ActivityTypeExistsException();
 
         ActivityType newActivityType = new ActivityType();
-        newActivityType.setName(name);
-        newActivityType.setDescription(description);
+        newActivityType.setName(activityTypeDTO.name());
+        newActivityType.setDescription(activityTypeDTO.description());
         newActivityType.setUser(userService.findById(userId));
         newActivityType.setId(repository.save(newActivityType).getId());
 
@@ -62,15 +61,15 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
     }
 
     @Override
-    public ActivityTypeDTO update(Integer userId,Integer activityTypeId, String name, String description) {
-        ActivityType inDb = repository.findByIdAndUserId(activityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
+    public ActivityTypeDTO update(Integer userId, ActivityTypeDTO activityTypeDTO) {
+        ActivityType inDb = repository.findById(activityTypeDTO.id(), userId).orElseThrow(ActivityTypeNotFoundException::new);
         if (!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
 
         ActivityType updated = new ActivityType();
-        updated.setId(activityTypeId);
+        updated.setId(activityTypeDTO.id());
         updated.setUser(inDb.getUser());
-        updated.setName(name);
-        updated.setDescription(description);
+        updated.setName(activityTypeDTO.name());
+        updated.setDescription(activityTypeDTO.description());
         repository.save(updated);
 
         return new ActivityTypeDTO(updated.getId(), updated.getName(), updated.getDescription());
@@ -78,7 +77,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
 
     @Override
     public void delete(Integer userId, Integer activityId){
-        ActivityType inDb = repository.findByIdAndUserId(activityId, userId).orElseThrow(ActivityTypeNotFoundException::new);
+        ActivityType inDb = repository.findById(activityId, userId).orElseThrow(ActivityTypeNotFoundException::new);
         if (!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException("Deleção inválida!");
         repository.deleteById(activityId);
     }
