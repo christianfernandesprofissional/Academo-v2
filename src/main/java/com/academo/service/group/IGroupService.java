@@ -1,18 +1,18 @@
 package com.academo.service.group;
 
+import com.academo.controller.dtos.group.GroupDTO;
 import com.academo.model.Group;
 
 import java.util.List;
 
 public interface IGroupService{
 
-    List<Group> findAll(Integer userId);
-    Group findById(Integer userId, Integer id);
-    Group create(Integer userId, Group group);
-    Group update(Integer userId, Group group);
-    void remove(Integer userId, Integer groupId);
-    Group addSubjectToGroup(Integer userId, Integer groupId, Integer SubjectId);
-    Group deleteSubjectFromGroup(Integer userId, Integer groupId, Integer SubjectId);
-    Group associateSubjects(Integer userId, Integer groupId, List<Integer> subjectsIds);
-
+    List<GroupDTO> findAll(Integer userId);
+    GroupDTO findById(Integer userId, Integer id);
+    GroupDTO create(Integer userId, Group group);
+    GroupDTO update(Integer userId, Group group);
+    void delete(Integer userId, Integer groupId);
+    GroupDTO addSubject(Integer userId, Integer groupId, Integer SubjectId);
+    GroupDTO deleteSubject(Integer userId, Integer groupId, Integer SubjectId);
+    GroupDTO associateSubjects(Integer userId, Integer groupId, List<Integer> subjectsIds);
 }

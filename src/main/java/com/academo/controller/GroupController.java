@@ -43,20 +43,7 @@ public class GroupController {
     @GetMapping("/all")
     public ResponseEntity<List<GroupDTO>> findAll(Authentication authentication){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity
-        List<GroupDTO> groups = groupService.getGroups(userId)
-                .stream()
-                .map(g -> new GroupDTO(
-                        g.getId(),
-                        g.getName(),
-                        g.getDescription(),
-                        g.getIsActive(),
-                        //A lista de Subject do grupo é transformada em uma lista de SubjectDTO
-                        g.getSubjects().stream()
-                                .map(s -> new SubjectDTO(s.getId(), s.getName(), s.getDescription(), s.getIsActive(), s.getCreatedAt(), s.getUpdatedAt())).toList()
-                )).toList();
-
-        return ResponseEntity.ok(groups);
+        return ResponseEntity.ok(groupService.findAll(userId));
     }
 
     @Operation(summary = "Recupera um grupo", method = "GET")
@@ -69,6 +56,7 @@ public class GroupController {
     public ResponseEntity<GroupDTO> findById(Authentication authentication, @RequestParam Integer groupId){
         //usando @RequestParam a requisição é feita pela url ficando localhost:8080/groups?groupId=1
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+
         Group group = groupService.getGroupByIdAndUserId(userId,groupId);
         List<SubjectDTO> subjects = group.getSubjects().stream()
                 .map(s -> new SubjectDTO(

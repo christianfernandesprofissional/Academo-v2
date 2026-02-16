@@ -2,6 +2,7 @@ package com.academo.repository;
 
 import com.academo.controller.dtos.group.GroupDTO;
 import com.academo.model.Group;
+import com.academo.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public interface GroupRepository extends JpaRepository<Group, Integer> {
 
 
-    List<GroupDTO> findAll(Integer userId);
-    public Optional<Group> findByIdAndUserId(Integer id, Integer userId);
+    List<Group> findAllByUserId(Integer userId);
+    Optional<Group> findById(Integer id, Integer userId);
+
 }

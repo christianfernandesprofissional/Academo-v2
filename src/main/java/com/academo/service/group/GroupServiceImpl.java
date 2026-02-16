@@ -1,6 +1,8 @@
 package com.academo.service.group;
 
+import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.GroupDTO;
+import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.Group;
 import com.academo.model.Subject;
 import com.academo.model.User;
@@ -15,6 +17,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,17 +37,16 @@ public class GroupServiceImpl implements IGroupService {
 
     @Override
     public List<GroupDTO> findAll(Integer userId){
-        return null;
+        return groupRepository.findAllByUserId(userId).stream().map(GroupDTO::fromGroup).toList();
     }
 
     @Override
-    public Group findById(Integer userId, Integer groupId){
-        //return groupRepository.findByIdAndUserId(userId,groupId).orElseThrow(GroupNotFoundException::new);
-        return groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
+    public GroupDTO findById(Integer userId, Integer groupId){
+        return GroupDTO.fromGroup(groupRepository.findById(groupId, userId).orElseThrow(GroupNotFoundException::new));
     }
 
     @Override
-    public Group create(Integer userId, Group group){
+    public Group create(Integer userId, CreateGroupDTO createGroupDTO){
         User user =  userService.findById(userId);
         group.setUser(user);
         return groupRepository.save(group);
@@ -123,6 +125,12 @@ public class GroupServiceImpl implements IGroupService {
         Subject subject = subjectService.getSubjectByIdAndUserId(subjectId, userId);
         if(!subject.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
         return subject;
+    }
+
+    @Override
+    public GroupDTO getGroupByIdAndUserId(Integer userId, Integer groupId){
+
+        return null;
     }
 
 }

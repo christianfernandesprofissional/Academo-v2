@@ -10,4 +10,5 @@ public record SubjectDTO(
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
+
 }
