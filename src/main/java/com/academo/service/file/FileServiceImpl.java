@@ -1,5 +1,6 @@
 package com.academo.service.file;
 
+import com.academo.controller.dtos.file.FileDTO;
 import com.academo.model.File;
 import com.academo.model.Subject;
 import com.academo.model.User;
@@ -10,12 +11,9 @@ import com.academo.util.FileTransfer.service.DriveService;
 import com.academo.util.exceptions.FileTransfer.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +50,7 @@ public class FileServiceImpl implements IFileService {
 
     @Transactional
     @Override
-    public File createFile(MultipartFile file, Integer userId, Integer subjectId) {
+    public FileDTO createFile(MultipartFile file, Integer userId, Integer subjectId) {
 
         Subject subject = subjectService.findById(subjectId);
         User user = userService.findById(userId);
@@ -77,7 +75,18 @@ public class FileServiceImpl implements IFileService {
         f.setUser(user);
         f.setSubject(subject);
 
-        return fileRepository.save(f);
+        File uploadedFile = fileRepository.save(f);
+        FileDTO fileDto = new FileDTO(
+                uploadedFile.getUuid(),
+                uploadedFile.getFileName(),
+                uploadedFile.getPath(),
+                uploadedFile.getFileType(),
+                uploadedFile.getSize(),
+                uploadedFile.getSubject().getId(),
+                uploadedFile.getCreatedAt()
+        );
+
+        return  fileDto;
     }
 
     @Override
@@ -86,9 +95,17 @@ public class FileServiceImpl implements IFileService {
     }
 
     @Override
-    public List<File> findAllFilesBySubjectId(Integer subjectId) {
+    public List<FileDTO> findAllFilesBySubjectId(Integer subjectId) {
         subjectService.findById(subjectId);
-        return fileRepository.findAllBySubjectId(subjectId).orElseThrow(FileNotFoundException::new);
+
+        return fileRepository.findAllBySubjectId(subjectId).stream().map( file -> new FileDTO(
+                file.getUuid(),
+                file.getFileName(),
+                file.getPath(),
+                file.getFileType(),
+                file.getSize(),
+                file.getSubject().getId(),
+                file.getCreatedAt())).toList();
     }
 
     @Transactional

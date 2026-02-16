@@ -7,6 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FileRepository extends JpaRepository<File, String> {
-
-    public Optional<List<File>> findAllBySubjectId(Integer subjectId);
+    public List<File> findAllBySubjectId(Integer subjectId);
 }
