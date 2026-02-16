@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -25,11 +27,13 @@ import java.util.List;
 @Tag(name = "Matérias")
 public class SubjectController {
 
-    @Autowired
-    ISubjectService service;
 
-    @Autowired
-    IActivityService activityService;
+    private final ISubjectService service;
+
+
+    public SubjectController(ISubjectService subjectService, IActivityService activityService){
+        service = subjectService;
+    }
 
     // A recuperação do Id do User por meio do PathVariable é temporária
     // Será implementado um Middleware para recuperação deste ID
@@ -39,10 +43,11 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar matéria")
     })
     @PostMapping
-    public ResponseEntity<Subject> create(Authentication authentication, @RequestBody CreateSubjectDTO subjectDTO) {
+    public ResponseEntity<SubjectDTO> create(Authentication authentication, @RequestBody CreateSubjectDTO subjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        Subject createdSubject = service.create(new Subject(subjectDTO.name(), subjectDTO.description()),userId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        SubjectDTO createdSubject = service.create(subjectDTO.name(),subjectDTO.description(),userId);
+        URI uri = URI.create("/subjects?subjectId=" + createdSubject.id());
+        return ResponseEntity.created(uri).body(createdSubject);
     }
 
     @Operation(summary = "Recupera as matérias de um grupo", method = "GET")
@@ -51,19 +56,10 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar matérias"),
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada para este grupo")
     })
-    @GetMapping("/by-group")
-    public ResponseEntity<List<SubjectDTO>> getByGroup(Authentication authentication, @RequestParam Integer groupId) {
+    @GetMapping("/in-group")
+    public ResponseEntity<List<SubjectDTO>> findSubjectByGroupId(Authentication authentication, @PathVariable Integer groupId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        List<SubjectDTO> subjects = service.findByGroup(groupId)
-                .stream()
-                .map(s -> new SubjectDTO(
-                        s.getId(),
-                        s.getName(),
-                        s.getDescription(),
-                        s.getIsActive(),
-                        s.getCreatedAt(),
-                        s.getUpdatedAt())).toList();
-
+        List<SubjectDTO> subjects = service.findByGroup(groupId);
         return ResponseEntity.ok(subjects);
     }
 
@@ -74,17 +70,9 @@ public class SubjectController {
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada")
     })
     @GetMapping("/all")
-    public ResponseEntity<List<SubjectDTO>> getSubjects(Authentication authentication) {
+    public ResponseEntity<List<SubjectDTO>> findAll(Authentication authentication) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        List<SubjectDTO> subjects = service.findAll(userId)
-                .stream()
-                .map(g -> new SubjectDTO(
-                        g.getId(),
-                        g.getName(),
-                        g.getDescription(),
-                        g.getIsActive(),
-                        g.getCreatedAt(),
-                        g.getUpdatedAt())).toList();
+        List<SubjectDTO> subjects = service.findAll(userId);
         return ResponseEntity.ok(subjects);
     }
 
@@ -94,11 +82,10 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar matéria"),
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada com este ID")
     })
-    @GetMapping("one")
-    public ResponseEntity<SubjectDTO> getSubject(Authentication authentication, @RequestParam Integer subjectId) {
+    @GetMapping
+    public ResponseEntity<SubjectDTO> findById(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        Subject subject = service.getSubjectByIdAndUserId(subjectId, userId);
-        SubjectDTO subjectDTO = new SubjectDTO(subject.getId(), subject.getName(), subject.getDescription(), subject.getIsActive(),subject.getCreatedAt(), subject.getUpdatedAt());
+        SubjectDTO subjectDTO = service.findBySubjectId(subjectId, userId);
         return ResponseEntity.ok(subjectDTO);
     }
 
@@ -109,11 +96,9 @@ public class SubjectController {
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada com este ID")
     })
     @PutMapping
-    public ResponseEntity<SubjectDTO> updateSubject(Authentication authentication, @RequestBody SubjectDTO subjectDTO) {
+    public ResponseEntity<SubjectDTO> update(Authentication authentication, @RequestBody SubjectDTO subjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        Subject subject = new Subject(subjectDTO);
-        subject.setActivities(activityService.getBySubjectId(subjectDTO.id()));
-        service.updateSubject(userId,subject);
+        SubjectDTO dto = service.updateSubject(userId, subjectDTO);
         return ResponseEntity.ok().build();
     }
 
@@ -124,7 +109,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada com este ID")
     })
     @DeleteMapping
-    public ResponseEntity<Activity> deleteActivity(Authentication authentication, @RequestParam Integer subjectId) {
+    public ResponseEntity<Activity> delete(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         service.deleteSubject(userId, subjectId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
