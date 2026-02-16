@@ -2,7 +2,7 @@ package com.academo.util.exceptions;
 
 public class NotAllowedInsertionException extends RuntimeException {
     public NotAllowedInsertionException() {
-        super("Inserção inválida!");
+        super();
     }
     public NotAllowedInsertionException(String message) {
         super(message);

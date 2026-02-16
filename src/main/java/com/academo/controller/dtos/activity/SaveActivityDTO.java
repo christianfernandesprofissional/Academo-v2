@@ -6,9 +6,8 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDate;
 
-public record UpdateActivityDTO(
-        @NotEmpty(message = "O ID da Atividade é obrigatório")
-        Integer id,
+public record SaveActivityDTO(
+
         @Future(message = "É necessário que a data da atividade seja no futuro")
         LocalDate activityDate,
         @Future(message = "É necessário que a data da notificação seja no futuro")

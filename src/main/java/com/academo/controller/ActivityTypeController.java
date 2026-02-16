@@ -1,8 +1,8 @@
 package com.academo.controller;
 
+import com.academo.controller.dtos.activity.SaveActivityDTO;
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
-import com.academo.controller.dtos.activityType.CreateActivityTypeDTO;
-import com.academo.model.ActivityType;
+import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.activityType.IActivityTypeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,7 +61,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar tipo de atividade"),
     })
     @PostMapping
-    public ResponseEntity<ActivityTypeDTO> create(Authentication authentication, @RequestBody @Valid CreateActivityTypeDTO activityTypeDTO) {
+    public ResponseEntity<ActivityTypeDTO> create(Authentication authentication, @RequestBody @Valid SaveActivityTypeDTO activityTypeDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityTypeDTO createdActivityType = activityTypeService.create(userId, activityTypeDTO);
         URI uri = URI.create("/activity-types?id=" + createdActivityType.id());
@@ -74,10 +74,10 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar tipo de atividade"),
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
     })
-    @PutMapping
-    public ResponseEntity<ActivityTypeDTO> update(Authentication authentication, @RequestBody @Valid ActivityTypeDTO activityTypeDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ActivityTypeDTO> update(Authentication authentication,@PathVariable Integer id, @RequestBody @Valid SaveActivityDTO activityTypeDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        ActivityTypeDTO updated = activityTypeService.update(userId, activityTypeDTO);
+        ActivityTypeDTO updated = activityTypeService.update(userId, id, activityTypeDTO);
         return ResponseEntity.ok(updated);
     }
 

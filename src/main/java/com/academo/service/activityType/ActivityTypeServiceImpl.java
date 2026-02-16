@@ -1,14 +1,14 @@
 package com.academo.service.activityType;
 
+import com.academo.controller.dtos.activity.SaveActivityDTO;
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
-import com.academo.controller.dtos.activityType.CreateActivityTypeDTO;
+import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.model.ActivityType;
 import com.academo.repository.ActivityTypeRepository;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.activityType.ActivityTypeExistsException;
 import com.academo.util.exceptions.activityType.ActivityTypeNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
     }
 
     @Override
-    public ActivityTypeDTO create(Integer userId, CreateActivityTypeDTO activityTypeDTO) {
+    public ActivityTypeDTO create(Integer userId, SaveActivityTypeDTO activityTypeDTO) {
 
         if(repository.existsByNameAndUserId(activityTypeDTO.name(), userId)) throw new ActivityTypeExistsException();
 
@@ -61,12 +61,12 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
     }
 
     @Override
-    public ActivityTypeDTO update(Integer userId, ActivityTypeDTO activityTypeDTO) {
-        ActivityType inDb = repository.findById(activityTypeDTO.id(), userId).orElseThrow(ActivityTypeNotFoundException::new);
+    public ActivityTypeDTO update(Integer userId, Integer id, SaveActivityDTO activityTypeDTO) {
+        ActivityType inDb = repository.findById(id, userId).orElseThrow(ActivityTypeNotFoundException::new);
         if (!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
 
         ActivityType updated = new ActivityType();
-        updated.setId(activityTypeDTO.id());
+        updated.setId(id);
         updated.setUser(inDb.getUser());
         updated.setName(activityTypeDTO.name());
         updated.setDescription(activityTypeDTO.description());
