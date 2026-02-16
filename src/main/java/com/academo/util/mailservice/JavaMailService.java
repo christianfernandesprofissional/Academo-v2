@@ -6,12 +6,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
-public class JavaMailApp {
+public class JavaMailService implements IMailService {
 
     @Autowired
     private JavaMailSender mailSender;
 
-    public void enviarEmailBoasVindas(String destinatario) {
+    @Override
+    public void sendWelcomeMail(String destinatario) {
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(destinatario);
         email.setSubject("Bem-vindo ao ACADEMO!");
@@ -27,8 +28,9 @@ public class JavaMailApp {
         mailSender.send(email);
     }
 
-    public void enviarEmailDeAtivacao(String destinatario, String token){
-        String baseUrl = System.getenv("BASE_URL");
+    @Override
+    public void sendActivationMail(String destinatario, String token){
+        String baseUrl = System.getenv("CLIENT_URL");
         String urlDeAtivacao = baseUrl+"/auth/activate?value="+token;
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(destinatario);

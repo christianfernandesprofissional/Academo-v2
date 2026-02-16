@@ -1,7 +1,5 @@
 package com.academo.model;
 
-import com.academo.controller.dtos.activity.ActivityPostDTO;
-import com.academo.controller.dtos.activity.ActivityPutDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_activities")
 public class Activity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -24,7 +23,7 @@ public class Activity {
     @Column(name = "notification_date")
     private LocalDate notificationDate;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")
@@ -32,6 +31,8 @@ public class Activity {
 
     @Column(name = "value")
     private Double value;
+
+    // Adicionar dados para Nota???
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -53,22 +54,25 @@ public class Activity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Activity() {}
-
-    public Activity(ActivityPostDTO dto){
-        this.name = dto.name();
-        this.description = dto.description();
-        this.activityDate = dto.activityDate();
-        this.notificationDate = dto.notificationDate();
-    }
-
-    public Activity(ActivityPutDTO dto){
-        this.id = dto.id();
-        this.name = dto.name();
-        this.description = dto.description();
-        this.activityDate = dto.activityDate();
-        this.notificationDate = dto.notificationDate();
-    }
+//    public Activity() {}
+//
+//    public Activity(ActivityPostDTO dto){
+//        this.name = dto.name();
+//        this.description = dto.description();
+//        this.activityDate = dto.activityDate();
+//        this.notificationDate = dto.notificationDate();
+//        this.value = dto.value();
+//
+//    }
+//
+//    public Activity(ActivityPutDTO dto){
+//        this.id = dto.id();
+//        this.name = dto.name();
+//        this.description = dto.description();
+//        this.activityDate = dto.activityDate();
+//        this.notificationDate = dto.notificationDate();
+//        this.value = dto.value();
+//    }
 
     public int getId() {
         return id;
@@ -155,5 +159,22 @@ public class Activity {
 
     public void setNotificationDate(LocalDate notification_date) {
         this.notificationDate = notification_date;
+    }
+
+    @Override
+    public String toString() {
+        return "Activity{" +
+                "id=" + id +
+                ", activityDate=" + activityDate +
+                ", notificationDate=" + notificationDate +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", value=" + value +
+                ", user=" + user +
+                ", subject=" + subject +
+                ", activityType=" + activityType +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

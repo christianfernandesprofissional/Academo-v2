@@ -1,4 +1,4 @@
-package com.academo.util.QuartzSchedule;
+package com.academo.util.config.mail;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobDetail;

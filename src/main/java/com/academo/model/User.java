@@ -15,7 +15,7 @@ public class User {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "password")
@@ -32,23 +32,15 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @Column(name = "is_active", columnDefinition = "default false")
-    private Boolean isActive;
+    @Column(name = "is_account_activated", columnDefinition = "default false", nullable = false)
+    private Boolean isAccountActivated;
 
-    @Column(name = "token_expires_at")
-    private LocalDateTime tokenExpiresAt;
+    @Column(name = "activation_account_token_expiration")
+    private LocalDateTime activationAccountTokenExpiration;
 
     @Column(name = "storage_usage")
     private Long storageUsage;
 
-    public User() {}
-
-    public User(String name, String password, String email) {
-        this.name = name;
-        this.password = password;
-        this.email = email;
-        this.isActive = false;
-    }
 
     public Integer getId() {
         return id;
@@ -96,16 +88,20 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public void setIsActive(Boolean active){this.isActive = active;}
-
-    public Boolean getIsActive(){return isActive;}
-
-    public LocalDateTime getTokenExpiresAt() {
-        return tokenExpiresAt;
+    public Boolean getAccountActivated() {
+        return isAccountActivated;
     }
 
-    public void setTokenExpiresAt(LocalDateTime tokenExpiresAt) {
-        this.tokenExpiresAt = tokenExpiresAt;
+    public void setAccountActivated(Boolean accountActivated) {
+        isAccountActivated = accountActivated;
+    }
+
+    public LocalDateTime getActivationAccountTokenExpiration() {
+        return activationAccountTokenExpiration;
+    }
+
+    public void setActivationAccountTokenExpiration(LocalDateTime activationAccountTokenExpiration) {
+        this.activationAccountTokenExpiration = activationAccountTokenExpiration;
     }
 
     public Long getStorageUsage() {

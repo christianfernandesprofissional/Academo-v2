@@ -12,9 +12,7 @@ import java.util.List;
 
 public class AuthUser implements UserDetails {
 
-
-    private User user;
-
+    private final User user;
 
     public AuthUser(User user) {
         this.user = user;

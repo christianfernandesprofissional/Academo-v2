@@ -1,15 +1,19 @@
 package com.academo.service.activityType;
 
+import com.academo.controller.dtos.activity.SaveActivityDTO;
+import com.academo.controller.dtos.activityType.ActivityTypeDTO;
+import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.model.ActivityType;
 
 import java.util.List;
 
 public interface IActivityTypeService {
 
-    public List<ActivityType> findAll(Integer userId);
-    public ActivityType findByIdAndUserId(Integer ActivityTypeId, Integer userId);
-    public ActivityType create(Integer userId, ActivityType activityType);
-    public ActivityType update(Integer userId, ActivityType activityType);
-    public void deleteActivityType(Integer userId, Integer activityId);
+    List<ActivityTypeDTO> findAll(Integer userId);
+    ActivityType findById(Integer ActivityTypeId, Integer userId);
+    ActivityTypeDTO findDTO(Integer ActivityTypeId, Integer userId);
+    ActivityTypeDTO create(Integer userId, SaveActivityTypeDTO activityTypeDTO);
+    ActivityTypeDTO update(Integer userId, Integer id, SaveActivityDTO activityTypeDTO);
+    void delete(Integer userId, Integer activityId);
 
 }

@@ -16,6 +16,8 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+
+
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
@@ -37,28 +39,32 @@ public class Group {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    /*
+    FetchType.EAGER -> Define que ao puxar um Grupo, teremos carregado junto, a lista de Subjects
+     */
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tb_groups_subjects",
             joinColumns = @JoinColumn(name = "id_group"),
             inverseJoinColumns = @JoinColumn(name = "id_subject"))
     private List<Subject> subjects;
 
-    public Group() {
-    }
-
-    public Group(int id, String name, String description, User user) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.user = user;
-        this.isActive = true;
-    }
-
-    public Group(String name, String description) {
-        this.name = name;
-        this.description = description;
-        this.isActive = true;
-    }
+//    public Group() {
+//    }
+//
+//    public Group(int id, String name, String description, User user) {
+//        this.id = id;
+//        this.name = name;
+//        this.description = description;
+//        this.user = user;
+//        this.isActive = true;
+//    }
+//
+//    public Group(String name, String description) {
+//        this.name = name;
+//        this.description = description;
+//        this.isActive = true;
+//    }
 
     public int getId() {
         return id;

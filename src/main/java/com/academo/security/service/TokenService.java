@@ -20,6 +20,9 @@ public class TokenService {
 
     private final String activationSecret = "activationKey";
 
+    private static final Instant ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00"));
+    private static final Instant ACCESS_TOKEN = LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
+
     // ---------------- LOGIN TOKEN -----------------------
     public String generateLoginToken(AuthUser user) {
         try {
@@ -79,10 +82,9 @@ public class TokenService {
 
     private Instant generationExpirationDate(boolean isActivationToken) {
         if(isActivationToken) {
-            //Caso alterar o tempo, também altere em UserController e RestExceptionHandler
-            return LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00"));
+            return ACTIVATION_TOKEN;
         }
-        return LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
+        return ACCESS_TOKEN;
     }
 
 
