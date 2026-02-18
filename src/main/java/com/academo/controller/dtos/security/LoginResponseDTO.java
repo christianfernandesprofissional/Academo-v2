@@ -1,4 +1,4 @@
-package com.academo.security.authuser;
+package com.academo.controller.dtos.security;
 
 public record LoginResponseDTO(
         String token,

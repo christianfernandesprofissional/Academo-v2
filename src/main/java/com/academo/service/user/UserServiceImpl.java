@@ -2,14 +2,12 @@ package com.academo.service.user;
 
 import com.academo.model.User;
 import com.academo.repository.UserRepository;
-import com.academo.security.authuser.RegisterDTO;
+import com.academo.controller.dtos.security.RegisterDTO;
 import com.academo.security.service.TokenService;
-import com.academo.service.profile.ProfileServiceImpl;
 import com.academo.util.exceptions.user.AlreadyActivatedUserException;
 import com.academo.util.exceptions.user.ExistingUserException;
 import com.academo.util.exceptions.user.UserNotFoundException;
 import com.academo.util.mailservice.IMailService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

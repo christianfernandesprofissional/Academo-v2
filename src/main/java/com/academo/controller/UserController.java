@@ -1,5 +1,8 @@
 package com.academo.controller;
 
+import com.academo.controller.dtos.security.LoginResponseDTO;
+import com.academo.controller.dtos.security.RegisterDTO;
+import com.academo.controller.dtos.security.UserAuthDTO;
 import com.academo.model.User;
 import com.academo.security.authuser.*;
 import com.academo.security.service.TokenService;

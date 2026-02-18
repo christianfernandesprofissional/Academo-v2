@@ -25,4 +25,15 @@ public record SubjectDTO(
                 subject.getUpdatedAt()
         );
     }
+
+    public static Subject toSubject(Integer subjectId, SubjectDTO subjectDTO) {
+        Subject subject = new Subject();
+        subject.setId(subjectId);
+        subject.setName(subjectDTO.name());
+        subject.setDescription(subjectDTO.description());
+        subject.setIsActive(subjectDTO.isActive());
+        subject.setCreatedAt(subjectDTO.createdAt());
+        subject.setUpdatedAt(subjectDTO.updatedAt());
+        return subject;
+    }
 }

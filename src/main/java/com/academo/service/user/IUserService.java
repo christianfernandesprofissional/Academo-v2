@@ -1,9 +1,7 @@
 package com.academo.service.user;
 
 import com.academo.model.User;
-import com.academo.security.authuser.RegisterDTO;
-
-import java.util.List;
+import com.academo.controller.dtos.security.RegisterDTO;
 
 public interface IUserService {
 

@@ -3,6 +3,7 @@ package com.academo.service.activity;
 import com.academo.controller.dtos.activity.ActivityDTO;
 import com.academo.controller.dtos.activity.SaveActivityDTO;
 import com.academo.controller.dtos.notification.NotificationDTO;
+import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.Activity;
 import com.academo.model.ActivityType;
 import com.academo.model.Subject;
@@ -86,7 +87,8 @@ public  class ActivityServiceImpl implements IActivityService{
     private Activity fillActivity(Integer userId, SaveActivityDTO activityDTO){
         User user = userService.findById(userId);
         ActivityType activityType = activityTypeService.findById(activityDTO.activityTypeId(), userId);
-        Subject subject = subjectService.getSubjectByIdAndUserId(activityDTO.subjectId(), userId);
+        SubjectDTO dto = subjectService.findById(activityDTO.subjectId(), userId);
+        Subject subject = SubjectDTO.toSubject(activityDTO.subjectId(), dto);
         Activity activity = new Activity();
         activity.setName(activityDTO.name());
         activity.setDescription(activityDTO.description());

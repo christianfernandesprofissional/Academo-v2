@@ -87,8 +87,8 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar deletar tipo de atividade"),
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
     })
-    @DeleteMapping
-    public ResponseEntity<Void> delete(Authentication authentication, @RequestParam Integer activityTypeId) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Integer activityTypeId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         activityTypeService.delete(userId, activityTypeId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
