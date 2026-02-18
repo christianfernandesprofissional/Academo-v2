@@ -30,7 +30,6 @@ public class SubjectController {
 
     private final ISubjectService service;
 
-
     public SubjectController(ISubjectService subjectService, IActivityService activityService){
         service = subjectService;
     }
@@ -43,9 +42,9 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar matéria")
     })
     @PostMapping
-    public ResponseEntity<SubjectDTO> create(Authentication authentication, @RequestBody CreateSubjectDTO subjectDTO) {
+    public ResponseEntity<SubjectDTO> create(Authentication authentication, @RequestBody CreateSubjectDTO createSubjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        SubjectDTO createdSubject = service.create(subjectDTO.name(),subjectDTO.description(),userId);
+        SubjectDTO createdSubject = service.create(userId, createSubjectDTO);
         URI uri = URI.create("/subjects?subjectId=" + createdSubject.id());
         return ResponseEntity.created(uri).body(createdSubject);
     }
@@ -57,7 +56,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada para este grupo")
     })
     @GetMapping("/in-group")
-    public ResponseEntity<List<SubjectDTO>> findSubjectByGroupId(Authentication authentication, @PathVariable Integer groupId) {
+    public ResponseEntity<List<SubjectDTO>> findByGroupId(Authentication authentication, @PathVariable Integer groupId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         List<SubjectDTO> subjects = service.findByGroup(groupId);
         return ResponseEntity.ok(subjects);
@@ -85,7 +84,7 @@ public class SubjectController {
     @GetMapping
     public ResponseEntity<SubjectDTO> findById(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        SubjectDTO subjectDTO = service.findBySubjectId(subjectId, userId);
+        SubjectDTO subjectDTO = service.findById(subjectId, userId);
         return ResponseEntity.ok(subjectDTO);
     }
 
@@ -98,7 +97,7 @@ public class SubjectController {
     @PutMapping
     public ResponseEntity<SubjectDTO> update(Authentication authentication, @RequestBody SubjectDTO subjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        SubjectDTO dto = service.updateSubject(userId, subjectDTO);
+        SubjectDTO dto = service.update(userId, subjectDTO);
         return ResponseEntity.ok().build();
     }
 
@@ -111,7 +110,7 @@ public class SubjectController {
     @DeleteMapping
     public ResponseEntity<Activity> delete(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        service.deleteSubject(userId, subjectId);
+        service.delete(userId, subjectId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
