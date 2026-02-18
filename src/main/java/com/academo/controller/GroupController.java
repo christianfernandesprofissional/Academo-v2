@@ -4,16 +4,13 @@ import com.academo.controller.dtos.group.AssociateSubjectsDTO;
 import com.academo.controller.dtos.group.GroupDTO;
 import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
-import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.service.group.IGroupService;
-import com.academo.service.subject.ISubjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.academo.model.Group;
 import com.academo.security.authuser.AuthUser;
-import com.academo.service.group.GroupServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -126,22 +123,10 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar associar matérias"),
             @ApiResponse(responseCode = "404", description = "Grupo não encontrado")
     })
-    @PutMapping("associate-subjects")
-    public ResponseEntity<GroupDTO> associateSubjects(Authentication authentication, @RequestBody AssociateSubjectsDTO associateSubjectsDTO){
+    @PutMapping("associate-subjects/{groupId}")
+    public ResponseEntity<GroupDTO> associateSubjects(Authentication authentication, @PathVariable Integer groupId, @RequestBody AssociateSubjectsDTO associateSubjectsDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        Group g = groupService.associateSubjects(userId, associateSubjectsDTO.groupId(), associateSubjectsDTO.subjectsIds());
-        Group group = groupService.updateGroup(userId, g);
-        List<SubjectDTO> subjects = group.getSubjects().stream()
-                .map(s -> new SubjectDTO(
-                        s.getId(),
-                        s.getName(),
-                        s.getDescription(),
-                        s.getIsActive(),
-                        s.getCreatedAt(),
-                        s.getUpdatedAt()
-                )).toList();
-        GroupDTO groupDTO = new GroupDTO(group.getId(), group.getName(), group.getDescription(), group.getIsActive(), subjects);
-        return ResponseEntity.ok(groupDTO);
+        return ResponseEntity.ok(groupService.associateSubjects(userId, groupId, associateSubjectsDTO));
     }
 
 }

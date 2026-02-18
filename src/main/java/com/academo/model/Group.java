@@ -130,6 +130,10 @@ public class Group {
         this.subjects = subjects;
     }
 
+    public void addSubject(Subject subject) {
+        this.getSubjects().add(subject);
+    }
+
 
 
     @Override

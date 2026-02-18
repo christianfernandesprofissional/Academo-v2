@@ -1,5 +1,6 @@
 package com.academo.service.group;
 
+import com.academo.controller.dtos.group.AssociateSubjectsDTO;
 import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.GroupDTO;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
@@ -17,5 +18,5 @@ public interface IGroupService{
     void delete(Integer userId, Integer groupId);
     GroupDTO addSubject(Integer userId, Integer groupId, Integer SubjectId);
     GroupDTO deleteSubject(Integer userId, Integer groupId, Integer SubjectId);
-    GroupDTO associateSubjects(Integer userId, Integer groupId, List<Integer> subjectsIds);
+    GroupDTO associateSubjects(Integer userId, Integer groupId, AssociateSubjectsDTO dto);
 }

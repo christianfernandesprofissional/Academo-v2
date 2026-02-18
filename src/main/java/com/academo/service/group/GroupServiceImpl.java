@@ -1,5 +1,6 @@
 package com.academo.service.group;
 
+import com.academo.controller.dtos.group.AssociateSubjectsDTO;
 import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.GroupDTO;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
@@ -93,9 +94,15 @@ public class GroupServiceImpl implements IGroupService {
 
     @Override
     @Transactional
-    public GroupDTO associateSubjects(Integer userId, Integer groupId, List<Integer> subjectsIds) {
+    public GroupDTO associateSubjects(Integer userId, Integer groupId, AssociateSubjectsDTO dto) {
         Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
-        return GroupDTO.fromGroup(subjectsIds.stream().map(s -> subjectService.findById(s, userId)));
+        /*
+        DEIXEI COMO EXEMPLO DE CÓDIGO IRREFATORÁVEL
+        return GroupDTO.fromGroup(subjectsIds.stream().map(s -> SubjectDTO.toSubject(s, subjectService.findById(s, userId))).toList().stream().map(group::addSubject).toList());
+         */
+        List<Subject> subjects = dto.subjectsIds().stream().map(s -> SubjectDTO.toSubject(s, subjectService.findById(s, userId))).toList();
+        group.getSubjects().addAll(subjects);
+        return GroupDTO.fromGroup(groupRepository.save(group));
     }
 
     /**
@@ -106,7 +113,7 @@ public class GroupServiceImpl implements IGroupService {
      * @return Group
      */
     private Group verifyGroup(Integer userId, Integer groupId){
-        Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
+        Group group = groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new);
         if(!group.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
         return group;
     }
@@ -119,7 +126,7 @@ public class GroupServiceImpl implements IGroupService {
      * @return Subject
      */
     private Subject verifySubject(Integer userId, Integer subjectId){
-        Subject subject = subjectService.getSubjectByIdAndUserId(subjectId, userId);
+        Subject subject = SubjectDTO.toSubject(subjectId, subjectService.findById(subjectId, userId));
         if(!subject.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
         return subject;
     }
