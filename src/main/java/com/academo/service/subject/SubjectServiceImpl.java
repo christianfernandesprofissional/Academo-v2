@@ -1,5 +1,6 @@
 package com.academo.service.subject;
 
+import com.academo.controller.dtos.subject.CreateSubjectDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.Activity;
 import com.academo.model.Group;
@@ -37,35 +38,33 @@ public class SubjectServiceImpl implements ISubjectService {
 
     @Override
     public List<SubjectDTO> findAll(Integer userId) {
-        return SubjectDTO.fromSubjectList(subjectRepository.findByUserId(userId));
+        return subjectRepository.findByUserId(userId).stream().map(SubjectDTO::fromSubject).toList();
     }
 
     @Override
-    public SubjectDTO findBySubjectId(Integer subjectId, Integer userId) {
+    public SubjectDTO findById(Integer subjectId, Integer userId) {
         return SubjectDTO.fromSubject(subjectRepository.findByIdAndUserId(subjectId, userId).orElseThrow(SubjectNotFoundException::new));
     }
 
     @Override
     public List<SubjectDTO> findByGroup(Integer groupId) {
         Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
-        return SubjectDTO.fromSubjectList(group.getSubjects());
+        return group.getSubjects().stream().map(SubjectDTO::fromSubject).toList();
     }
 
     @Override
-    public SubjectDTO create(String name, String description, Integer userId) {
+    public SubjectDTO create(Integer userId, CreateSubjectDTO createSubjectDTO) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Subject subject = new Subject();
-        subject.setName(name);
-        subject.setDescription(description);
+        subject.setName(createSubjectDTO.name());
+        subject.setDescription(createSubjectDTO.description());
         subject.setUser(user);
         subject = subjectRepository.save(subject);
-
         return SubjectDTO.fromSubject(subject);
-
     }
 
     @Override
-    public SubjectDTO updateSubject(Integer userId, SubjectDTO subjectDto) {
+    public SubjectDTO update(Integer userId, SubjectDTO subjectDto) {
         Subject inDb = subjectRepository.findById(subjectDto.id()).orElseThrow(SubjectNotFoundException::new);
         if(!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
         User user = userService.findById(userId);
@@ -83,7 +82,7 @@ public class SubjectServiceImpl implements ISubjectService {
 
     @Override
     @Transactional
-    public void deleteSubject(Integer userId, Integer subjectId){
+    public void delete(Integer userId, Integer subjectId){
         Subject inDb = subjectRepository.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
         if(!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException("Deleção inválida!");
 
