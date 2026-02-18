@@ -52,23 +52,11 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar grupo"),
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado com este ID")
     })
-    @GetMapping
-    public ResponseEntity<GroupDTO> findById(Authentication authentication, @RequestParam Integer groupId){
+    @GetMapping("/{groupId}")
+    public ResponseEntity<GroupDTO> findById(Authentication authentication, @PathVariable Integer groupId){
         //usando @RequestParam a requisição é feita pela url ficando localhost:8080/groups?groupId=1
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-
-        Group group = groupService.getGroupByIdAndUserId(userId,groupId);
-        List<SubjectDTO> subjects = group.getSubjects().stream()
-                .map(s -> new SubjectDTO(
-                        s.getId(),
-                        s.getName(),
-                        s.getDescription(),
-                        s.getIsActive(),
-                        s.getCreatedAt(),
-                        s.getUpdatedAt()
-                )).toList();
-        GroupDTO groupDTO = new GroupDTO(group.getId(), group.getName(), group.getDescription(),group.getIsActive(), subjects);
-        return ResponseEntity.ok(groupDTO);
+        return ResponseEntity.ok(groupService.findById(userId, groupId));
     }
 
     @Operation(summary = "Associa matérias a um grupo", method = "PUT")
@@ -101,9 +89,9 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar grupo")
     })
     @PostMapping
-    public ResponseEntity<Group> createGroup(Authentication authentication, @RequestBody CreateGroupDTO groupDTO){
+    public ResponseEntity<GroupDTO> create(Authentication authentication, @RequestBody CreateGroupDTO groupDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        groupService.insertGroup(userId, new Group(groupDTO.name(), groupDTO.description()));
+        groupService.create(userId,groupDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -113,19 +101,10 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar grupo"),
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado com este ID")
     })
-    @PutMapping
-    public ResponseEntity<Group> updateGroup(Authentication authentication, @RequestBody UpdateGroupDTO groupDTO){
+    @PutMapping("/{groupId}")
+    public ResponseEntity<GroupDTO> update(Authentication authentication ,@PathVariable Integer groupId, @RequestBody UpdateGroupDTO updateGroupDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        Group group = new Group();
-        group.setName(groupDTO.name());
-        group.setDescription(groupDTO.description());
-        group.setIsActive(groupDTO.isActive());
-        group.setId(groupDTO.id());
-        group.setSubjects(groupDTO.subjectsId().stream().map((s) -> subjectService.findById(s)).toList());
-
-        Group saved = groupService.updateGroup(userId,group);
-
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(groupService.update(userId, groupId, updateGroupDTO));
     }
 
     @Operation(summary = "Remove um grupo", method = "DELETE")
@@ -134,8 +113,8 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar deletar grupo"),
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado com este ID")
     })
-    @DeleteMapping
-    public ResponseEntity<Group> deleteGroup(Authentication authentication, @RequestParam Integer groupId){
+    @DeleteMapping("/{groupId}")
+    public ResponseEntity<Group> deleteGroup(Authentication authentication, @PathVariable Integer groupId){
         //usando @RequestParam a requisição é feita pela url ficando localhost:8080/groups?groupId=1
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         groupService.deleteGroup(userId,groupId);

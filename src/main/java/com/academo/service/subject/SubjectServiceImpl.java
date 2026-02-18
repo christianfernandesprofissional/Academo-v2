@@ -64,7 +64,6 @@ public class SubjectServiceImpl implements ISubjectService {
 
     }
 
-
     @Override
     public SubjectDTO updateSubject(Integer userId, SubjectDTO subjectDto) {
         Subject inDb = subjectRepository.findById(subjectDto.id()).orElseThrow(SubjectNotFoundException::new);
@@ -95,4 +94,7 @@ public class SubjectServiceImpl implements ISubjectService {
         subjectRepository.deleteById(subjectId);
     }
 
+    public List<Subject> createList(Integer grupoId, Integer subjectId){
+        groupRepository.findById(grupoId);
+    }
 }

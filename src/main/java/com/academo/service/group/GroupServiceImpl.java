@@ -2,6 +2,7 @@ package com.academo.service.group;
 
 import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.GroupDTO;
+import com.academo.controller.dtos.group.UpdateGroupDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.Group;
 import com.academo.model.Subject;
@@ -46,18 +47,24 @@ public class GroupServiceImpl implements IGroupService {
     }
 
     @Override
-    public Group create(Integer userId, CreateGroupDTO createGroupDTO){
+    public GroupDTO create(Integer userId, CreateGroupDTO createGroupDTO){
         User user =  userService.findById(userId);
-        group.setUser(user);
-        return groupRepository.save(group);
+        Group g = new Group();
+        g.setName(createGroupDTO.name());
+        g.setDescription(createGroupDTO.description());
+        g.setUser(user);
+        return GroupDTO.fromGroup(g);
     }
 
     @Override
-    public Group update(Integer userId, Group group) {
-        Group groupDb = groupRepository.findById(group.getId()).orElseThrow(GroupNotFoundException::new);
+    public GroupDTO update(Integer userId, Integer groupId, UpdateGroupDTO updateGroupDTO) {
+        Group groupDb = groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new);
         if (!groupDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
-        group.setUser(groupDb.getUser());
-        return groupRepository.save(group);
+        groupDb.setName(updateGroupDTO.name());
+        groupDb.setDescription(updateGroupDTO.description());
+        groupDb.setIsActive(updateGroupDTO.isActive());
+        groupDb.setSubjects(groupRepository.updateGroupDTO.subjectsId());
+        return groupRepository.save(groupDb);
     }
 
     @Override
@@ -125,12 +132,6 @@ public class GroupServiceImpl implements IGroupService {
         Subject subject = subjectService.getSubjectByIdAndUserId(subjectId, userId);
         if(!subject.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
         return subject;
-    }
-
-    @Override
-    public GroupDTO getGroupByIdAndUserId(Integer userId, Integer groupId){
-
-        return null;
     }
 
 }
