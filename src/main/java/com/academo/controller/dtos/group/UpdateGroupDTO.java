@@ -11,8 +11,6 @@ public record UpdateGroupDTO(
         String name,
         String description,
         @NotNull(message = "O status do grupo deve ser informado")
-        Boolean isActive,
-        List<Integer> subjectsId
-
+        Boolean isActive
 ) {
 }

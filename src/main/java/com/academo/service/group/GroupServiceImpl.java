@@ -43,7 +43,7 @@ public class GroupServiceImpl implements IGroupService {
 
     @Override
     public GroupDTO findById(Integer userId, Integer groupId){
-        return GroupDTO.fromGroup(groupRepository.findById(groupId, userId).orElseThrow(GroupNotFoundException::new));
+        return GroupDTO.fromGroup(groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new));
     }
 
     @Override
@@ -63,12 +63,11 @@ public class GroupServiceImpl implements IGroupService {
         groupDb.setName(updateGroupDTO.name());
         groupDb.setDescription(updateGroupDTO.description());
         groupDb.setIsActive(updateGroupDTO.isActive());
-        groupDb.setSubjects(groupRepository.updateGroupDTO.subjectsId());
-        return groupRepository.save(groupDb);
+        return GroupDTO.fromGroup(groupRepository.save(groupDb));
     }
 
     @Override
-    public void remove(Integer userId, Integer groupId) {
+    public void delete(Integer userId, Integer groupId) {
         Group groupDb = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
         if (!groupDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException("Deleção inválida!");
         groupRepository.deleteById(groupId);
@@ -76,36 +75,27 @@ public class GroupServiceImpl implements IGroupService {
 
     @Override
     @Transactional
-    public Group addSubjectToGroup(Integer userId, Integer groupId, Integer subjectId) {
+    public GroupDTO addSubject(Integer userId, Integer groupId, Integer subjectId) {
         Group group = verifyGroup(userId, groupId);
         Subject subject = verifySubject(userId, subjectId);
-
         group.getSubjects().add(subject);
-        return groupRepository.save(group);
+        return GroupDTO.fromGroup(groupRepository.save(group));
     }
 
     @Override
     @Transactional
-    public Group deleteSubjectFromGroup(Integer userId, Integer groupId, Integer subjectId) {
+    public GroupDTO deleteSubject(Integer userId, Integer groupId, Integer subjectId) {
         Group group = verifyGroup(userId, groupId);
         Subject subject = verifySubject(userId, subjectId);
-
         group.getSubjects().remove(subject);
-        return groupRepository.save(group);
+        return GroupDTO.fromGroup(groupRepository.save(group));
     }
 
     @Override
-    public Group associateSubjects(Integer userId, Integer groupId, List<Integer> subjectsIds) {
+    @Transactional
+    public GroupDTO associateSubjects(Integer userId, Integer groupId, List<Integer> subjectsIds) {
         Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
-        List<Subject> subjects = group.getSubjects();
-        for(Integer id : subjectsIds) {
-            Subject subject = subjectService.findById(id);
-            if(subject != null) {
-                subjects.add(subject);
-            }
-        }
-        group.setSubjects(subjects);
-        return group;
+        return GroupDTO.fromGroup(subjectsIds.stream().map(s -> subjectService.findById(s, userId)));
     }
 
     /**
