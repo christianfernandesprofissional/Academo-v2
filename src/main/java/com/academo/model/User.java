@@ -41,7 +41,6 @@ public class User {
     @Column(name = "storage_usage")
     private Long storageUsage;
 
-
     public Integer getId() {
         return id;
     }

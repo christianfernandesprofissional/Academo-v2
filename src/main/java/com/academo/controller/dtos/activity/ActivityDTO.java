@@ -1,7 +1,6 @@
 package com.academo.controller.dtos.activity;
 
 import com.academo.model.Activity;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 
 import java.time.LocalDate;

@@ -6,7 +6,6 @@ import com.academo.model.Profile;
 import com.academo.model.User;
 import com.academo.repository.ProfileRepository;
 import com.academo.util.exceptions.profile.ProfileNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

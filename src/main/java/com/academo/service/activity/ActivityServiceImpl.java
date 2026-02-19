@@ -2,38 +2,35 @@ package com.academo.service.activity;
 
 import com.academo.controller.dtos.activity.ActivityDTO;
 import com.academo.controller.dtos.activity.SaveActivityDTO;
-import com.academo.controller.dtos.notification.NotificationDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.Activity;
 import com.academo.model.ActivityType;
 import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.repository.ActivityRepository;
-import com.academo.service.activityType.ActivityTypeServiceImpl;
-import com.academo.service.subject.SubjectServiceImpl;
-import com.academo.service.user.UserServiceImpl;
+import com.academo.service.activityType.IActivityTypeService;
+import com.academo.service.subject.ISubjectService;
+import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.activity.ActivityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public  class ActivityServiceImpl implements IActivityService{
-    @Autowired
-    ActivityRepository activityRepository;
+public class ActivityServiceImpl implements IActivityService{
 
-    @Autowired
-    UserServiceImpl userService;
+    private final ActivityRepository activityRepository;
+    private final IUserService userService;
+    private final ISubjectService subjectService;
+    private final IActivityTypeService activityTypeService;
 
-    @Autowired
-    SubjectServiceImpl subjectService;
-
-    @Autowired
-    ActivityTypeServiceImpl activityTypeService;
+    public ActivityServiceImpl(ActivityRepository activityRepository, IUserService userService, ISubjectService subjectService, IActivityTypeService activityTypeService) {
+        this.activityRepository = activityRepository;
+        this.userService = userService;
+        this.subjectService = subjectService;
+        this.activityTypeService = activityTypeService;
+    }
 
     @Override
     public List<ActivityDTO> findAll(Integer userId) {
@@ -73,7 +70,10 @@ public  class ActivityServiceImpl implements IActivityService{
     }
 
     @Override
-    public List<ActivityDTO> findBySubjectId(Integer subjectId) {
+    public List<ActivityDTO> findBySubjectId(Integer userId, Integer subjectId) {
+        // Esse dto abaixo serve apenas para tentar recuperar um Subject com este ID e UserID. Caso o subject não pertença
+        // ao usuário da requisição, será lançada uma exceção
+        SubjectDTO dto = subjectService.findById(subjectId, userId);
         return activityRepository.findAllBySubjectId(subjectId).stream().map(ActivityDTO::fromActivity).toList();
     }
 

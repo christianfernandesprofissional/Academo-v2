@@ -7,7 +7,7 @@ import com.academo.security.service.TokenService;
 import com.academo.util.exceptions.user.AlreadyActivatedUserException;
 import com.academo.util.exceptions.user.ExistingUserException;
 import com.academo.util.exceptions.user.UserNotFoundException;
-import com.academo.util.mailservice.IMailService;
+import com.academo.service.mail.IMailService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

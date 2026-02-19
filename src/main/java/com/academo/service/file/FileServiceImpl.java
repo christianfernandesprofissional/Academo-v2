@@ -1,16 +1,16 @@
 package com.academo.service.file;
 
 import com.academo.controller.dtos.file.FileDTO;
+import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.File;
 import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.repository.FileRepository;
-import com.academo.service.subject.SubjectServiceImpl;
-import com.academo.service.user.UserServiceImpl;
-import com.academo.util.FileTransfer.service.DriveService;
+import com.academo.service.subject.ISubjectService;
+import com.academo.service.user.IUserService;
+import com.academo.service.storage.google.DriveService;
 import com.academo.util.exceptions.FileTransfer.*;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,17 +20,17 @@ import java.util.Set;
 @Service
 public class FileServiceImpl implements IFileService {
 
-    @Autowired
-    private FileRepository fileRepository;
+    private final FileRepository fileRepository;
+    private final IUserService userService;
+    private final ISubjectService subjectService;
+    private final DriveService driveService;
 
-    @Autowired
-    private UserServiceImpl userService;
-
-    @Autowired
-    private SubjectServiceImpl subjectService;
-
-    @Autowired
-    private DriveService driveService;
+    public FileServiceImpl(FileRepository fileRepository, IUserService userService, ISubjectService subjectService, DriveService driveService) {
+        this.fileRepository = fileRepository;
+        this.userService = userService;
+        this.subjectService = subjectService;
+        this.driveService = driveService;
+    }
 
     private static final long ONE_MB = 1024L * 1024L;
 
@@ -52,7 +52,7 @@ public class FileServiceImpl implements IFileService {
     @Override
     public FileDTO createFile(MultipartFile file, Integer userId, Integer subjectId) {
 
-        Subject subject = subjectService.findById(subjectId);
+        Subject subject = SubjectDTO.toSubject(subjectId, subjectService.findById(subjectId, userId));
         User user = userService.findById(userId);
         isUserStorageFull(file, user);
         isMimeTypeValid(file);
@@ -76,7 +76,7 @@ public class FileServiceImpl implements IFileService {
         f.setSubject(subject);
 
         File uploadedFile = fileRepository.save(f);
-        FileDTO fileDto = new FileDTO(
+        return new FileDTO(
                 uploadedFile.getUuid(),
                 uploadedFile.getFileName(),
                 uploadedFile.getPath(),
@@ -85,8 +85,6 @@ public class FileServiceImpl implements IFileService {
                 uploadedFile.getSubject().getId(),
                 uploadedFile.getCreatedAt()
         );
-
-        return  fileDto;
     }
 
     @Override
@@ -95,8 +93,9 @@ public class FileServiceImpl implements IFileService {
     }
 
     @Override
-    public List<FileDTO> findAllFilesBySubjectId(Integer subjectId) {
-        subjectService.findById(subjectId);
+    public List<FileDTO> findAllFilesBySubjectId(Integer userId, Integer subjectId) {
+        //Não entendi o porquê deste subject. Imagino que seja para verificar caso ele não exista. Neste caso, esta primeira linha lançará exceção
+        Subject subject = SubjectDTO.toSubject(subjectId, subjectService.findById(subjectId, userId));
 
         return fileRepository.findAllBySubjectId(subjectId).stream().map( file -> new FileDTO(
                 file.getUuid(),

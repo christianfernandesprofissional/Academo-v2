@@ -10,19 +10,13 @@ import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.repository.GroupRepository;
 import com.academo.service.subject.ISubjectService;
-import com.academo.service.subject.SubjectServiceImpl;
 import com.academo.service.user.IUserService;
-import com.academo.service.user.UserServiceImpl;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class GroupServiceImpl implements IGroupService {

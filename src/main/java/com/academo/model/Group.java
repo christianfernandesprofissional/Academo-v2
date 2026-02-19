@@ -49,22 +49,6 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "id_subject"))
     private List<Subject> subjects;
 
-//    public Group() {
-//    }
-//
-//    public Group(int id, String name, String description, User user) {
-//        this.id = id;
-//        this.name = name;
-//        this.description = description;
-//        this.user = user;
-//        this.isActive = true;
-//    }
-//
-//    public Group(String name, String description) {
-//        this.name = name;
-//        this.description = description;
-//        this.isActive = true;
-//    }
 
     public int getId() {
         return id;

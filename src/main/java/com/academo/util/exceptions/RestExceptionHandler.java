@@ -13,7 +13,7 @@ import com.academo.util.exceptions.group.GroupNotFoundException;
 import com.academo.util.exceptions.profile.ProfileNotFoundException;
 import com.academo.util.exceptions.subject.SubjectNotFoundException;
 import com.academo.util.exceptions.user.*;
-import com.academo.util.mailservice.IMailService;
+import com.academo.service.mail.IMailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,57 +39,57 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     //Activity
     @ExceptionHandler(ActivityNotFoundException.class)
     private ResponseEntity<ExceptionDTO> activityNotFoundHandler(ActivityNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(ActivityExistsException.class)
     private ResponseEntity<ExceptionDTO> activityNotFoundHandler(ActivityExistsException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
     }
 
     //Group
     @ExceptionHandler(GroupNotFoundException.class)
     private ResponseEntity<ExceptionDTO> groupNotFoundHandler(GroupNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
     }
 
     //Profile
     @ExceptionHandler(ProfileNotFoundException.class)
     private ResponseEntity<ExceptionDTO> profileNotFoundHandler(ProfileNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
     }
 
     //Subject
     @ExceptionHandler(SubjectNotFoundException.class)
     private ResponseEntity<ExceptionDTO> subjectNotFoundHandler(SubjectNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
     }
 
     //ActivityType
     @ExceptionHandler(ActivityTypeNotFoundException.class)
     private ResponseEntity<ExceptionDTO> typeActivityNotFoundException(ActivityTypeNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(ActivityTypeExistsException.class)
     private ResponseEntity<ExceptionDTO> typeActivityNotFoundException(ActivityTypeExistsException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
     }
 
     //User
     @ExceptionHandler(UserNotFoundException.class)
     private ResponseEntity<ExceptionDTO> userNotFoundHandler(UserNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(ExistingUserException.class)
     private ResponseEntity<ExceptionDTO> existingUserHandler(ExistingUserException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(WrongDataException.class)
     private ResponseEntity<ExceptionDTO> wrongDataHandler(WrongDataException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
     }
 
 
@@ -109,7 +109,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             var token = tokenService.generateActivationToken(user.getId());
             mailService.sendActivationMail(user.getEmail(), token);
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ExceptionDTO(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ExceptionDTO(exception.getMessage()));
     }
 
     //Files

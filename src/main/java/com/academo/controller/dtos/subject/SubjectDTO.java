@@ -1,10 +1,8 @@
 package com.academo.controller.dtos.subject;
 
 import com.academo.model.Subject;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record SubjectDTO(
         Integer id,

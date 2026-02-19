@@ -14,5 +14,5 @@ public interface IActivityService {
     Boolean existsByName(String activityName);
     // Isso pode ser substituído por um -> if(repository.findById(id).isPresent() throw new... -> Basta transformar o retorno de findById em Optional
     Boolean existsById(Integer id);
-    List<ActivityDTO> findBySubjectId(Integer subjectId);
+    List<ActivityDTO> findBySubjectId(Integer userId, Integer subjectId);
 }

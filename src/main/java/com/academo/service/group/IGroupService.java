@@ -4,8 +4,6 @@ import com.academo.controller.dtos.group.AssociateSubjectsDTO;
 import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.GroupDTO;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
-import com.academo.model.Group;
-import org.hibernate.sql.Update;
 
 import java.util.List;
 

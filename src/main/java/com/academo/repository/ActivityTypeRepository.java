@@ -1,7 +1,6 @@
 package com.academo.repository;
 
 import com.academo.model.ActivityType;
-import com.academo.model.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

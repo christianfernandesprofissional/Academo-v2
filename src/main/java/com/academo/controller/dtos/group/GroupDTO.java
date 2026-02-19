@@ -1,9 +1,7 @@
 package com.academo.controller.dtos.group;
 
-import com.academo.controller.GroupController;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.Group;
-import com.academo.model.Subject;
 
 import java.time.LocalDateTime;
 import java.util.List;

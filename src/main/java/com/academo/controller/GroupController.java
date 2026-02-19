@@ -86,7 +86,6 @@ public class GroupController {
     })
     @DeleteMapping("/{groupId}")
     public ResponseEntity<Group> delete(Authentication authentication, @PathVariable Integer groupId){
-        //usando @RequestParam a requisição é feita pela url ficando localhost:8080/groups?groupId=1
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         groupService.delete(userId,groupId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -98,7 +97,7 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar adicionar matéria"),
             @ApiResponse(responseCode = "404", description = "Grupo ou matéria não encontrado")
     })
-    @PostMapping("/add-subject")
+    @PostMapping("/add-subject/{groupId}/{subjectId}")
     public ResponseEntity<GroupDTO> addSubject(Authentication authentication, @PathVariable Integer groupId, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.addSubject(userId, groupId, subjectId));
@@ -110,8 +109,8 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar remover matéria"),
             @ApiResponse(responseCode = "404", description = "Grupo ou matéria não encontrado")
     })
-    @DeleteMapping("/delete-subject")
-    public ResponseEntity<GroupDTO> deleteSubject(Authentication authentication, @RequestParam Integer groupId, @RequestParam Integer subjectId){
+    @DeleteMapping("/delete-subject/{groupId}/{subjectId}")
+    public ResponseEntity<GroupDTO> deleteSubject(Authentication authentication, @PathVariable Integer groupId, @PathVariable Integer subjectId){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.deleteSubject(userId, groupId, subjectId));
     }

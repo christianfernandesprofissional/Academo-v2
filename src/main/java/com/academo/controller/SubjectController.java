@@ -2,23 +2,21 @@ package com.academo.controller;
 
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.controller.dtos.subject.CreateSubjectDTO;
+import com.academo.controller.dtos.subject.UpdateSubjectDTO;
 import com.academo.service.activity.IActivityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.academo.model.Activity;
-import com.academo.model.Subject;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.subject.ISubjectService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -55,7 +53,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar matérias"),
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada para este grupo")
     })
-    @GetMapping("/in-group")
+    @GetMapping("/in-group/{groupId}")
     public ResponseEntity<List<SubjectDTO>> findByGroupId(Authentication authentication, @PathVariable Integer groupId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         List<SubjectDTO> subjects = service.findByGroup(groupId);
@@ -81,7 +79,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar matéria"),
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada com este ID")
     })
-    @GetMapping
+    @GetMapping("/{subjectId}")
     public ResponseEntity<SubjectDTO> findById(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         SubjectDTO subjectDTO = service.findById(subjectId, userId);
@@ -94,11 +92,10 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar matéria"),
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada com este ID")
     })
-    @PutMapping
-    public ResponseEntity<SubjectDTO> update(Authentication authentication, @RequestBody SubjectDTO subjectDTO) {
+    @PutMapping("/{subjectId}")
+    public ResponseEntity<SubjectDTO> update(Authentication authentication,@PathVariable Integer subjectId, @RequestBody UpdateSubjectDTO updateSubjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        SubjectDTO dto = service.update(userId, subjectDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(service.update(userId, subjectId, updateSubjectDTO));
     }
 
     @Operation(summary = "Remove uma matéria", method = "DELETE")
