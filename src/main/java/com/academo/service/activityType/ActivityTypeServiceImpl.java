@@ -26,7 +26,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
 
     @Override
     public List<ActivityTypeDTO> findAll(Integer userId) {
-        return repository.findAll(userId).stream()
+        return repository.findAllByUserId(userId).stream()
                 .map(t -> new ActivityTypeDTO(
                         t.getId(),
                         t.getName(),
@@ -36,13 +36,13 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
 
     @Override
     public ActivityType findById(Integer ActivityTypeId, Integer userId) {
-        return repository.findById(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
+        return repository.findByIdAndUserId(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
     }
 
     // Método criado devido a necessidade do retorno de uma entidade em ActivityService no método fillActivity()
     @Override
     public ActivityTypeDTO findDTO(Integer ActivityTypeId, Integer userId) {
-        ActivityType activityType =  repository.findById(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
+        ActivityType activityType =  repository.findByIdAndUserId(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
         return new ActivityTypeDTO(activityType.getId(), activityType.getName(), activityType.getDescription());
     }
 
@@ -62,7 +62,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
 
     @Override
     public ActivityTypeDTO update(Integer userId, Integer id, SaveActivityDTO activityTypeDTO) {
-        ActivityType inDb = repository.findById(id, userId).orElseThrow(ActivityTypeNotFoundException::new);
+        ActivityType inDb = repository.findByIdAndUserId(id, userId).orElseThrow(ActivityTypeNotFoundException::new);
         if (!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
 
         ActivityType updated = new ActivityType();
@@ -77,7 +77,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
 
     @Override
     public void delete(Integer userId, Integer activityId){
-        ActivityType inDb = repository.findById(activityId, userId).orElseThrow(ActivityTypeNotFoundException::new);
+        ActivityType inDb = repository.findByIdAndUserId(activityId, userId).orElseThrow(ActivityTypeNotFoundException::new);
         if (!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException("Deleção inválida!");
         repository.deleteById(activityId);
     }

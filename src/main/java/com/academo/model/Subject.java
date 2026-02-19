@@ -28,7 +28,7 @@ public class Subject {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "is_active", columnDefinition = "default true")
+    @Column(name = "is_active", columnDefinition = "boolean default true")
     private Boolean isActive;
 
     @Column(name = "created_at", updatable = false)

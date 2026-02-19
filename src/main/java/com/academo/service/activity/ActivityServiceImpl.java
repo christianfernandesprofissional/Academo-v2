@@ -39,7 +39,7 @@ public class ActivityServiceImpl implements IActivityService{
 
     @Override
     public ActivityDTO findById(Integer userId, Integer activityId) {
-        return ActivityDTO.fromActivity(activityRepository.findById(userId,activityId).orElseThrow(ActivityNotFoundException::new));
+        return ActivityDTO.fromActivity(activityRepository.findByIdAndUserId(activityId, userId).orElseThrow(ActivityNotFoundException::new));
     }
 
     @Override
@@ -49,13 +49,13 @@ public class ActivityServiceImpl implements IActivityService{
 
     @Override
     public ActivityDTO update(Integer userId, Integer activityId, SaveActivityDTO activityDTO) {
-        if(activityRepository.findById(userId,activityId).isEmpty()) throw new NotAllowedInsertionException("Inserção inválida");
+        if(activityRepository.findByIdAndUserId(activityId, userId).isEmpty()) throw new NotAllowedInsertionException("Inserção inválida");
         return ActivityDTO.fromActivity(activityRepository.save(fillActivity(userId, activityDTO)));
     }
 
     @Override
     public void delete(Integer userId,Integer activityId) {
-        if(activityRepository.findById(userId,activityId).isEmpty()) throw new NotAllowedInsertionException("Deleção inválida");
+        if(activityRepository.findByIdAndUserId(activityId, userId).isEmpty()) throw new NotAllowedInsertionException("Deleção inválida");
         activityRepository.deleteById(activityId);
     }
 
@@ -94,7 +94,7 @@ public class ActivityServiceImpl implements IActivityService{
         activity.setDescription(activityDTO.description());
         activity.setActivityDate(activityDTO.activityDate());
         activity.setNotificationDate(activityDTO.notificationDate());
-        activity.setValue(activityDTO.value());
+        activity.setActivityValue(activityDTO.value());
         activity.setActivityType(activityType);
         activity.setSubject(subject);
         activity.setUser(user);

@@ -28,7 +28,7 @@ public class Group {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", columnDefinition = "boolean default true")
     private boolean isActive;
 
     @Column(name = "created_at", updatable = false)

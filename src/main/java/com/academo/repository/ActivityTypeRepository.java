@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface ActivityTypeRepository extends JpaRepository<ActivityType, Integer> {
     Boolean existsByNameAndUserId(String name, Integer userId);
-    List<ActivityType> findAll(Integer userId);
-    Optional<ActivityType> findById(Integer activityTypeId, Integer userId);
+    List<ActivityType> findAllByUserId(Integer userId);
+    Optional<ActivityType> findByIdAndUserId(Integer activityTypeId, Integer userId);
 }

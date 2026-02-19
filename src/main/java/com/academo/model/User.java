@@ -32,7 +32,7 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @Column(name = "is_account_activated", columnDefinition = "default false", nullable = false)
+    @Column(name = "is_account_activated", columnDefinition = "boolean default false", nullable = false)
     private Boolean isAccountActivated;
 
     @Column(name = "activation_account_token_expiration")

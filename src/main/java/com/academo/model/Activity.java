@@ -29,8 +29,8 @@ public class Activity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "value")
-    private Double value;
+    @Column(name = "activity_value")
+    private Double activityValue;
 
     // Adicionar dados para Nota???
 
@@ -126,12 +126,12 @@ public class Activity {
         this.updatedAt = updatedAt;
     }
 
-    public double getValue() {
-        return value;
+    public double getActivityValue() {
+        return activityValue;
     }
 
-    public void setValue(double value) {
-        this.value = value;
+    public void setActivityValue(double activityValue) {
+        this.activityValue = activityValue;
     }
 
     public LocalDate getNotificationDate() {
@@ -150,7 +150,7 @@ public class Activity {
                 ", notificationDate=" + notificationDate +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", value=" + value +
+                ", activityValue=" + activityValue +
                 ", user=" + user +
                 ", subject=" + subject +
                 ", activityType=" + activityType +

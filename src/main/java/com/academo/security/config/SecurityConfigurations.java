@@ -24,8 +24,8 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfigurations {
 
-    @Value("${CLIENTE_URL}")
-    private String CLIENTE_URL;
+    //@Value("${cliente.url}")
+    private static final String CLIENTE_URL = "http://localhost:5173";
 
     private final SecurityFilter securityFilter;
 
