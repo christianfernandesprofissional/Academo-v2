@@ -27,7 +27,7 @@ public record ActivityDTO(
                 activity.getNotificationDate(),
                 activity.getActivityDate(),
                 activity.getName(),
-                activity.getActivityValue(),
+                activity.getGrade(),
                 activity.getDescription(),
                 activity.getSubject().getName(),
                 activity.getActivityType().getName(),

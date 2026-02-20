@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="tb_profiles")
+@Table(name="profiles")
 public class Profile {
 
     @Id
@@ -20,7 +20,7 @@ public class Profile {
     @JoinColumn(name = "id")
     private User user;
 
-    @Column(name="name")
+    @Column(name="full_name")
     private String fullName;
 
     @Column(name = "birth_date")

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tb_groups")
+@Table(name = "groups")
 public class Group {
 
     @Id

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tb_subjects")
+@Table(name = "subjects")
 public class Subject {
 
     @Id

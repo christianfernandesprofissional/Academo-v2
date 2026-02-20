@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "tb_activities")
+@Table(name = "activities")
 public class Activity {
 
     @Id
@@ -29,8 +29,8 @@ public class Activity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "activity_value")
-    private Double activityValue;
+    @Column(name = "grade")
+    private Double grade;
 
     // Adicionar dados para Nota???
 
@@ -126,12 +126,12 @@ public class Activity {
         this.updatedAt = updatedAt;
     }
 
-    public double getActivityValue() {
-        return activityValue;
+    public double getGrade() {
+        return grade;
     }
 
     public void setActivityValue(double activityValue) {
-        this.activityValue = activityValue;
+        this.grade = activityValue;
     }
 
     public LocalDate getNotificationDate() {
@@ -150,7 +150,7 @@ public class Activity {
                 ", notificationDate=" + notificationDate +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", activityValue=" + activityValue +
+                ", grade=" + grade +
                 ", user=" + user +
                 ", subject=" + subject +
                 ", activityType=" + activityType +
