@@ -32,8 +32,6 @@ public class Activity {
     @Column(name = "grade")
     private Double grade;
 
-    // Adicionar dados para Nota???
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

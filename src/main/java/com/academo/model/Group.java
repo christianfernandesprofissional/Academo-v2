@@ -17,7 +17,6 @@ public class Group {
     @Column(name = "id")
     private int id;
 
-
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 

@@ -26,7 +26,7 @@ public class File implements Serializable {
     @Column(name = "file_type", length = 255, nullable = false)
     private String fileType; // Tipo de arquivo
 
-    @Column(name = "size")
+    @Column(name = "size", nullable = false)
     private Long size;
 
     @ManyToOne
