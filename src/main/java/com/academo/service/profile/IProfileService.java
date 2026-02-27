@@ -1,14 +1,14 @@
 package com.academo.service.profile;
 
-import com.academo.model.Profile;
+import com.academo.controller.dtos.profile.ProfileDTO;
+import com.academo.controller.dtos.profile.UpdateProfileDTO;
 import com.academo.model.User;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public interface IProfileService  {
 
-    public Profile create(User user);
-    public Profile update(Integer userId, Profile profile);
+    ProfileDTO findById(Integer id);
+    ProfileDTO create(User user);
+    ProfileDTO update(Integer userId, UpdateProfileDTO profileDTO);
 }

@@ -1,6 +1,5 @@
-package com.academo.util.FileTransfer.service;
+package com.academo.util.config.storage;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.gson.GsonFactory;

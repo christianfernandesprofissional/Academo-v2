@@ -1,64 +1,68 @@
 package com.academo.service.group;
 
+import com.academo.controller.dtos.group.AssociateSubjectsDTO;
+import com.academo.controller.dtos.group.CreateGroupDTO;
+import com.academo.controller.dtos.group.GroupDTO;
+import com.academo.controller.dtos.group.UpdateGroupDTO;
+import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.Group;
 import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.repository.GroupRepository;
-import com.academo.service.subject.SubjectServiceImpl;
-import com.academo.service.user.UserServiceImpl;
+import com.academo.service.subject.ISubjectService;
+import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class GroupServiceImpl implements IGroupService {
 
-    @Autowired
-    private GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
+    private final IUserService userService;
+    private final ISubjectService subjectService;
 
-    @Autowired
-    private UserServiceImpl userService;
-
-    @Autowired
-    SubjectServiceImpl subjectService;
-
-    // Lista todos os grupos pelo usuário
-    @Override
-    public List<Group> getGroups(Integer id){
-        return groupRepository.findByUserId(id);
-    }
-
-    // Função para acessar um grupo específico
-    @Override
-    public Group getGroupByIdAndUserId(Integer userId, Integer groupId){
-        //return groupRepository.findByIdAndUserId(userId,groupId).orElseThrow(GroupNotFoundException::new);
-        return groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
+    public GroupServiceImpl(GroupRepository groupRepository, IUserService userService, ISubjectService subjectService) {
+        this.groupRepository = groupRepository;
+        this.userService = userService;
+        this.subjectService = subjectService;
     }
 
     @Override
-    // Cria novo grupo
-    public Group insertGroup(Integer userId, Group group){
+    public List<GroupDTO> findAll(Integer userId){
+        return groupRepository.findAllByUserId(userId).stream().map(GroupDTO::fromGroup).toList();
+    }
+
+    @Override
+    public GroupDTO findById(Integer userId, Integer groupId){
+        return GroupDTO.fromGroup(groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new));
+    }
+
+    @Override
+    public GroupDTO create(Integer userId, CreateGroupDTO createGroupDTO){
         User user =  userService.findById(userId);
-        group.setUser(user);
-        return groupRepository.save(group);
+        Group g = new Group();
+        g.setName(createGroupDTO.name());
+        g.setDescription(createGroupDTO.description());
+        g.setUser(user);
+        return GroupDTO.fromGroup(g);
     }
 
     @Override
-    public Group updateGroup(Integer userId, Group group) {
-        Group groupDb = groupRepository.findById(group.getId()).orElseThrow(GroupNotFoundException::new);
+    public GroupDTO update(Integer userId, Integer groupId, UpdateGroupDTO updateGroupDTO) {
+        Group groupDb = groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new);
         if (!groupDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
-        group.setUser(groupDb.getUser());
-        return groupRepository.save(group);
+        groupDb.setName(updateGroupDTO.name());
+        groupDb.setDescription(updateGroupDTO.description());
+        groupDb.setIsActive(updateGroupDTO.isActive());
+        return GroupDTO.fromGroup(groupRepository.save(groupDb));
     }
 
     @Override
-    public void deleteGroup(Integer userId, Integer groupId) {
+    public void delete(Integer userId, Integer groupId) {
         Group groupDb = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
         if (!groupDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException("Deleção inválida!");
         groupRepository.deleteById(groupId);
@@ -66,36 +70,33 @@ public class GroupServiceImpl implements IGroupService {
 
     @Override
     @Transactional
-    public Group addSubjectToGroup(Integer userId, Integer groupId, Integer subjectId) {
+    public GroupDTO addSubject(Integer userId, Integer groupId, Integer subjectId) {
         Group group = verifyGroup(userId, groupId);
         Subject subject = verifySubject(userId, subjectId);
-
         group.getSubjects().add(subject);
-        return groupRepository.save(group);
+        return GroupDTO.fromGroup(groupRepository.save(group));
     }
 
     @Override
     @Transactional
-    public Group deleteSubjectFromGroup(Integer userId, Integer groupId, Integer subjectId) {
+    public GroupDTO deleteSubject(Integer userId, Integer groupId, Integer subjectId) {
         Group group = verifyGroup(userId, groupId);
         Subject subject = verifySubject(userId, subjectId);
-
         group.getSubjects().remove(subject);
-        return groupRepository.save(group);
+        return GroupDTO.fromGroup(groupRepository.save(group));
     }
 
     @Override
-    public Group associateSubjects(Integer userId, Integer groupId, List<Integer> subjectsIds) {
+    @Transactional
+    public GroupDTO associateSubjects(Integer userId, Integer groupId, AssociateSubjectsDTO dto) {
         Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
-        List<Subject> subjects = group.getSubjects();
-        for(Integer id : subjectsIds) {
-            Subject subject = subjectService.findById(id);
-            if(subject != null) {
-                subjects.add(subject);
-            }
-        }
-        group.setSubjects(subjects);
-        return group;
+        /*
+        DEIXEI COMO EXEMPLO DE CÓDIGO IRREFATORÁVEL
+        return GroupDTO.fromGroup(subjectsIds.stream().map(s -> SubjectDTO.toSubject(s, subjectService.findById(s, userId))).toList().stream().map(group::addSubject).toList());
+         */
+        List<Subject> subjects = dto.subjectsIds().stream().map(s -> SubjectDTO.toSubject(s, subjectService.findById(s, userId))).toList();
+        group.getSubjects().addAll(subjects);
+        return GroupDTO.fromGroup(groupRepository.save(group));
     }
 
     /**
@@ -106,7 +107,7 @@ public class GroupServiceImpl implements IGroupService {
      * @return Group
      */
     private Group verifyGroup(Integer userId, Integer groupId){
-        Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
+        Group group = groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new);
         if(!group.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
         return group;
     }
@@ -119,7 +120,7 @@ public class GroupServiceImpl implements IGroupService {
      * @return Subject
      */
     private Subject verifySubject(Integer userId, Integer subjectId){
-        Subject subject = subjectService.getSubjectByIdAndUserId(subjectId, userId);
+        Subject subject = SubjectDTO.toSubject(subjectId, subjectService.findById(subjectId, userId));
         if(!subject.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
         return subject;
     }

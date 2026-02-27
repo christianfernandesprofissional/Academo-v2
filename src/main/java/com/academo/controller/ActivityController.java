@@ -1,17 +1,14 @@
 package com.academo.controller;
 
 import com.academo.controller.dtos.activity.ActivityDTO;
-import com.academo.controller.dtos.activity.ActivityPostDTO;
-import com.academo.controller.dtos.activity.ActivityPutDTO;
-import com.academo.controller.dtos.notification.NotificationDTO;
+import com.academo.controller.dtos.activity.SaveActivityDTO;
 import com.academo.model.Activity;
 import com.academo.security.authuser.AuthUser;
-import com.academo.service.activity.ActivityServiceImp;
-import com.academo.util.exceptions.activity.ActivityExistsException;
-import com.academo.util.exceptions.activity.ActivityNotFoundException;
-import com.academo.util.notification.SendNotifications;
-import jakarta.mail.MessagingException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.academo.service.activity.IActivityService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,66 +19,82 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/activities")
+@Tag(name = "Atividades")
 public class ActivityController {
 
-    @Autowired
-    private ActivityServiceImp  activityService;
+    private final IActivityService activityService;
 
-    @Autowired
-    private SendNotifications sendNotifications;
+    public ActivityController(IActivityService activityService) {
+        this.activityService = activityService;
+    }
 
+
+    @Operation(summary = "Recupera a lista de todas as atividades de um usuário", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atividades recuperadas com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar atividades"),
+            @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada")
+    })
     @GetMapping("/all")
-    public ResponseEntity<List<ActivityDTO>> getActivities(Authentication authentication) {
+    public ResponseEntity<List<ActivityDTO>> findAll(Authentication authentication) {
        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-       List<ActivityDTO> activities =activityService.getActivities(userId)
-               .stream()
-               .map(a -> new ActivityDTO(
-                       a.getId(),
-                       a.getNotificationDate(),
-                       a.getActivityDate(),
-                       a.getName(),
-                       a.getDescription(),
-                       a.getSubject() != null ? a.getSubject().getName() : null,
-                       a.getActivityType() != null ? a.getActivityType().getName() : null
-               )).toList();
-       return ResponseEntity.ok(activities);
+       return ResponseEntity.ok(activityService.findAll(userId));
     }
 
-    @GetMapping
-    public ResponseEntity<Activity> getActivity(Authentication authentication, @RequestParam Integer activityId) {
+    @Operation(summary = "Recupera uma atividade", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atividade recuperada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar atividade"),
+            @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada com este ID")
+    })
+    @GetMapping("/{activityId}")
+    public ResponseEntity<ActivityDTO> findById(Authentication authentication, @PathVariable Integer activityId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        Activity activity = activityService.getActivityByActivityIdAndUserId(userId,activityId);
-        return ResponseEntity.ok(activity);
+        return ResponseEntity.ok(activityService.findById(userId, activityId));
     }
 
+    @GetMapping("/by-subject/{subjectId}")
+    public ResponseEntity<List<ActivityDTO>> findBySubject(Authentication authentication, @PathVariable Integer subjectId) {
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        return ResponseEntity.ok(activityService.findBySubjectId(userId, subjectId));
+    }
+
+    @Operation(summary = "Cadastra uma nova atividade", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Atividade cadastrada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar atividade")
+    })
     @PostMapping
-    public ResponseEntity<Activity> createActivity(Authentication authentication, @RequestBody ActivityPostDTO activityPostDto) {
-        if(activityService.existsActivityByName(activityPostDto.name())) throw new ActivityExistsException();
+    public ResponseEntity<ActivityDTO> create(Authentication authentication, @RequestBody SaveActivityDTO activityDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        Activity activity = new Activity(activityPostDto);
-        Activity created = activityService.insertActivity(activity, userId, activityPostDto.activityTypeId(), activityPostDto.subjectId());
-        URI location = URI.create("/activities?activityId=" + created.getId());
-        return ResponseEntity.created(location).build();
+        ActivityDTO created = activityService.create(userId, activityDTO);
+        URI location = URI.create("/activities?activityId=" + created.id());
+        return ResponseEntity.created(location).body(created);
     }
 
-    @PutMapping
-    public ResponseEntity<Activity> updateActivity(Authentication authentication, @RequestBody ActivityPutDTO activityPutDto) {
-        if(!activityService.existsActivityById(activityPutDto.id())) throw new ActivityNotFoundException();
+    @Operation(summary = "Recupera a lista de todas as atividades de um usuário", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atividade atualizada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar atividade"),
+            @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada com este ID")
+    })
+    @PutMapping("/{activityId}")
+    public ResponseEntity<Activity> update(Authentication authentication,@PathVariable Integer activityId, @RequestBody SaveActivityDTO activityDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        Activity activity = new Activity(activityPutDto);
-        activityService.updateActivity(activity, userId, activityPutDto.ActivityTypeId(), activityPutDto.subjectId());
+        activityService.update(userId, activityId, activityDTO);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping
-    public ResponseEntity<Activity> deleteActivity(Authentication authentication, @RequestParam Integer activityId) {
+    @Operation(summary = "Remove uma atividade", method = "DELETE")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Atividade removida com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao tentar deletar atividade"),
+            @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada com este ID")
+    })
+    @DeleteMapping("/{activityId}")
+    public ResponseEntity<Activity> delete(Authentication authentication, @PathVariable Integer activityId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        activityService.deleteActivity(userId,activityId);
+        activityService.delete(userId,activityId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @GetMapping("/teste")
-    public void teste(Authentication authentication) throws MessagingException {
-        sendNotifications.sendEmails(activityService.teste());
     }
 }

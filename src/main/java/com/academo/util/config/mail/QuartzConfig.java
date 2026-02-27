@@ -1,4 +1,4 @@
-package com.academo.util.QuartzSchedule;
+package com.academo.util.config.mail;
 
 import com.academo.util.QuartzSchedule.notification.NotificationJob;
 import org.quartz.JobBuilder;

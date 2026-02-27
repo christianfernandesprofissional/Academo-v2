@@ -7,15 +7,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="tb_type_activities")
+@Table(name="activity_types")
 public class ActivityType {
-    // id, name, description, userid, createdAt, updatedAt
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")
@@ -32,14 +32,6 @@ public class ActivityType {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    public ActivityType() {
-    }
-
-    public ActivityType(String name, String description) {
-        this.setName(name);
-        this.setDescription(description);
-    }
 
     public Integer getId() {
         return id;

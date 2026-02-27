@@ -1,7 +1,5 @@
 package com.academo.model;
 
-import com.academo.controller.dtos.activity.ActivityPostDTO;
-import com.academo.controller.dtos.activity.ActivityPutDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -11,8 +9,9 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "tb_activities")
+@Table(name = "activities")
 public class Activity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -24,14 +23,14 @@ public class Activity {
     @Column(name = "notification_date")
     private LocalDate notificationDate;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "value")
-    private Double value;
+    @Column(name = "grade")
+    private Double grade;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -53,22 +52,6 @@ public class Activity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Activity() {}
-
-    public Activity(ActivityPostDTO dto){
-        this.name = dto.name();
-        this.description = dto.description();
-        this.activityDate = dto.activityDate();
-        this.notificationDate = dto.notificationDate();
-    }
-
-    public Activity(ActivityPutDTO dto){
-        this.id = dto.id();
-        this.name = dto.name();
-        this.description = dto.description();
-        this.activityDate = dto.activityDate();
-        this.notificationDate = dto.notificationDate();
-    }
 
     public int getId() {
         return id;
@@ -141,12 +124,12 @@ public class Activity {
         this.updatedAt = updatedAt;
     }
 
-    public double getValue() {
-        return value;
+    public double getGrade() {
+        return grade;
     }
 
-    public void setValue(double value) {
-        this.value = value;
+    public void setActivityValue(double activityValue) {
+        this.grade = activityValue;
     }
 
     public LocalDate getNotificationDate() {
@@ -155,5 +138,22 @@ public class Activity {
 
     public void setNotificationDate(LocalDate notification_date) {
         this.notificationDate = notification_date;
+    }
+
+    @Override
+    public String toString() {
+        return "Activity{" +
+                "id=" + id +
+                ", activityDate=" + activityDate +
+                ", notificationDate=" + notificationDate +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", grade=" + grade +
+                ", user=" + user +
+                ", subject=" + subject +
+                ", activityType=" + activityType +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

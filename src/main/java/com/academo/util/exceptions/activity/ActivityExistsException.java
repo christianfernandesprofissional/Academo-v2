@@ -3,7 +3,7 @@ package com.academo.util.exceptions.activity;
 public class ActivityExistsException extends RuntimeException{
 
     public ActivityExistsException(){
-        super("Activity already exists");
+        super("A atividade ja existe");
     }
 
     public ActivityExistsException(String message){

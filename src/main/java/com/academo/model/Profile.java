@@ -1,6 +1,5 @@
 package com.academo.model;
 
-import com.academo.controller.dtos.profile.ProfilePutDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -9,14 +8,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="tb_profiles")
+@Table(name="profiles")
 public class Profile {
 
     @Id
     @Column(name="id")
     private int id;
 
-    @Column(name="name")
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    private User user;
+
+    @Column(name="full_name")
     private String fullName;
 
     @Column(name = "birth_date")
@@ -35,26 +39,6 @@ public class Profile {
     @Column(name="updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @Transient
-    private Long usageStorage;
-
-    public Profile() {
-    }
-
-    public Profile(int id, String fullName) {
-        this.id = id;
-        this.fullName = fullName;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public Profile(ProfilePutDTO profilePutDTO) {
-        fullName = profilePutDTO.fullName();
-        birthDate = profilePutDTO.birthDate();
-        gender = profilePutDTO.gender();
-        institution = profilePutDTO.institution();
-    }
 
     public int getId() {
         return id;
@@ -112,7 +96,7 @@ public class Profile {
         this.createdAt = createdAt;
     }
 
-    public Long getUsageStorage() { return usageStorage; }
-
-    public void setUsageStorage(Long usageStorage) { this.usageStorage = usageStorage; }
+    public User getUser() {
+        return user;
+    }
 }

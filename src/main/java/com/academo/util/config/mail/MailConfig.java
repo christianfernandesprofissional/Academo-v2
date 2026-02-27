@@ -1,4 +1,4 @@
-package com.academo.util.mailservice;
+package com.academo.util.config.mail;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

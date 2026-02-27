@@ -1,0 +1,537 @@
+# NUNCA NUNCA NUNCA ALTERE ESTE ARQUIVO. GRATO! =D
+
+databaseChangeLog:
+- changeSet:
+    id: 1771623768047-1
+    author: fabio-britto (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: activities_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: activity_date
+            type: date
+        - column:
+            name: notificationDate
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: grade
+            type: numeric
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: subject_id
+            type: INTEGER
+        - column:
+            name: activity_type_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: date
+        tableName: activities
+- changeSet:
+    id: 1771623768047-2
+    author: fabio-britto (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: tb_users_pkey
+            name: id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: password
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: email
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: is_account_activated
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: activation_account_token_expiration
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: 0
+            name: storage_usage
+            type: BIGINT
+        tableName: tb_users
+- changeSet:
+    id: 1771623768047-3
+    author: fabio-britto (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: group_subject_pkey
+            name: id_group
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: group_subject_pkey
+            name: id_subject
+            type: INTEGER
+        tableName: group_subject
+- changeSet:
+    id: 1771623768047-4
+    author: fabio-britto (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: email
+        constraintName: tb_users_email_key
+        tableName: tb_users
+- changeSet:
+    id: 1771623768047-5
+    author: fabio-britto (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: id_group
+        constraintName: group_subject_id_group_key
+        tableName: group_subject
+- changeSet:
+    id: 1771623768047-6
+    author: fabio-britto (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: activiy_types_pkey
+            name: id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: date
+        tableName: activiy_types
+- changeSet:
+    id: 1771623768047-7
+    author: fabio-britto (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: files_pkey
+            name: uuid
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: file_name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: path
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: file_type
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: size
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: subject_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: date
+        tableName: files
+- changeSet:
+    id: 1771623768047-8
+    author: fabio-britto (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: groups_pkey
+            name: id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: is_active
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: date
+        tableName: groups
+- changeSet:
+    id: 1771623768047-9
+    author: fabio-britto (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: profiles_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: full_name
+            type: VARCHAR(255)
+        - column:
+            name: birth_date
+            type: date
+        - column:
+            name: gender
+            type: VARCHAR(255)
+        - column:
+            name: institution
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: upated_at
+            type: VARCHAR(255)
+        tableName: profiles
+- changeSet:
+    id: 1771623768047-10
+    author: fabio-britto (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: subjects_pkey
+            name: id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: is_active
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: date
+        tableName: subjects
+- changeSet:
+    id: 1771623768047-11
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: activity_type_id
+        baseTableName: activities
+        constraintName: activities_activity_type_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: SET NULL
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: activiy_types
+        validate: true
+- changeSet:
+    id: 1771623768047-12
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: subject_id
+        baseTableName: activities
+        constraintName: activities_subject_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: subjects
+        validate: true
+- changeSet:
+    id: 1771623768047-13
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: activities
+        constraintName: activities_user_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tb_users
+        validate: true
+- changeSet:
+    id: 1771623768047-14
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: activiy_types
+        constraintName: activiy_types_user_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tb_users
+        validate: true
+- changeSet:
+    id: 1771623768047-15
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: subject_id
+        baseTableName: files
+        constraintName: files_subject_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: subjects
+        validate: true
+- changeSet:
+    id: 1771623768047-16
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: files
+        constraintName: files_user_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tb_users
+        validate: true
+- changeSet:
+    id: 1771623768047-17
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: id_group
+        baseTableName: group_subject
+        constraintName: group_subject_id_group_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: groups
+        validate: true
+- changeSet:
+    id: 1771623768047-18
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: id_subject
+        baseTableName: group_subject
+        constraintName: group_subject_id_subject_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: subjects
+        validate: true
+- changeSet:
+    id: 1771623768047-19
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: groups
+        constraintName: groups_user_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tb_users
+        validate: true
+- changeSet:
+    id: 1771623768047-20
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: id
+        baseTableName: profiles
+        constraintName: profiles_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tb_users
+        validate: true
+- changeSet:
+    id: 1771623768047-21
+    author: fabio-britto (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: subjects
+        constraintName: subjects_user_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tb_users
+        validate: true
+

@@ -1,13 +1,13 @@
 package com.academo.controller;
 
 import com.academo.controller.dtos.file.FileDTO;
-import com.academo.model.File;
-import com.academo.model.User;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.file.IFileService;
-import com.academo.util.FileTransfer.service.DriveService;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.academo.service.storage.google.DriveService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,33 +22,36 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/files")
+@Tag(name = "Arquivos")
 public class FileController {
 
-    @Autowired
-    private IFileService fileService;
+    private final IFileService fileService;
+    private final DriveService driveService;
 
-    @Autowired
-    private DriveService driveService;
-
-    @PostMapping("/upload-file")
-    public ResponseEntity<FileDTO> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("subjectId") Integer subjectId, Authentication authentication){
-        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-
-        File uploadedFile = fileService.createFile(file, userId, subjectId);
-        URI uri = URI.create(uploadedFile.getPath());
-        FileDTO fileDto = new FileDTO(
-                uploadedFile.getUuid(),
-                uploadedFile.getFileName(),
-                uploadedFile.getPath(),
-                uploadedFile.getFileType(),
-                uploadedFile.getSize(),
-                uploadedFile.getSubject().getId(),
-                uploadedFile.getCreatedAt()
-        );
-
-        return ResponseEntity.created(uri).body(fileDto);
+    public FileController(IFileService fileService, DriveService driveService) {
+        this.fileService = fileService;
+        this.driveService = driveService;
     }
 
+    @Operation(summary = "Realiza o Upload de um arquivo", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Upload realizado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao tentar realizar upload")
+    })
+    @PostMapping("/upload-file/{file}/{subjectId}")
+    public ResponseEntity<FileDTO> upload(@PathVariable("file") MultipartFile file, @PathVariable("subjectId") Integer subjectId, Authentication authentication){
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        FileDTO uploadedFile = fileService.createFile(file, userId, subjectId);
+        URI uri = URI.create(uploadedFile.path());
+        return ResponseEntity.created(uri).body(uploadedFile);
+    }
+
+    @Operation(summary = "Realiza o download de um arquivo", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Download realizado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao tentar realizar download do arquivo"),
+            @ApiResponse(responseCode = "404", description = "Nenhum arquivo encontrado com este ID")
+    })
     @GetMapping("/download/{fileId}")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileId) {
         DriveService.DownloadedFile downloaded = null;
@@ -57,9 +60,7 @@ public class FileController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
         ByteArrayResource resource = new ByteArrayResource(downloaded.content());
-
         String mimeType = downloaded.mimeType() != null ? downloaded.mimeType() : MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
         return ResponseEntity.ok()
@@ -68,26 +69,30 @@ public class FileController {
                 .body(resource);
     }
 
+    @Operation(summary = "Remove um arquivo", method = "DELETE")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Arquivo removido com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao tentar remover o arquivo"),
+            @ApiResponse(responseCode = "404", description = "Nenhuma arquivo encontrado com este ID")
+    })
     @DeleteMapping("/delete/{uuid}")
     public ResponseEntity<String> deleteFile(@PathVariable String uuid, Authentication authentication) {
             Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
             fileService.deleteFile(uuid, userId);
-            return ResponseEntity.ok("Arquivo deletado com sucesso!");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 
-    @GetMapping
-    public ResponseEntity<List<FileDTO>> getFiles(@RequestParam Integer subjectId){
-        List<FileDTO> files = fileService.findAllFilesBySubjectId(subjectId).stream()
-                .map( file -> new FileDTO(
-                        file.getUuid(),
-                        file.getFileName(),
-                        file.getPath(),
-                        file.getFileType(),
-                        file.getSize(),
-                        file.getSubject().getId(),
-                        file.getCreatedAt())).toList();
-        return ResponseEntity.ok(files);
+    @Operation(summary = "Recupera a lista de arquivos de uma atividade", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Arquivos recuperados com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar arquivos"),
+            @ApiResponse(responseCode = "404", description = "Nenhum arquivo encontrado")
+    })
+    @GetMapping("/{subjectId}")
+    public ResponseEntity<List<FileDTO>> findAll(Authentication authentication, @PathVariable Integer subjectId){
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        return ResponseEntity.ok(fileService.findAllFilesBySubjectId(userId, subjectId));
     }
 
 

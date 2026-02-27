@@ -1,6 +1,5 @@
 package com.academo.model;
 
-import com.academo.controller.dtos.subject.SubjectDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,13 +10,15 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tb_subjects")
+@Table(name = "subjects")
 public class Subject {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "name", nullable = false, unique = true)
+
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")
@@ -27,7 +28,7 @@ public class Subject {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", columnDefinition = "boolean default true")
     private Boolean isActive;
 
     @Column(name = "created_at", updatable = false)
@@ -38,37 +39,27 @@ public class Subject {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToMany(mappedBy = "subjects")
+    /*
+    FetchType.LAZY -> Define que, ao puxar uma Subject, a lista de Grupos não é automaticamente carregada
+     */
+    @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Group> groups;
 
+    /*
+    Cascade.Type.REMOVE -> Indica que ao remover a classe Pai (Subject), as instâncias da classe filha (Activitie) serão removidas
+     */
     @OneToMany(mappedBy = "subject",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            cascade = CascadeType.REMOVE)
     @JsonIgnore 
     private List<Activity> activities;
 
     @OneToMany(mappedBy = "subject",
-             cascade = CascadeType.ALL,
-             orphanRemoval = true)
+             cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<File> files;
 
-    public Subject() {
-        setIsActive(true);
-    }
 
-    public Subject(String name, String description) {
-        this.name = name;
-        this.description = description;
-        setIsActive(true);
-    }
-    public Subject(SubjectDTO subjectDTO) {
-        this.id = subjectDTO.id();
-        this.name = subjectDTO.name();
-        this.description = subjectDTO.description();
-        this.isActive = subjectDTO.isActive();
-    }
     public int getId() {
         return id;
     }
@@ -131,6 +122,30 @@ public class Subject {
 
     public void setGroups(List<Group> groups) {
         this.groups = groups;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public List<Activity> getActivities() {
+        return activities;
+    }
+
+    public void setActivities(List<Activity> activities) {
+        this.activities = activities;
+    }
+
+    public List<File> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<File> files) {
+        this.files = files;
     }
 
     @Override

@@ -18,7 +18,10 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    private final String activationSecret = "activationKey";
+    private final String ACTIVATION_SECRET = "activationKey";
+
+    private static final Instant ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00"));
+    private static final Instant ACCESS_TOKEN = LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
 
     // ---------------- LOGIN TOKEN -----------------------
     public String generateLoginToken(AuthUser user) {
@@ -52,7 +55,7 @@ public class TokenService {
     // ---------------- ACCOUNT ACTIVATION TOKEN -----------------------
     public String generateActivationToken(Integer userId) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(activationSecret);
+            Algorithm algorithm = Algorithm.HMAC256(ACTIVATION_SECRET);
             String token = JWT.create()
                     .withIssuer("academo")
                     .withSubject(String.valueOf(userId))
@@ -66,7 +69,7 @@ public class TokenService {
 
     public String validateActivationToken(String token) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(activationSecret);
+            Algorithm algorithm = Algorithm.HMAC256(ACTIVATION_SECRET);
             return JWT.require(algorithm)
                     .withIssuer("academo")
                     .build()
@@ -79,10 +82,9 @@ public class TokenService {
 
     private Instant generationExpirationDate(boolean isActivationToken) {
         if(isActivationToken) {
-            //Caso alterar o tempo, também altere em UserController e RestExceptionHandler
-            return LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00"));
+            return ACTIVATION_TOKEN;
         }
-        return LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
+        return ACCESS_TOKEN;
     }
 
 

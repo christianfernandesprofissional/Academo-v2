@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tb_groups")
+@Table(name = "groups")
 public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
@@ -26,7 +27,7 @@ public class Group {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", columnDefinition = "boolean default true")
     private boolean isActive;
 
     @Column(name = "created_at", updatable = false)
@@ -37,28 +38,16 @@ public class Group {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    /*
+    FetchType.EAGER -> Define que ao puxar um Grupo, teremos carregado junto, a lista de Subjects
+     */
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tb_groups_subjects",
             joinColumns = @JoinColumn(name = "id_group"),
             inverseJoinColumns = @JoinColumn(name = "id_subject"))
     private List<Subject> subjects;
 
-    public Group() {
-    }
-
-    public Group(int id, String name, String description, User user) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.user = user;
-        this.isActive = true;
-    }
-
-    public Group(String name, String description) {
-        this.name = name;
-        this.description = description;
-        this.isActive = true;
-    }
 
     public int getId() {
         return id;
@@ -122,6 +111,10 @@ public class Group {
 
     public void setSubjects(List<Subject> subjects) {
         this.subjects = subjects;
+    }
+
+    public void addSubject(Subject subject) {
+        this.getSubjects().add(subject);
     }
 
 

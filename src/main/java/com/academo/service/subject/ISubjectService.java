@@ -1,16 +1,17 @@
 package com.academo.service.subject;
 
-import com.academo.model.Subject;
+import com.academo.controller.dtos.subject.CreateSubjectDTO;
+import com.academo.controller.dtos.subject.SubjectDTO;
+import com.academo.controller.dtos.subject.UpdateSubjectDTO;
 
 import java.util.List;
 
 public interface ISubjectService {
 
-    public List<Subject> findAll(Integer userId);
-    public Subject findById(Integer subjectId);
-    public List<Subject> findByGroup(Integer groupId);
-    public Subject getSubjectByIdAndUserId(Integer subjectId, Integer userId);
-    public Subject create(Subject subject, Integer userId);
-    public Subject updateSubject(Integer userId, Subject subject);
-    public void deleteSubject(Integer userId, Integer subject);
+    List<SubjectDTO> findAll(Integer userId);
+    SubjectDTO findById(Integer subjectId, Integer userId);
+    List<SubjectDTO> findByGroup(Integer groupId);
+    SubjectDTO create(Integer userId, CreateSubjectDTO createSubjectDTO);
+    SubjectDTO update(Integer userId, Integer subjectId, UpdateSubjectDTO updateSubjectDTO);
+    void delete(Integer userId, Integer subject);
 }

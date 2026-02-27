@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,8 +15,9 @@ import java.util.Optional;
 public interface ActivityRepository extends JpaRepository<Activity, Integer> {
 
     List<Activity> findAllByUserId(Integer userId);
-    Optional<Activity> findByIdAndUserId(Integer userId, Integer activityId);
+    Optional<Activity> findByIdAndUserId(Integer activityId, Integer userId);
     Boolean existsActivityByName(String activityName);
+    List<Activity> findAllBySubjectId(Integer subjectId);
 
     @Query(nativeQuery = true, value = """
             SELECT\s
