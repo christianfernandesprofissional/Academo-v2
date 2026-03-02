@@ -33,13 +33,16 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Column(name = "is_account_activated", columnDefinition = "boolean default false", nullable = false)
-    private Boolean isAccountActivated;
+    private Boolean isAccountActivated = false;
 
     @Column(name = "activation_account_token_expiration")
     private LocalDateTime activationAccountTokenExpiration;
 
     @Column(name = "storage_usage")
-    private Long storageUsage;
+    private Long storageUsage = 0L;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Profile profile;
 
     public Integer getId() {
         return id;
@@ -109,6 +112,14 @@ public class User {
 
     public void setStorageUsage(Long storageUsage) {
         this.storageUsage = storageUsage;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 
     @Override

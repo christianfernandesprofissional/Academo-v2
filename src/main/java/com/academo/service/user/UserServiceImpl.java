@@ -1,5 +1,6 @@
 package com.academo.service.user;
 
+import com.academo.model.Profile;
 import com.academo.model.User;
 import com.academo.repository.UserRepository;
 import com.academo.controller.dtos.security.RegisterDTO;
@@ -37,8 +38,10 @@ public class UserServiceImpl implements IUserService {
         user.setEmail(registerDTO.email());
         user.setPassword(encryptedPassword);
         user.setName(registerDTO.name());
-        user.setStorageUsage(0L);
         user.setActivationAccountTokenExpiration(ACTIVATION_TOKEN);
+        Profile profile = new Profile();
+        profile.setUser(user);
+        user.setProfile(profile);
         User createdUser = userRepository.save(user);
         var token = tokenService.generateActivationToken(createdUser.getId());
         mailService.sendActivationMail(createdUser.getEmail(), token);

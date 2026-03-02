@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,7 +42,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody UserAuthDTO user) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid UserAuthDTO user) {
         UsernamePasswordAuthenticationToken userPass = new UsernamePasswordAuthenticationToken(user.username(), user.password());
         Authentication auth = authenticationManager.authenticate(userPass);
         var token = tokenService.generateLoginToken((AuthUser) auth.getPrincipal());
@@ -55,7 +56,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Este usuário já está cadastrado no sistema"),
     })
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDTO register) throws ExistingUserException {
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO register) throws ExistingUserException {
         userService.createUser(register);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

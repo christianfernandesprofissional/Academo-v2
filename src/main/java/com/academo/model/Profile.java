@@ -15,9 +15,9 @@ public class Profile {
     @Column(name="id")
     private int id;
 
-    @OneToOne
+    @OneToOne(optional = false)
     @MapsId
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "id", nullable = false)
     private User user;
 
     @Column(name="full_name")
@@ -94,6 +94,10 @@ public class Profile {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public User getUser() {
