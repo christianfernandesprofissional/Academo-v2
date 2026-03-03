@@ -19,7 +19,7 @@ databaseChangeLog:
             name: activity_date
             type: date
         - column:
-            name: notificationDate
+            name: notification_date
             type: date
         - column:
             constraints:
