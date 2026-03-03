@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import com.academo.model.Activity;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.subject.ISubjectService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -40,7 +41,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar matéria")
     })
     @PostMapping
-    public ResponseEntity<SubjectDTO> create(Authentication authentication, @RequestBody CreateSubjectDTO createSubjectDTO) {
+    public ResponseEntity<SubjectDTO> create(Authentication authentication, @Valid @RequestBody CreateSubjectDTO createSubjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         SubjectDTO createdSubject = service.create(userId, createSubjectDTO);
         URI uri = URI.create("/subjects?subjectId=" + createdSubject.id());
@@ -93,7 +94,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada com este ID")
     })
     @PutMapping("/{subjectId}")
-    public ResponseEntity<SubjectDTO> update(Authentication authentication,@PathVariable Integer subjectId, @RequestBody UpdateSubjectDTO updateSubjectDTO) {
+    public ResponseEntity<SubjectDTO> update(Authentication authentication, @PathVariable Integer subjectId, @Valid @RequestBody UpdateSubjectDTO updateSubjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.update(userId, subjectId, updateSubjectDTO));
     }
