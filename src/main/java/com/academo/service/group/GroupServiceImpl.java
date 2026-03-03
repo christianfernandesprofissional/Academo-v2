@@ -48,7 +48,7 @@ public class GroupServiceImpl implements IGroupService {
         g.setName(createGroupDTO.name());
         g.setDescription(createGroupDTO.description());
         g.setUser(user);
-        return GroupDTO.fromGroup(g);
+        return GroupDTO.fromGroup(groupRepository.save(g));
     }
 
     @Override

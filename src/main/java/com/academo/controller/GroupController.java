@@ -11,11 +11,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.academo.model.Group;
 import com.academo.security.authuser.AuthUser;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -35,7 +37,7 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar grupos"),
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado")
     })
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<GroupDTO>> findAll(Authentication authentication){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.findAll(userId));
@@ -49,7 +51,6 @@ public class GroupController {
     })
     @GetMapping("/{groupId}")
     public ResponseEntity<GroupDTO> findById(Authentication authentication, @PathVariable Integer groupId){
-        //usando @RequestParam a requisição é feita pela url ficando localhost:8080/groups?groupId=1
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.findById(userId, groupId));
     }
@@ -60,10 +61,11 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar grupo")
     })
     @PostMapping
-    public ResponseEntity<GroupDTO> create(Authentication authentication, @RequestBody CreateGroupDTO groupDTO){
+    public ResponseEntity<GroupDTO> create(Authentication authentication, @RequestBody @Valid CreateGroupDTO groupDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        groupService.create(userId,groupDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        GroupDTO createdGroup = groupService.create(userId,groupDTO);
+        URI uri  = URI.create("/groups?groupId=" + createdGroup.id());
+        return ResponseEntity.created(uri).body(createdGroup);
     }
 
     @Operation(summary = "Atualiza um grupo", method = "PUT")
@@ -73,7 +75,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado com este ID")
     })
     @PutMapping("/{groupId}")
-    public ResponseEntity<GroupDTO> update(Authentication authentication ,@PathVariable Integer groupId, @RequestBody UpdateGroupDTO updateGroupDTO){
+    public ResponseEntity<GroupDTO> update(Authentication authentication ,@PathVariable Integer groupId, @RequestBody @Valid UpdateGroupDTO updateGroupDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.update(userId, groupId, updateGroupDTO));
     }
@@ -123,7 +125,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Grupo não encontrado")
     })
     @PutMapping("associate-subjects/{groupId}")
-    public ResponseEntity<GroupDTO> associateSubjects(Authentication authentication, @PathVariable Integer groupId, @RequestBody AssociateSubjectsDTO associateSubjectsDTO){
+    public ResponseEntity<GroupDTO> associateSubjects(Authentication authentication, @PathVariable Integer groupId, @RequestBody @Valid AssociateSubjectsDTO associateSubjectsDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.associateSubjects(userId, groupId, associateSubjectsDTO));
     }
