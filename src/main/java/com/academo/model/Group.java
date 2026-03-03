@@ -43,7 +43,7 @@ public class Group {
      */
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tb_groups_subjects",
+    @JoinTable(name = "group_subject",
             joinColumns = @JoinColumn(name = "id_group"),
             inverseJoinColumns = @JoinColumn(name = "id_subject"))
     private List<Subject> subjects;
