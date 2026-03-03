@@ -83,7 +83,6 @@ public class SubjectServiceImpl implements ISubjectService {
         if(!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException("Deleção inválida!");
 
         // Verificar esta lógica
-
         for(Group g : inDb.getGroups()) {
             g.getSubjects().remove(inDb);
             groupRepository.save(g);

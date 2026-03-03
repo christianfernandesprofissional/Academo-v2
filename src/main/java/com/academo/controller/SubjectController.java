@@ -104,7 +104,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar remover matéria"),
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada com este ID")
     })
-    @DeleteMapping
+    @DeleteMapping("/{subjectId}")
     public ResponseEntity<Activity> delete(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         service.delete(userId, subjectId);

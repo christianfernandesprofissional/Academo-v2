@@ -29,7 +29,7 @@ public class Subject {
     private User user;
 
     @Column(name = "is_active", columnDefinition = "boolean default true")
-    private Boolean isActive;
+    private Boolean isActive = true;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
