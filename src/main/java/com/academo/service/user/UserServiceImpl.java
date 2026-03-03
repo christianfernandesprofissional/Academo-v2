@@ -1,5 +1,6 @@
 package com.academo.service.user;
 
+import com.academo.controller.dtos.user.UserDTO;
 import com.academo.model.Profile;
 import com.academo.model.User;
 import com.academo.repository.UserRepository;
@@ -9,6 +10,8 @@ import com.academo.util.exceptions.user.AlreadyActivatedUserException;
 import com.academo.util.exceptions.user.ExistingUserException;
 import com.academo.util.exceptions.user.UserNotFoundException;
 import com.academo.service.mail.IMailService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,8 @@ import java.time.ZoneOffset;
 
 @Service
 public class UserServiceImpl implements IUserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private static final LocalDateTime ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
 
@@ -48,14 +53,15 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User activateUser(String token) {
+    public UserDTO activateUser(String token) {
+        logger.debug("[DEBUG] Token: {}", token);
         Integer userId = Integer.parseInt(tokenService.validateActivationToken(token));
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if(!user.getAccountActivated()) {
             user.setAccountActivated(true);
             user.setActivationAccountTokenExpiration(LocalDateTime.now());
             mailService.sendWelcomeMail(user.getEmail());
-            return userRepository.save(user);
+            return UserDTO.fromUser(userRepository.save(user));
         } else {
             throw new AlreadyActivatedUserException("Usuário já ativado na plataforma!");
         }
@@ -72,8 +78,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User update(User user) {
-        return userRepository.save(user);
+    public UserDTO update(User user) {
+        return UserDTO.fromUser(userRepository.save(user));
     }
 
 }

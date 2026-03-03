@@ -1,5 +1,6 @@
 package com.academo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,6 +16,7 @@ public class Profile {
     @Column(name="id")
     private int id;
 
+    @JsonIgnore
     @OneToOne(optional = false)
     @MapsId
     @JoinColumn(name = "id", nullable = false)
