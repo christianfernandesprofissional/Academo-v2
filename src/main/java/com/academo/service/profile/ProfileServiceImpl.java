@@ -37,7 +37,7 @@ public class ProfileServiceImpl implements IProfileService {
         Profile profile = profileRepository.findById(userId).orElseThrow(ProfileNotFoundException::new);
         profile.setFullName(profileDto.fullName());
         profile.setInstitution(profileDto.institution());
-        profile.setGender(profileDto.gender());
+        profile.setGender(profileDto.gender().charAt(0));
         profile.setBirthDate(profileDto.birthDate());
         Profile updatedProfile = profileRepository.save(profile);
         return new ProfileDTO(updatedProfile, updatedProfile.getUser().getStorageUsage());

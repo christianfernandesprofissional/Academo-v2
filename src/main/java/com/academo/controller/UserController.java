@@ -48,11 +48,11 @@ public class UserController {
     })
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid UserAuthDTO user) {
-        UsernamePasswordAuthenticationToken userPass = new UsernamePasswordAuthenticationToken(user.username(), user.password());
+        UsernamePasswordAuthenticationToken userPass = new UsernamePasswordAuthenticationToken(user.email(), user.password());
         Authentication auth = authenticationManager.authenticate(userPass);
         var token = tokenService.generateLoginToken((AuthUser) auth.getPrincipal());
-        logger.info("Token: {}", token);
-        User u = userService.findByEmail(user.username());
+        logger.info("[DEBUG] Token: {}", token);
+        User u = userService.findByEmail(user.email());
         return ResponseEntity.ok(new LoginResponseDTO(token, u.getId(), u.getName()));
     }
 
@@ -75,7 +75,6 @@ public class UserController {
     })
     @PostMapping("/activate")
     public ResponseEntity<UserDTO> activate(@RequestParam("token") String token) {
-        System.out.println("TOKEN " + token);
         logger.debug("[DEBUG] Token: {}", token);
         return ResponseEntity.status(HttpStatus.OK).body(userService.activateUser(token));
     }
