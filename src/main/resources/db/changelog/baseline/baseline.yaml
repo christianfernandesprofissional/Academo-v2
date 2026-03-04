@@ -127,13 +127,17 @@ databaseChangeLog:
               nullable: false
               primaryKey: true
               primaryKeyName: group_subject_pkey
+            name: id_group_subject
+            type: INTEGER
+        - column:
+            autoIncrement: false
+            constraints:
+              nullable: false
             name: id_group
             type: INTEGER
         - column:
             constraints:
               nullable: false
-              primaryKey: true
-              primaryKeyName: group_subject_pkey
             name: id_subject
             type: INTEGER
         tableName: group_subject
@@ -145,14 +149,6 @@ databaseChangeLog:
         columnNames: email
         constraintName: tb_users_email_key
         tableName: tb_users
-- changeSet:
-    id: 1771623768047-5
-    author: fabio-britto (generated)
-    changes:
-    - addUniqueConstraint:
-        columnNames: id_group
-        constraintName: group_subject_id_group_key
-        tableName: group_subject
 - changeSet:
     id: 1771623768047-6
     author: fabio-britto (generated)

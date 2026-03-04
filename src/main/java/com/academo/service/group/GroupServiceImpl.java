@@ -17,6 +17,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupServiceImpl implements IGroupService {
@@ -94,7 +96,8 @@ public class GroupServiceImpl implements IGroupService {
         DEIXEI COMO EXEMPLO DE CÓDIGO IRREFATORÁVEL
         return GroupDTO.fromGroup(subjectsIds.stream().map(s -> SubjectDTO.toSubject(s, subjectService.findById(s, userId))).toList().stream().map(group::addSubject).toList());
          */
-        List<Subject> subjects = dto.subjectsIds().stream().map(s -> SubjectDTO.toSubject(s, subjectService.findById(s, userId))).toList();
+        Set<Subject> subjects = dto.subjectsIds().stream().map(s -> SubjectDTO.toSubject(s, subjectService.findById(s, userId))).collect(Collectors.toSet());
+
         group.getSubjects().addAll(subjects);
         return GroupDTO.fromGroup(groupRepository.save(group));
     }

@@ -5,9 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "groups")
@@ -47,7 +45,7 @@ public class Group {
     @JoinTable(name = "group_subject",
             joinColumns = @JoinColumn(name = "id_group"),
             inverseJoinColumns = @JoinColumn(name = "id_subject"))
-    private List<Subject> subjects = new ArrayList<>();
+    private Set<Subject> subjects = new HashSet<>();
 
 
     public int getId() {
@@ -106,11 +104,11 @@ public class Group {
         this.updatedAt = updatedAt;
     }
 
-    public List<Subject> getSubjects() {
+    public Set<Subject> getSubjects() {
         return subjects;
     }
 
-    public void setSubjects(List<Subject> subjects) {
+    public void setSubjects(Set<Subject> subjects) {
         this.subjects = subjects;
     }
 
