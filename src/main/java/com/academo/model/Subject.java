@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,7 +45,7 @@ public class Subject {
      */
     @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Group> groups;
+    private List<Group> groups = new ArrayList<>();
 
     /*
     Cascade.Type.REMOVE -> Indica que ao remover a classe Pai (Subject), as instâncias da classe filha (Activitie) serão removidas
@@ -52,12 +53,12 @@ public class Subject {
     @OneToMany(mappedBy = "subject",
             cascade = CascadeType.REMOVE)
     @JsonIgnore 
-    private List<Activity> activities;
+    private List<Activity> activities = new ArrayList<>();
 
     @OneToMany(mappedBy = "subject",
              cascade = CascadeType.REMOVE)
     @JsonIgnore
-    private List<File> files;
+    private List<File> files = new ArrayList<>();
 
 
     public int getId() {
