@@ -13,7 +13,7 @@ public interface IActivityTypeService {
     ActivityType findById(Integer ActivityTypeId, Integer userId);
     ActivityTypeDTO findDTO(Integer ActivityTypeId, Integer userId);
     ActivityTypeDTO create(Integer userId, SaveActivityTypeDTO activityTypeDTO);
-    ActivityTypeDTO update(Integer userId, Integer id, SaveActivityDTO activityTypeDTO);
+    ActivityTypeDTO update(Integer userId, Integer id, SaveActivityTypeDTO activityTypeDTO);
     void delete(Integer userId, Integer activityId);
 
 }

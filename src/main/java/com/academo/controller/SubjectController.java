@@ -67,7 +67,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar matérias"),
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada")
     })
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<SubjectDTO>> findAll(Authentication authentication) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         List<SubjectDTO> subjects = service.findAll(userId);

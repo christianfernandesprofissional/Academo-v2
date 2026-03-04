@@ -49,8 +49,13 @@ public class ActivityServiceImpl implements IActivityService{
 
     @Override
     public ActivityDTO update(Integer userId, Integer activityId, SaveActivityDTO activityDTO) {
-        if(activityRepository.findByIdAndUserId(activityId, userId).isEmpty()) throw new NotAllowedInsertionException("Inserção inválida");
-        return ActivityDTO.fromActivity(activityRepository.save(fillActivity(userId, activityDTO)));
+        Activity existingActivity = activityRepository.findByIdAndUserId(activityId, userId).orElseThrow(ActivityNotFoundException::new);
+        existingActivity.setActivityDate(activityDTO.activityDate());
+        existingActivity.setNotificationDate(activityDTO.notificationDate());
+        existingActivity.setName(activityDTO.name());
+        existingActivity.setDescription(activityDTO.description());
+        existingActivity.setGrade(activityDTO.grade());
+        return ActivityDTO.fromActivity(activityRepository.save(existingActivity));
     }
 
     @Override
@@ -70,7 +75,7 @@ public class ActivityServiceImpl implements IActivityService{
     }
 
     @Override
-    public List<ActivityDTO> findBySubjectId(Integer userId, Integer subjectId) {
+    public List<ActivityDTO> findAllBySubjectId(Integer userId, Integer subjectId) {
         // Esse dto abaixo serve apenas para tentar recuperar um Subject com este ID e UserID. Caso o subject não pertença
         // ao usuário da requisição, será lançada uma exceção
         SubjectDTO dto = subjectService.findById(subjectId, userId);
@@ -94,7 +99,7 @@ public class ActivityServiceImpl implements IActivityService{
         activity.setDescription(activityDTO.description());
         activity.setActivityDate(activityDTO.activityDate());
         activity.setNotificationDate(activityDTO.notificationDate());
-        activity.setActivityValue(activityDTO.value());
+        activity.setGrade(activityDTO.grade());
         activity.setActivityType(activityType);
         activity.setSubject(subject);
         activity.setUser(user);
