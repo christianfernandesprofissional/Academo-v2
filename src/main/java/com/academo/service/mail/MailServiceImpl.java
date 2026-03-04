@@ -45,7 +45,7 @@ public class MailServiceImpl implements IMailService {
     @Override
     public void sendActivationMail(String destinatario, String token){
         String baseUrl = System.getenv("CLIENT_URL");
-        String urlDeAtivacao = baseUrl+"/auth/activate?value="+token;
+        String urlDeAtivacao = baseUrl+"/auth/activate?token="+token;
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(destinatario);
         email.setSubject("Ative sua conta!");
