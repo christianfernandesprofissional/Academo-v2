@@ -1,35 +1,47 @@
 package com.academo.model;
 
 import com.academo.model.enums.PeriodName;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+
+
+@Entity
+@Table(name = "periods")
 public class Period {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "subject_id")
+    @ManyToOne
+    @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
-    @Column(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "name")
     private PeriodName name;
 
     @Column(name = "grade")
-    private Double grade;
+    private BigDecimal grade = new BigDecimal("0");
 
     @Column(name = "weight")
-    private Double weight;
+    private BigDecimal weight;
+
+    @OneToMany(mappedBy = "period",
+                cascade = CascadeType.REMOVE)
+    private HashSet<ActivityType> activityTypeList = new HashSet<>();
 
     public Period(){}
 
-    public Period(Integer id, Subject subject, User user, PeriodName name, Double grade, Double weight) {
+    public Period(Integer id, Subject subject, User user, PeriodName name, BigDecimal grade, BigDecimal weight) {
         this.id = id;
         this.subject = subject;
         this.user = user;
@@ -37,4 +49,73 @@ public class Period {
         this.grade = grade;
         this.weight = weight;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public PeriodName getName() {
+        return name;
+    }
+
+    public void setName(PeriodName name) {
+        this.name = name;
+    }
+
+    public BigDecimal getGrade() {
+        return grade;
+    }
+
+    public void setGrade(BigDecimal grade) {
+        this.grade = grade;
+    }
+
+    public BigDecimal getWeight() {
+        return weight;
+    }
+
+    public void setWeight(BigDecimal weight) {
+        this.weight = weight;
+    }
+
+    public HashSet<ActivityType> getActivityTypeList() {
+        return activityTypeList;
+    }
+
+    public void setActivityTypeList(HashSet<ActivityType> activityTypeList) {
+        this.activityTypeList = activityTypeList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Period period = (Period) o;
+        return name == period.name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
+    }
+
 }
