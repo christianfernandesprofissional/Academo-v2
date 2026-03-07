@@ -2,6 +2,7 @@ package com.academo.controller.dtos.activityType;
 
 import com.academo.controller.dtos.activity.ActivityDTO;
 import com.academo.model.Activity;
+import com.academo.model.ActivityType;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.time.LocalDateTime;
@@ -16,5 +17,15 @@ public record ActivityTypeDTO (
         List<ActivityDTO> activities,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
-)
-{}
+){
+    public static ActivityTypeDTO fromActivityType(ActivityType activityType){
+        return new ActivityTypeDTO(
+                activityType.getId(),
+                activityType.getName(),
+                activityType.getDescription(),
+                activityType.getActivities().stream().map(ActivityDTO::fromActivity).toList(),
+                activityType.getCreatedAt(),
+                activityType.getUpdatedAt()
+        );
+    }
+}

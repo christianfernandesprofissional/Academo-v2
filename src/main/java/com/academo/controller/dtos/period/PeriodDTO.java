@@ -2,6 +2,7 @@ package com.academo.controller.dtos.period;
 
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
+import com.academo.model.Period;
 import com.academo.model.enums.PeriodName;
 
 import java.math.BigDecimal;
@@ -15,4 +16,15 @@ public record PeriodDTO(
         BigDecimal weight,
         List<ActivityTypeDTO> activityTypeList
         ) {
+
+    public static PeriodDTO fromPeriod(Period period){
+        return new PeriodDTO(
+                period.getId(),
+                SubjectDTO.fromSubject(period.getSubject()),
+                period.getName(),
+                period.getGrade(),
+                period.getWeight(),
+                period.getActivityTypeList().stream().map(ActivityTypeDTO::fromActivityType).toList()
+        );
+    }
 }
