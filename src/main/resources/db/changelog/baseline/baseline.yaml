@@ -46,6 +46,8 @@ databaseChangeLog:
             name: subject_id
             type: INTEGER
         - column:
+            constraints:
+              nullable: false
             name: activity_type_id
             type: INTEGER
         - column:
@@ -101,6 +103,7 @@ databaseChangeLog:
         - column:
             constraints:
               nullable: false
+            defaultValueBoolean: true
             name: is_account_activated
             type: BOOLEAN
         - column:
@@ -272,6 +275,7 @@ databaseChangeLog:
         - column:
             constraints:
               nullable: false
+            defaultValueBoolean: true
             name: is_active
             type: BOOLEAN
         - column:
@@ -352,6 +356,7 @@ databaseChangeLog:
         - column:
             constraints:
               nullable: false
+            defaultValueBoolean: true
             name: is_active
             type: BOOLEAN
         - column:
@@ -375,8 +380,8 @@ databaseChangeLog:
         constraintName: activities_activity_type_id_fkey
         deferrable: false
         initiallyDeferred: false
-        onDelete: SET NULL
-        onUpdate: NO ACTION
+        onDelete: CASCADE
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: activity_types
         validate: true
@@ -391,7 +396,7 @@ databaseChangeLog:
         deferrable: false
         initiallyDeferred: false
         onDelete: CASCADE
-        onUpdate: NO ACTION
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: subjects
         validate: true
@@ -405,8 +410,8 @@ databaseChangeLog:
         constraintName: activities_user_id_fkey
         deferrable: false
         initiallyDeferred: false
-        onDelete: NO ACTION
-        onUpdate: NO ACTION
+        onDelete: CASCADE
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: tb_users
         validate: true
@@ -420,8 +425,8 @@ databaseChangeLog:
         constraintName: activity_types_user_id_fkey
         deferrable: false
         initiallyDeferred: false
-        onDelete: NO ACTION
-        onUpdate: NO ACTION
+        onDelete: CASCADE
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: tb_users
         validate: true
@@ -436,7 +441,7 @@ databaseChangeLog:
         deferrable: false
         initiallyDeferred: false
         onDelete: CASCADE
-        onUpdate: NO ACTION
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: subjects
         validate: true
@@ -450,8 +455,8 @@ databaseChangeLog:
         constraintName: files_user_id_fkey
         deferrable: false
         initiallyDeferred: false
-        onDelete: NO ACTION
-        onUpdate: NO ACTION
+        onDelete: CASCADE
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: tb_users
         validate: true
@@ -466,7 +471,7 @@ databaseChangeLog:
         deferrable: false
         initiallyDeferred: false
         onDelete: CASCADE
-        onUpdate: NO ACTION
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: groups
         validate: true
@@ -481,7 +486,7 @@ databaseChangeLog:
         deferrable: false
         initiallyDeferred: false
         onDelete: CASCADE
-        onUpdate: NO ACTION
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: subjects
         validate: true
@@ -495,8 +500,8 @@ databaseChangeLog:
         constraintName: groups_user_id_fkey
         deferrable: false
         initiallyDeferred: false
-        onDelete: NO ACTION
-        onUpdate: NO ACTION
+        onDelete: CASCADE
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: tb_users
         validate: true
@@ -510,8 +515,8 @@ databaseChangeLog:
         constraintName: profiles_id_fkey
         deferrable: false
         initiallyDeferred: false
-        onDelete: NO ACTION
-        onUpdate: NO ACTION
+        onDelete: CASCADE
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: tb_users
         validate: true
@@ -525,8 +530,8 @@ databaseChangeLog:
         constraintName: subjects_user_id_fkey
         deferrable: false
         initiallyDeferred: false
-        onDelete: NO ACTION
-        onUpdate: NO ACTION
+        onDelete: CASCADE
+        onUpdate: CASCADE
         referencedColumnNames: id
         referencedTableName: tb_users
         validate: true
