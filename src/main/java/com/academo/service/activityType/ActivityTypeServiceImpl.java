@@ -1,5 +1,6 @@
 package com.academo.service.activityType;
 
+import com.academo.controller.dtos.activity.ActivityDTO;
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
 import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.model.ActivityType;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,6 +36,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
                         t.getId(),
                         t.getName(),
                         t.getDescription(),
+                        new ArrayList<ActivityDTO>(),
                         t.getCreatedAt(),
                         t.getUpdatedAt()
                 )).toList();
@@ -48,7 +51,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
     @Override
     public ActivityTypeDTO findDTO(Integer ActivityTypeId, Integer userId) {
         ActivityType activityType =  repository.findByIdAndUserId(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
-        return new ActivityTypeDTO(activityType.getId(), activityType.getName(), activityType.getDescription(), activityType.getCreatedAt(), activityType.getUpdatedAt());
+        return new ActivityTypeDTO(activityType.getId(), activityType.getName(), activityType.getDescription(),new ArrayList<ActivityDTO>(), activityType.getCreatedAt(), activityType.getUpdatedAt());
     }
 
     @Override
@@ -62,7 +65,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
         newActivityType.setUser(userService.findById(userId));
         newActivityType.setId(repository.save(newActivityType).getId());
 
-        return new ActivityTypeDTO(newActivityType.getId(), newActivityType.getName(), newActivityType.getDescription(), newActivityType.getCreatedAt(), newActivityType.getUpdatedAt());
+        return new ActivityTypeDTO(newActivityType.getId(), newActivityType.getName(), newActivityType.getDescription(),new ArrayList<ActivityDTO>(), newActivityType.getCreatedAt(), newActivityType.getUpdatedAt());
     }
 
     @Override
@@ -75,7 +78,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
         ActivityType updated = repository.save(inDb);
         logger.info("[DEBUG] ActivityType updated - createdAt: {}", updated.getCreatedAt());
 
-        return new ActivityTypeDTO(updated.getId(), updated.getName(), updated.getDescription(), updated.getCreatedAt(), updated.getUpdatedAt());
+        return new ActivityTypeDTO(updated.getId(), updated.getName(), updated.getDescription(), new ArrayList<ActivityDTO>(),updated.getCreatedAt(), updated.getUpdatedAt());
     }
 
     @Override
