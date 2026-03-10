@@ -4,6 +4,7 @@ import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.controller.dtos.period.PeriodDTO;
 import com.academo.controller.dtos.period.SavePeriodDTO;
 import com.academo.repository.PeriodRepository;
+import com.academo.util.exceptions.period.PeriodNotFoundException;
 
 import java.util.List;
 
@@ -21,8 +22,8 @@ public class PeriodServiceImpl implements IPeriodService{
     }
 
     @Override
-    public PeriodDTO findById(Integer userId, Integer subjectId) {
-        return null;
+    public PeriodDTO findById(Integer userId, Integer periodId) {
+        return PeriodDTO.fromPeriod(repository.findByUserIdAndPeriodId(userId,periodId).orElseThrow(PeriodNotFoundException::new));
     }
 
     @Override
