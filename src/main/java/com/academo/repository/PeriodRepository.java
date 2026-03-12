@@ -12,5 +12,6 @@ public interface PeriodRepository extends JpaRepository<Period, Integer> {
 
     List<Period> findAllByUserIdAndSubjectId(Integer userId, Integer subjectId);
     Optional<Period> findByUserIdAndPeriodId(Integer userId, Integer periodId);
+    void deleteByPeriodIdAndSubjectId(Integer userId, Integer periodId);
 
 }

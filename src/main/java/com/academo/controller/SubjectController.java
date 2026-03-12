@@ -44,7 +44,7 @@ public class SubjectController {
     public ResponseEntity<SubjectDTO> create(Authentication authentication, @Valid @RequestBody CreateSubjectDTO createSubjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         SubjectDTO createdSubject = service.create(userId, createSubjectDTO);
-        URI uri = URI.create("/subjects?subjectId=" + createdSubject.id());
+        URI uri = URI.create("/subjects/" + createdSubject.id());
         return ResponseEntity.created(uri).body(createdSubject);
     }
 

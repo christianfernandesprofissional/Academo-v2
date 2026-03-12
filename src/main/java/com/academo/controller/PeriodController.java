@@ -1,15 +1,19 @@
 package com.academo.controller;
 
 import com.academo.controller.dtos.period.PeriodDTO;
+import com.academo.controller.dtos.period.SavePeriodDTO;
+import com.academo.controller.dtos.period.UpdatePeriodDTO;
 import com.academo.model.Period;
 import com.academo.model.User;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.period.IPeriodService;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -30,24 +34,29 @@ public class PeriodController {
     }
 
     @GetMapping("/{periodId}")
-    public ResponseEntity<Period> findById(Authentication auth, @PathVariable Integer subjectId, @PathVariable Integer periodId){
+    public ResponseEntity<PeriodDTO> findById(Authentication auth, @PathVariable Integer subjectId, @PathVariable Integer periodId){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
-        service.findById(userId, periodId);
-        return null;
+        return ResponseEntity.ok(service.findById(userId, periodId));
+    }
+
+    @PostMapping
+    public ResponseEntity<PeriodDTO> create(Authentication auth, @RequestBody SavePeriodDTO periodDTO){
+        Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
+        PeriodDTO saved = service.create(userId, periodDTO);
+        URI uri = URI.create("/periods/"+saved.id());
+        return ResponseEntity.created(uri).body(saved);
     }
 
     @GetMapping
-    public ResponseEntity<Period> create(){
-        return null;
+    public ResponseEntity<PeriodDTO> update(Authentication auth, @RequestBody UpdatePeriodDTO periodDTO){
+        Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
+        PeriodDTO updated = service.update(userId, periodDTO);
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping
-    public ResponseEntity<Period> update(){
-        return null;
-    }
-
-    @GetMapping
-    public ResponseEntity<Period> delete(){
-        return null;
+    public ResponseEntity<PeriodDTO> delete(Authentication auth, @PathVariable Integer subjectId, @PathVariable Integer periodId){
+        service.delete(subjectId, periodId);
+        return ResponseEntity.noContent().build();
     }
 }
