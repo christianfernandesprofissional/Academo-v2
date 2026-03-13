@@ -10,7 +10,7 @@ import java.util.List;
 
 public record UpdatePeriodDTO(
         Integer id,
-        SubjectDTO subject,
+        Integer subjectId,
         PeriodName name,
         String grade,
         String weight

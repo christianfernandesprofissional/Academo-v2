@@ -10,10 +10,12 @@ import com.academo.model.User;
 import com.academo.model.enums.PeriodName;
 import com.academo.repository.PeriodRepository;
 import com.academo.util.exceptions.period.PeriodNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Service
 public class PeriodServiceImpl implements IPeriodService{
 
     private final PeriodRepository repository;
@@ -29,7 +31,7 @@ public class PeriodServiceImpl implements IPeriodService{
 
     @Override
     public PeriodDTO findById(Integer userId, Integer periodId) {
-        return PeriodDTO.fromPeriod(repository.findByUserIdAndPeriodId(userId,periodId).orElseThrow(PeriodNotFoundException::new));
+        return PeriodDTO.fromPeriod(repository.findByPeriodIdAndUserId(userId,periodId).orElseThrow(PeriodNotFoundException::new));
     }
 
     @Override
@@ -47,7 +49,7 @@ public class PeriodServiceImpl implements IPeriodService{
 
     @Override
     public PeriodDTO update(Integer userId, UpdatePeriodDTO periodDTO) {
-        Period inDB = repository.findByUserIdAndPeriodId(userId,periodDTO.id()).orElseThrow(PeriodNotFoundException::new);
+        Period inDB = repository.findByPeriodIdAndUserId(periodDTO.id(),userId).orElseThrow(PeriodNotFoundException::new);
         inDB.setName(periodDTO.name());
         inDB.setWeight(new BigDecimal(periodDTO.weight()));
         inDB.setGrade(new BigDecimal(periodDTO.grade()));
@@ -56,8 +58,8 @@ public class PeriodServiceImpl implements IPeriodService{
     }
 
     @Override
-    public void delete(Integer subjectId, Integer periodId){
-        repository.deleteByPeriodIdAndSubjectId(periodId,subjectId);
+    public void delete(Integer userId,Integer subjectId, Integer periodId){
+        repository.deleteByPeriodIdAndSubjectIdAndUserId(periodId, subjectId, userId);
     }
 
     @Override

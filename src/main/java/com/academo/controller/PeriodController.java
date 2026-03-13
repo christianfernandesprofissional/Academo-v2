@@ -47,16 +47,17 @@ public class PeriodController {
         return ResponseEntity.created(uri).body(saved);
     }
 
-    @GetMapping
+    @PutMapping
     public ResponseEntity<PeriodDTO> update(Authentication auth, @RequestBody UpdatePeriodDTO periodDTO){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
         PeriodDTO updated = service.update(userId, periodDTO);
         return ResponseEntity.ok(updated);
     }
 
-    @GetMapping
+    @DeleteMapping
     public ResponseEntity<PeriodDTO> delete(Authentication auth, @PathVariable Integer subjectId, @PathVariable Integer periodId){
-        service.delete(subjectId, periodId);
+        Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
+        service.delete(userId, subjectId, periodId);
         return ResponseEntity.noContent().build();
     }
 }

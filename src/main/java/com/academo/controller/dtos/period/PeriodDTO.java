@@ -19,7 +19,7 @@ public record PeriodDTO(
 
     public static PeriodDTO fromPeriod(Period period){
         return new PeriodDTO(
-                period.getId(),
+                period.getPeriodId(),
                 SubjectDTO.fromSubject(period.getSubject()),
                 period.getName(),
                 period.getGrade(),

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface PeriodRepository extends JpaRepository<Period, Integer> {
 
     List<Period> findAllByUserIdAndSubjectId(Integer userId, Integer subjectId);
-    Optional<Period> findByUserIdAndPeriodId(Integer userId, Integer periodId);
-    void deleteByPeriodIdAndSubjectId(Integer userId, Integer periodId);
+    Optional<Period> findByPeriodIdAndUserId(Integer periodId, Integer userId);
+    void deleteByPeriodIdAndSubjectIdAndUserId(Integer periodId, Integer subjectId, Integer userId);
 
 }
