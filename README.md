@@ -11,7 +11,7 @@ Com o Academo, é possível agrupar matérias, receber notificações de ativida
 - **Spring Boot** + **Spring Security**
 - **JWT (JSON Web Token)** para autenticação
 - **PostgreSQL** como banco de dados relacional
-- **Flyway** para versionamento de schema do banco
+- **Liquibase** para versionamento de schema do banco
 - **Maven** para gerenciamento de dependências
 - **Jakarta Mail** para envio de notificações por e-mail
 
