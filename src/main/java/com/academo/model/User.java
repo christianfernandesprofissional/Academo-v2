@@ -33,7 +33,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Column(name = "is_account_activated", columnDefinition = "boolean default false", nullable = false)
-    private Boolean isAccountActivated = false;
+    private Boolean isAccountActivated = Boolean.FALSE;
 
     @Column(name = "activation_account_token_expiration")
     private LocalDateTime activationAccountTokenExpiration;

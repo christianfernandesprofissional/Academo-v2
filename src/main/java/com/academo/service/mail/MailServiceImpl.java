@@ -1,20 +1,21 @@
 package com.academo.service.mail;
 
 import com.academo.controller.dtos.activity.ActivityNotificationDTO;
+import com.academo.controller.dtos.mail.ActivateAccountMailDTO;
+import com.academo.controller.dtos.mail.WelcomeMailDTO;
 import com.academo.controller.dtos.notification.NotificationDTO;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Comparator;
 import java.util.List;
 
-@Component
+//@Component
 public class MailServiceImpl implements IMailService {
 
     private final JavaMailSender mailSender;
@@ -26,9 +27,9 @@ public class MailServiceImpl implements IMailService {
     }
 
     @Override
-    public void sendWelcomeMail(String destinatario) {
+    public void sendWelcomeMail(WelcomeMailDTO welcomeMailDTO) {
         SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(destinatario);
+        email.setTo(welcomeMailDTO.email());
         email.setSubject("Bem-vindo ao ACADEMO!");
         email.setText("""
                 Olá,
@@ -43,11 +44,11 @@ public class MailServiceImpl implements IMailService {
     }
 
     @Override
-    public void sendActivationMail(String destinatario, String token){
+    public void sendActivationMail(ActivateAccountMailDTO activateAccountMailDTO){
         String baseUrl = System.getenv("CLIENT_URL");
-        String urlDeAtivacao = baseUrl+"/auth/activate?token="+token;
+        String urlDeAtivacao = baseUrl+"/auth/activate?value="+activateAccountMailDTO.activationToken();
         SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(destinatario);
+        email.setTo(activateAccountMailDTO.email());
         email.setSubject("Ative sua conta!");
         email.setText("""
                 Olá,

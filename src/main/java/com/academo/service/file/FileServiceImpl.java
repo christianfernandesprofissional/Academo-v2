@@ -9,7 +9,7 @@ import com.academo.repository.FileRepository;
 import com.academo.service.subject.ISubjectService;
 import com.academo.service.user.IUserService;
 import com.academo.service.storage.google.DriveService;
-import com.academo.util.exceptions.FileTransfer.*;
+import com.academo.util.exceptions.fileTransfer.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

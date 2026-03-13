@@ -1,4 +1,4 @@
-package com.academo.util.exceptions.FileTransfer;
+package com.academo.util.exceptions.fileTransfer;
 
 public class FileNotFoundException extends RuntimeException{
 
