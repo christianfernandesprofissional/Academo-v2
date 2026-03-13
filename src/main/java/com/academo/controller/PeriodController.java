@@ -33,7 +33,7 @@ public class PeriodController {
         return ResponseEntity.ok(service.findAll(userId, subjectId));
     }
 
-    @GetMapping("/{periodId}")
+    @GetMapping("/{subjectId}/{periodId}")
     public ResponseEntity<PeriodDTO> findById(Authentication auth, @PathVariable Integer subjectId, @PathVariable Integer periodId){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.findById(userId, periodId));

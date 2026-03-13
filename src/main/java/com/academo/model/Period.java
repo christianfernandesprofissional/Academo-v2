@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 
 @Entity
@@ -14,7 +15,7 @@ public class Period {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "period_id")
+    @Column(name = "id")
     private Integer periodId;
 
     @ManyToOne
@@ -36,7 +37,7 @@ public class Period {
 
     @OneToMany(mappedBy = "period",
                 cascade = CascadeType.REMOVE)
-    private HashSet<ActivityType> activityTypeList = new HashSet<>();
+    private Set<ActivityType> activityTypeList = new HashSet<>();
 
     public Period(){}
 
@@ -97,7 +98,7 @@ public class Period {
         this.weight = weight;
     }
 
-    public HashSet<ActivityType> getActivityTypeList() {
+    public Set<ActivityType> getActivityTypeList() {
         return activityTypeList;
     }
 
