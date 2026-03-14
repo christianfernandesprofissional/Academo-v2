@@ -3,6 +3,12 @@ databaseChangeLog:
     id: 1771623768047-22
     author: christian-fernandes
     changes:
+    - sql:
+        sql: CREATE TYPE calculation_type AS ENUM ('MEDIA_ARITMETICA', 'MEDIA_PONDERADA');
+- changeSet:
+    id: 1771623768047-23
+    author: christian-fernandes
+    changes:
     - createTable:
         columns:
         - column:
@@ -42,7 +48,7 @@ databaseChangeLog:
             type: NUMERIC
         tableName: periods
 - changeSet:
-    id: 1771623768047-23
+    id: 1771623768047-24
     author: christian-fernandes
     changes:
     - addColumn:
@@ -58,9 +64,9 @@ databaseChangeLog:
             constraints:
               nullable: false
             name: calculation
-            type: VARCHAR(255)
+            type: calculation_type
 - changeSet:
-    id: 1771623768047-24
+    id: 1771623768047-25
     author: christian-fernandes
     changes:
       - addColumn:
@@ -72,7 +78,7 @@ databaseChangeLog:
               name: period_id
               type: INTEGER
 - changeSet:
-    id: 1771623768047-25
+    id: 1771623768047-26
     author: christian-fernandes
     changes:
       - addForeignKeyConstraint:
@@ -87,7 +93,7 @@ databaseChangeLog:
           referencedTableName: tb_users
           validate: true
 - changeSet:
-    id: 1771623768047-26
+    id: 1771623768047-27
     author: christian-fernandes
     changes:
       - addForeignKeyConstraint:
@@ -102,7 +108,7 @@ databaseChangeLog:
           referencedTableName: subjects
           validate: true
 - changeSet:
-    id: 1771623768047-27
+    id: 1771623768047-28
     author: christian-fernandes
     changes:
       - addForeignKeyConstraint:
