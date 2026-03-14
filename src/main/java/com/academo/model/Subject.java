@@ -164,6 +164,26 @@ public class Subject {
 
     public void setPeriods(HashSet<Period> periods){this.periods = periods;};
 
+    public BigDecimal getFinalGrade() {
+        return finalGrade;
+    }
+
+    public void setFinalGrade(BigDecimal finalGrade) {
+        this.finalGrade = finalGrade;
+    }
+
+    public CalculationType getCalculationType() {
+        return calculationType;
+    }
+
+    public void setCalculationType(CalculationType calculationType) {
+        this.calculationType = calculationType;
+    }
+
+    public void setPeriods(Set<Period> periods) {
+        this.periods = periods;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

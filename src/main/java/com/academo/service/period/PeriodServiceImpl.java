@@ -37,7 +37,7 @@ public class PeriodServiceImpl implements IPeriodService{
     @Override
     public PeriodDTO create(Integer userId, SavePeriodDTO periodDTO) {
         Period newPeriod = new Period();
-        newPeriod.setName(PeriodName.valueOf(periodDTO.name()));
+        newPeriod.setName(PeriodName.valueOf(periodDTO.name()).name());
         newPeriod.setGrade(new BigDecimal(periodDTO.grade()));
         newPeriod.setWeight(new BigDecimal(periodDTO.weight()));
         newPeriod.setSubject(new Subject());
@@ -50,7 +50,7 @@ public class PeriodServiceImpl implements IPeriodService{
     @Override
     public PeriodDTO update(Integer userId, UpdatePeriodDTO periodDTO) {
         Period inDB = repository.findByPeriodIdAndUserId(periodDTO.id(),userId).orElseThrow(PeriodNotFoundException::new);
-        inDB.setName(periodDTO.name());
+        inDB.setName(PeriodName.valueOf(periodDTO.name()).name());
         inDB.setWeight(new BigDecimal(periodDTO.weight()));
         inDB.setGrade(new BigDecimal(periodDTO.grade()));
         repository.save(inDB);

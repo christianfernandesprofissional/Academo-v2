@@ -6,6 +6,7 @@ import com.academo.controller.dtos.subject.UpdateSubjectDTO;
 import com.academo.model.Group;
 import com.academo.model.Subject;
 import com.academo.model.User;
+import com.academo.model.enums.CalculationType;
 import com.academo.repository.GroupRepository;
 import com.academo.repository.SubjectRepository;
 import com.academo.repository.UserRepository;
@@ -67,6 +68,7 @@ public class SubjectServiceImpl implements ISubjectService {
         Subject updated = inDb;
         updated.setName(subjectDTO.name());
         updated.setDescription(subjectDTO.description());
+        updated.setCalculationType(CalculationType.valueOf(subjectDTO.calculationType()));
         updated.setIsActive(subjectDTO.isActive());
         updated = subjectRepository.save(updated);
         return SubjectDTO.fromSubject(updated);

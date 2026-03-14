@@ -27,7 +27,7 @@ public class Period {
     private User user;
 
     @Column(name = "name")
-    private PeriodName name;
+    private String name;
 
     @Column(name = "grade")
     private BigDecimal grade = new BigDecimal("0");
@@ -41,7 +41,7 @@ public class Period {
 
     public Period(){}
 
-    public Period(Integer id, Subject subject, User user, PeriodName name, BigDecimal grade, BigDecimal weight) {
+    public Period(Integer id, Subject subject, User user, String name, BigDecimal grade, BigDecimal weight) {
         this.periodId = id;
         this.subject = subject;
         this.user = user;
@@ -74,11 +74,11 @@ public class Period {
         this.user = user;
     }
 
-    public PeriodName getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(PeriodName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

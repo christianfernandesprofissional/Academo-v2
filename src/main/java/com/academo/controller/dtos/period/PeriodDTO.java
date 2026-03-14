@@ -11,7 +11,7 @@ import java.util.List;
 public record PeriodDTO(
         Integer id,
         SubjectDTO subject,
-        PeriodName name,
+        String name,
         BigDecimal grade,
         BigDecimal weight,
         List<ActivityTypeDTO> activityTypeList
