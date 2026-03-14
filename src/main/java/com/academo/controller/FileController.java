@@ -38,10 +38,10 @@ public class FileController {
             @ApiResponse(responseCode = "201", description = "Upload realizado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro ao tentar realizar upload")
     })
-    @PostMapping("/upload-file/{file}/{subjectId}")
-    public ResponseEntity<FileDTO> upload(@PathVariable("file") MultipartFile file, @PathVariable("subjectId") Integer subjectId, Authentication authentication){
+    @PostMapping("/upload-file/{subjectId}")
+    public ResponseEntity<FileDTO> upload(@RequestParam("file") MultipartFile file, @PathVariable("subjectId") Integer subjectId, Authentication authentication){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        FileDTO uploadedFile = fileService.createFile(file, userId, subjectId);
+        FileDTO uploadedFile = fileService.upload(file, userId, subjectId);
         URI uri = URI.create(uploadedFile.path());
         return ResponseEntity.created(uri).body(uploadedFile);
     }

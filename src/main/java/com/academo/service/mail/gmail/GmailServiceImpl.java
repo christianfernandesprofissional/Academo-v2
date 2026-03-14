@@ -1,9 +1,10 @@
-package com.academo.service.mail;
+package com.academo.service.mail.gmail;
 
 import com.academo.controller.dtos.activity.ActivityNotificationDTO;
 import com.academo.controller.dtos.mail.ActivateAccountMailDTO;
 import com.academo.controller.dtos.mail.WelcomeMailDTO;
 import com.academo.controller.dtos.notification.NotificationDTO;
+import com.academo.service.mail.IMailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.SimpleMailMessage;
@@ -16,12 +17,12 @@ import java.util.Comparator;
 import java.util.List;
 
 //@Component
-public class MailServiceImpl implements IMailService {
+public class GmailServiceImpl implements IMailService {
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
 
-    public MailServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine) {
+    public GmailServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
     }

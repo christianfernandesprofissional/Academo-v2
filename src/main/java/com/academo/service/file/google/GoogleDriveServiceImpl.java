@@ -1,4 +1,4 @@
-package com.academo.service.file;
+package com.academo.service.file.google;
 
 import com.academo.controller.dtos.file.FileDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
@@ -6,57 +6,42 @@ import com.academo.model.File;
 import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.repository.FileRepository;
+import com.academo.service.file.IFileService;
 import com.academo.service.subject.ISubjectService;
 import com.academo.service.user.IUserService;
 import com.academo.service.storage.google.DriveService;
+import com.academo.util.config.storage.FileValidation;
 import com.academo.util.exceptions.fileTransfer.*;
 import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 
-@Service
-public class FileServiceImpl implements IFileService {
+
+public class GoogleDriveServiceImpl implements IFileService {
 
     private final FileRepository fileRepository;
     private final IUserService userService;
     private final ISubjectService subjectService;
     private final DriveService driveService;
 
-    public FileServiceImpl(FileRepository fileRepository, IUserService userService, ISubjectService subjectService, DriveService driveService) {
+    public GoogleDriveServiceImpl(FileRepository fileRepository, IUserService userService, ISubjectService subjectService, DriveService driveService) {
         this.fileRepository = fileRepository;
         this.userService = userService;
         this.subjectService = subjectService;
         this.driveService = driveService;
     }
 
-    private static final long ONE_MB = 1024L * 1024L;
-
-    private static final long FIFTEEN_MB = 15 * ONE_MB;
-
-    private static final long THREE_HUNDRED_MB = 300 * ONE_MB;
-
-    private static final Set<String> ALLOWED_TYPES = Set.of(
-            "image/jpeg",
-            "image/png",
-            "application/pdf",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "text/csv",
-            "text/plain"
-    );
 
     @Transactional
     @Override
-    public FileDTO createFile(MultipartFile file, Integer userId, Integer subjectId) {
+    public FileDTO upload(MultipartFile file, Integer userId, Integer subjectId) {
 
         Subject subject = SubjectDTO.toSubject(subjectId, subjectService.findById(subjectId, userId));
         User user = userService.findById(userId);
-        isUserStorageFull(file, user);
-        isMimeTypeValid(file);
-        isFileSizeValid(file);
+        FileValidation.isUserStorageFull(file, user);
+        FileValidation.isMimeTypeValid(file);
+        FileValidation.isFileSizeValid(file);
 
 
         String driveFileId = null;
@@ -125,31 +110,5 @@ public class FileServiceImpl implements IFileService {
         } catch (Exception e) {
            throw new FileStorageException("Erro ao deletar arquivo!");
         }
-    }
-
-
-    // -------> MÉTODOS AUXILIARES <--------
-
-
-    private Boolean isMimeTypeValid(MultipartFile file) {
-        String contentType = file.getContentType();
-
-        if (contentType == null || !ALLOWED_TYPES.contains(contentType.toLowerCase())) {
-            throw new MimeTypeException();
-        }
-        return true;
-    }
-
-    private Boolean isFileSizeValid(MultipartFile file) {
-        //RETORNAR EXCEÇÃO
-        if(file.getSize() > FIFTEEN_MB) throw new FileSizeException();
-        return true;
-    }
-
-    private Boolean isUserStorageFull(MultipartFile file, User user) {
-        if(user.getStorageUsage() + file.getSize() > THREE_HUNDRED_MB) {
-            throw new UserStorageIsFullException();
-        }
-        return true;
     }
 }
