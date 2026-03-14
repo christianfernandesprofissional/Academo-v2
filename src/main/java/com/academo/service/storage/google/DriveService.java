@@ -11,7 +11,6 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -19,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
-@Service
+//@Component
 public class DriveService {
 
 

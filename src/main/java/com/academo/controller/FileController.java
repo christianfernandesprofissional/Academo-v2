@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.tika.Tika;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,7 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -26,11 +31,10 @@ import java.util.List;
 public class FileController {
 
     private final IFileService fileService;
-    private final DriveService driveService;
+    //private final DriveService driveService;
 
-    public FileController(IFileService fileService, DriveService driveService) {
+    public FileController(IFileService fileService) {
         this.fileService = fileService;
-        this.driveService = driveService;
     }
 
     @Operation(summary = "Realiza o Upload de um arquivo", method = "POST")
@@ -52,22 +56,39 @@ public class FileController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar realizar download do arquivo"),
             @ApiResponse(responseCode = "404", description = "Nenhum arquivo encontrado com este ID")
     })
-    @GetMapping("/download/{fileId}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileId) {
-        DriveService.DownloadedFile downloaded = null;
-        try {
-            downloaded = driveService.getFile(fileId);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        ByteArrayResource resource = new ByteArrayResource(downloaded.content());
-        String mimeType = downloaded.mimeType() != null ? downloaded.mimeType() : MediaType.APPLICATION_OCTET_STREAM_VALUE;
+    @GetMapping("/download/{fileUUID}")
+    public ResponseEntity<InputStreamResource> download(@PathVariable String fileUUID) {
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloaded.name() + "\"")
-                .contentType(MediaType.parseMediaType(mimeType))
+        ResponseInputStream<GetObjectResponse> fileStream = fileService.downloadStream(fileUUID);
+        Tika tika = new Tika();
+        String mimeType;
+        try {
+            mimeType = tika.detect(fileStream, fileUUID);
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao detectar MimeType: " + e.getMessage());
+        }
+
+        InputStreamResource resource = new InputStreamResource(fileStream);
+
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(mimeType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileUUID + "\"")
                 .body(resource);
     }
+
+//        DriveService.DownloadedFile downloaded = null;
+//        try {
+//            downloaded = driveService.getFile(fileId);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        ByteArrayResource resource = new ByteArrayResource(downloaded.content());
+//        String mimeType = downloaded.mimeType() != null ? downloaded.mimeType() : MediaType.APPLICATION_OCTET_STREAM_VALUE;
+//
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloaded.name() + "\"")
+//                .contentType(MediaType.parseMediaType(mimeType))
+//                .body(resource);
+//    }
 
     @Operation(summary = "Remove um arquivo", method = "DELETE")
     @ApiResponses(value = {
@@ -76,9 +97,9 @@ public class FileController {
             @ApiResponse(responseCode = "404", description = "Nenhuma arquivo encontrado com este ID")
     })
     @DeleteMapping("/delete/{uuid}")
-    public ResponseEntity<String> deleteFile(@PathVariable String uuid, Authentication authentication) {
+    public ResponseEntity<String> delete(@PathVariable String uuid, Authentication authentication) {
             Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-            fileService.deleteFile(uuid, userId);
+            fileService.delete(uuid, userId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -92,11 +113,6 @@ public class FileController {
     @GetMapping("/{subjectId}")
     public ResponseEntity<List<FileDTO>> findAll(Authentication authentication, @PathVariable Integer subjectId){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(fileService.findAllFilesBySubjectId(userId, subjectId));
+        return ResponseEntity.ok(fileService.findAllBySubject(userId, subjectId));
     }
-
-
-
-
-
 }

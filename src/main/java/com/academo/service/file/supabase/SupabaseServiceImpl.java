@@ -10,15 +10,16 @@ import com.academo.service.file.IFileService;
 import com.academo.service.subject.ISubjectService;
 import com.academo.service.user.IUserService;
 import com.academo.util.config.storage.FileValidation;
+import com.academo.util.exceptions.fileTransfer.FileNotFoundException;
 import com.academo.util.exceptions.fileTransfer.FileStorageException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -52,11 +53,11 @@ public class SupabaseServiceImpl implements IFileService {
         FileValidation.isMimeTypeValid(file);
         FileValidation.isFileSizeValid(file);
 
-        String key = UUID.randomUUID().toString();
+        String fileUUIDName = UUID.randomUUID().toString();
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(key)
+                    .key(fileUUIDName)
                     .contentType(file.getContentType())
                     .build();
 
@@ -70,7 +71,7 @@ public class SupabaseServiceImpl implements IFileService {
         user.increaseStorageUsage(file.getSize());
         userService.update(user);
 
-        File f = new File(file.getOriginalFilename(), key, file.getContentType(), file.getSize());
+        File f = new File(file.getOriginalFilename(), fileUUIDName, file.getContentType(), file.getSize());
         f.setUser(user);
         f.setSubject(subject);
         File createdFile = fileRepository.save(f);
@@ -79,17 +80,38 @@ public class SupabaseServiceImpl implements IFileService {
     }
 
     @Override
-    public File findFileById(String uuid) {
-        return null;
+    public FileDTO findById(String uuid) {
+        return FileDTO.fromFile(fileRepository.findById(uuid).orElseThrow(FileNotFoundException::new));
+
     }
 
     @Override
-    public List<FileDTO> findAllFilesBySubjectId(Integer userId, Integer subjectId) {
-        return List.of();
+    public List<FileDTO> findAllBySubject(Integer userId, Integer subjectId) {
+        return fileRepository.findAllBySubjectIdAndUserId(subjectId, userId).stream().map(FileDTO::fromFile).toList();
     }
 
     @Override
-    public void deleteFile(String uuid, Integer userId) {
+    public ResponseInputStream<GetObjectResponse> downloadStream(String fileUUIDName) {
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileUUIDName)
+                .build();
 
+        return s3Client.getObject(getObjectRequest);
+    }
+
+    @Transactional
+    @Override
+    public void delete(String uuid, Integer userId) {
+        File file = fileRepository.findByIdAndUserId(uuid, userId).orElseThrow(FileNotFoundException::new);
+
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(file.getPath())
+                .build();
+
+        s3Client.deleteObject(deleteObjectRequest);
+
+        fileRepository.delete(file);
     }
 }

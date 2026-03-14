@@ -14,6 +14,8 @@ import com.academo.util.config.storage.FileValidation;
 import com.academo.util.exceptions.fileTransfer.*;
 import jakarta.transaction.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.util.List;
 
@@ -61,40 +63,27 @@ public class GoogleDriveServiceImpl implements IFileService {
         f.setSubject(subject);
 
         File uploadedFile = fileRepository.save(f);
-        return new FileDTO(
-                uploadedFile.getUuid(),
-                uploadedFile.getFileName(),
-                uploadedFile.getPath(),
-                uploadedFile.getFileType(),
-                uploadedFile.getSize(),
-                uploadedFile.getSubject().getId(),
-                uploadedFile.getCreatedAt()
-        );
+        return FileDTO.fromFile(uploadedFile);
     }
 
     @Override
-    public File findFileById(String uuid){
-        return fileRepository.findById(uuid).orElseThrow(FileNotFoundException::new);
+    public FileDTO findById(String uuid){
+        return FileDTO.fromFile(fileRepository.findById(uuid).orElseThrow(FileNotFoundException::new));
     }
 
     @Override
-    public List<FileDTO> findAllFilesBySubjectId(Integer userId, Integer subjectId) {
-        //Não entendi o porquê deste subject. Imagino que seja para verificar caso ele não exista. Neste caso, esta primeira linha lançará exceção
-        Subject subject = SubjectDTO.toSubject(subjectId, subjectService.findById(subjectId, userId));
+    public List<FileDTO> findAllBySubject(Integer userId, Integer subjectId) {
+        return fileRepository.findAllBySubjectIdAndUserId(subjectId, userId).stream().map(FileDTO::fromFile).toList();
+    }
 
-        return fileRepository.findAllBySubjectId(subjectId).stream().map( file -> new FileDTO(
-                file.getUuid(),
-                file.getFileName(),
-                file.getPath(),
-                file.getFileType(),
-                file.getSize(),
-                file.getSubject().getId(),
-                file.getCreatedAt())).toList();
+    @Override
+    public ResponseInputStream<GetObjectResponse> downloadStream(String uuid) {
+        return null;
     }
 
     @Transactional
     @Override
-    public void deleteFile(String uuid, Integer userId) {
+    public void delete(String uuid, Integer userId) {
         User user = userService.findById(userId);
         File file = fileRepository.findById(uuid).orElseThrow(FileNotFoundException::new);
 

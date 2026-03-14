@@ -26,7 +26,7 @@ import java.util.Collections;
 public class SecurityConfigurations {
 
     @Value("${cliente.url}")
-    private String CLIENTE_URL;
+    private static String CLIENTE_URL;
 
     private final SecurityFilter securityFilter;
 
