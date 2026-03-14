@@ -1,13 +1,14 @@
 package com.academo.service.user;
 
+import com.academo.controller.dtos.user.UserDTO;
 import com.academo.model.User;
 import com.academo.controller.dtos.security.RegisterDTO;
 
 public interface IUserService {
 
     void createUser(RegisterDTO registerDTO);
-    User activateUser(String token);
+    UserDTO activateUser(String token);
     User findById(Integer id);
     User findByEmail(String email);
-    User update(User user);
+    UserDTO update(User user);
 }

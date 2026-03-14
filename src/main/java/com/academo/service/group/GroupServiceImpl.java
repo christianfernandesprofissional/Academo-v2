@@ -48,7 +48,7 @@ public class GroupServiceImpl implements IGroupService {
         g.setName(createGroupDTO.name());
         g.setDescription(createGroupDTO.description());
         g.setUser(user);
-        return GroupDTO.fromGroup(g);
+        return GroupDTO.fromGroup(groupRepository.save(g));
     }
 
     @Override
@@ -71,8 +71,8 @@ public class GroupServiceImpl implements IGroupService {
     @Override
     @Transactional
     public GroupDTO addSubject(Integer userId, Integer groupId, Integer subjectId) {
-        Group group = verifyGroup(userId, groupId);
-        Subject subject = verifySubject(userId, subjectId);
+        Group group = groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new);
+        Subject subject = SubjectDTO.toSubject(subjectId, subjectService.findById(subjectId, userId));
         group.getSubjects().add(subject);
         return GroupDTO.fromGroup(groupRepository.save(group));
     }
@@ -80,8 +80,8 @@ public class GroupServiceImpl implements IGroupService {
     @Override
     @Transactional
     public GroupDTO deleteSubject(Integer userId, Integer groupId, Integer subjectId) {
-        Group group = verifyGroup(userId, groupId);
-        Subject subject = verifySubject(userId, subjectId);
+        Group group = groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new);
+        Subject subject = SubjectDTO.toSubject(subjectId, subjectService.findById(subjectId, userId));
         group.getSubjects().remove(subject);
         return GroupDTO.fromGroup(groupRepository.save(group));
     }
@@ -98,31 +98,4 @@ public class GroupServiceImpl implements IGroupService {
         group.getSubjects().addAll(subjects);
         return GroupDTO.fromGroup(groupRepository.save(group));
     }
-
-    /**
-     * Verifica se o grupo pertence ao mesmo usuário,
-     *
-     * @param userId id do usuário
-     * @param groupId id do grupo
-     * @return Group
-     */
-    private Group verifyGroup(Integer userId, Integer groupId){
-        Group group = groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new);
-        if(!group.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
-        return group;
-    }
-
-    /**
-     * Verifica se o Subject pertence ao mesmo usuário,
-     *
-     * @param userId id do usuário
-     * @param subjectId id do subject
-     * @return Subject
-     */
-    private Subject verifySubject(Integer userId, Integer subjectId){
-        Subject subject = SubjectDTO.toSubject(subjectId, subjectService.findById(subjectId, userId));
-        if(!subject.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
-        return subject;
-    }
-
 }

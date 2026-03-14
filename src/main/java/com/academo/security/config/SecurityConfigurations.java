@@ -1,6 +1,6 @@
 package com.academo.security.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,13 +19,14 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
 
-    //@Value("${cliente.url}")
-    private static final String CLIENTE_URL = "http://localhost:5173";
+    @Value("${cliente.url}")
+    private static String CLIENTE_URL;
 
     private final SecurityFilter securityFilter;
 
@@ -66,9 +67,9 @@ public class SecurityConfigurations {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList(CLIENTE_URL));
+        config.setAllowedOrigins(Collections.singletonList(CLIENTE_URL));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

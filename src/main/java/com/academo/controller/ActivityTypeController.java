@@ -35,7 +35,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar tipos de atividade"),
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrada")
     })
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<ActivityTypeDTO>> findAll(Authentication authentication) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         List<ActivityTypeDTO> types  = activityTypeService.findAll(userId);
@@ -75,7 +75,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ActivityTypeDTO> update(Authentication authentication,@PathVariable Integer id, @RequestBody @Valid SaveActivityDTO activityTypeDTO) {
+    public ResponseEntity<ActivityTypeDTO> update(Authentication authentication,@PathVariable Integer id, @RequestBody @Valid SaveActivityTypeDTO activityTypeDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityTypeDTO updated = activityTypeService.update(userId, id, activityTypeDTO);
         return ResponseEntity.ok(updated);
@@ -87,7 +87,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar deletar tipo de atividade"),
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{activityTypeId}")
     public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Integer activityTypeId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         activityTypeService.delete(userId, activityTypeId);

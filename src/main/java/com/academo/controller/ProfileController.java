@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.academo.security.authuser.AuthUser;
-import com.academo.service.profile.ProfileServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,7 +23,7 @@ public class ProfileController {
 
     private final IProfileService service;
 
-    public ProfileController(ProfileServiceImpl service) {
+    public ProfileController(IProfileService service) {
         this.service = service;
     }
 
@@ -45,7 +45,7 @@ public class ProfileController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar perfil")
     })
     @PutMapping
-    public ResponseEntity<ProfileDTO> update(Authentication authentication, @RequestBody UpdateProfileDTO profileDto) {
+    public ResponseEntity<ProfileDTO> update(Authentication authentication, @RequestBody @Valid UpdateProfileDTO profileDto) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.status(HttpStatus.OK).body(service.update(userId, profileDto));
     }

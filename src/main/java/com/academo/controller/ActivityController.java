@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -35,7 +36,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar atividades"),
             @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada")
     })
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<ActivityDTO>> findAll(Authentication authentication) {
        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
        return ResponseEntity.ok(activityService.findAll(userId));
@@ -54,9 +55,9 @@ public class ActivityController {
     }
 
     @GetMapping("/by-subject/{subjectId}")
-    public ResponseEntity<List<ActivityDTO>> findBySubject(Authentication authentication, @PathVariable Integer subjectId) {
+    public ResponseEntity<List<ActivityDTO>> findAllBySubject(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(activityService.findBySubjectId(userId, subjectId));
+        return ResponseEntity.ok(activityService.findAllBySubjectId(userId, subjectId));
     }
 
     @Operation(summary = "Cadastra uma nova atividade", method = "POST")
@@ -65,7 +66,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar atividade")
     })
     @PostMapping
-    public ResponseEntity<ActivityDTO> create(Authentication authentication, @RequestBody SaveActivityDTO activityDTO) {
+    public ResponseEntity<ActivityDTO> create(Authentication authentication, @RequestBody @Valid SaveActivityDTO activityDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityDTO created = activityService.create(userId, activityDTO);
         URI location = URI.create("/activities?activityId=" + created.id());
@@ -79,10 +80,9 @@ public class ActivityController {
             @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada com este ID")
     })
     @PutMapping("/{activityId}")
-    public ResponseEntity<Activity> update(Authentication authentication,@PathVariable Integer activityId, @RequestBody SaveActivityDTO activityDTO) {
+    public ResponseEntity<ActivityDTO> update(Authentication authentication,@PathVariable Integer activityId, @RequestBody @Valid SaveActivityDTO activityDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        activityService.update(userId, activityId, activityDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(activityService.update(userId, activityId, activityDTO));
     }
 
     @Operation(summary = "Remove uma atividade", method = "DELETE")
@@ -92,7 +92,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "404", description = "Nenhuma atividade encontrada com este ID")
     })
     @DeleteMapping("/{activityId}")
-    public ResponseEntity<Activity> delete(Authentication authentication, @PathVariable Integer activityId) {
+    public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Integer activityId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         activityService.delete(userId,activityId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

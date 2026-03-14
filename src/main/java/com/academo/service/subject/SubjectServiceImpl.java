@@ -23,13 +23,11 @@ import java.util.List;
 public class SubjectServiceImpl implements ISubjectService {
 
     private final SubjectRepository subjectRepository;
-    private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final IUserService userService;
 
     public SubjectServiceImpl(SubjectRepository subjectRepository, UserRepository userRepository, GroupRepository groupRepository, IUserService userService) {
         this.subjectRepository = subjectRepository;
-        this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.userService = userService;
     }
@@ -52,7 +50,7 @@ public class SubjectServiceImpl implements ISubjectService {
 
     @Override
     public SubjectDTO create(Integer userId, CreateSubjectDTO createSubjectDTO) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.findById(userId);
         Subject subject = new Subject();
         subject.setName(createSubjectDTO.name());
         subject.setDescription(createSubjectDTO.description());
@@ -65,13 +63,11 @@ public class SubjectServiceImpl implements ISubjectService {
     public SubjectDTO update(Integer userId, Integer subjectId, UpdateSubjectDTO subjectDTO) {
         Subject inDb = subjectRepository.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
         if(!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
-        User user = userService.findById(userId);
-        Subject updated = new Subject();
-        updated.setId(subjectId);
+
+        Subject updated = inDb;
         updated.setName(subjectDTO.name());
         updated.setDescription(subjectDTO.description());
         updated.setIsActive(subjectDTO.isActive());
-        updated.setUser(user);
         updated = subjectRepository.save(updated);
         return SubjectDTO.fromSubject(updated);
     }
@@ -83,7 +79,6 @@ public class SubjectServiceImpl implements ISubjectService {
         if(!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException("Deleção inválida!");
 
         // Verificar esta lógica
-
         for(Group g : inDb.getGroups()) {
             g.getSubjects().remove(inDb);
             groupRepository.save(g);

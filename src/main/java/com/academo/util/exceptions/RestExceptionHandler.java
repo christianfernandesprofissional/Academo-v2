@@ -1,40 +1,72 @@
 package com.academo.util.exceptions;
 
+import com.academo.controller.dtos.mail.ActivateAccountMailDTO;
+import com.academo.controller.dtos.validation.ValidationErrors;
 import com.academo.model.User;
 import com.academo.security.service.TokenService;
-import com.academo.service.user.UserServiceImpl;
-import com.academo.util.exceptions.FileTransfer.*;
+import com.academo.service.user.IUserService;
+import com.academo.util.exceptions.fileTransfer.*;
 import com.academo.util.exceptions.activity.ActivityExistsException;
 import com.academo.util.exceptions.activity.ActivityNotFoundException;
 import com.academo.util.exceptions.activityType.ActivityTypeExistsException;
 import com.academo.util.exceptions.activityType.ActivityTypeNotFoundException;
 import com.academo.controller.dtos.exception.ExceptionDTO;
 import com.academo.util.exceptions.group.GroupNotFoundException;
+import com.academo.util.exceptions.mail.MailException;
 import com.academo.util.exceptions.profile.ProfileNotFoundException;
 import com.academo.util.exceptions.subject.SubjectNotFoundException;
 import com.academo.util.exceptions.user.*;
 import com.academo.service.mail.IMailService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @Autowired
-    private IMailService mailService;
+    private final IMailService mailService;
+    private final TokenService tokenService;
+    private final IUserService userService;
 
-    @Autowired
-    private TokenService tokenService;
+    public RestExceptionHandler(IMailService mailService, TokenService tokenService, IUserService userService) {
+        this.mailService = mailService;
+        this.tokenService = tokenService;
+        this.userService = userService;
+    }
 
-    @Autowired
-    private UserServiceImpl userService;
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+
+        Map<String, String> validationErrors = new HashMap<>();
+
+        ex.getBindingResult()
+                .getFieldErrors()
+                .forEach(fieldError ->
+                        validationErrors.put(
+                                fieldError.getField(),
+                                fieldError.getDefaultMessage()
+                        )
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ValidationErrors(validationErrors));
+    }
 
     //Activity
     @ExceptionHandler(ActivityNotFoundException.class)
@@ -107,7 +139,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             user.setActivationAccountTokenExpiration(expiresAt);
             userService.update(user);
             var token = tokenService.generateActivationToken(user.getId());
-            mailService.sendActivationMail(user.getEmail(), token);
+            mailService.sendActivationMail(new ActivateAccountMailDTO(user.getName(), user.getEmail(), token));
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ExceptionDTO(exception.getMessage()));
     }
@@ -145,6 +177,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AlreadyActivatedUserException.class)
     private ResponseEntity<ExceptionDTO> alreadyActivatedUserHandler(AlreadyActivatedUserException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(MailException.class)
+    private ResponseEntity<ExceptionDTO> mailException(MailException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
     }
 
 }

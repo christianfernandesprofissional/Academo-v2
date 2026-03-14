@@ -2,6 +2,7 @@ package com.academo.controller.dtos.activity;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDate;
@@ -16,9 +17,9 @@ public record SaveActivityDTO(
         String name,
         String description,
         @PositiveOrZero(message = "É obrigatório que a nota da atividade seja maior ou igual a zero")
-        Double value,
-        @NotEmpty(message = "É necessário que a atividade pertença a uma matéria existente")
+        Double grade,
+        @NotNull(message = "É necessário que a atividade pertença a uma matéria existente")
         Integer subjectId,
-        @NotEmpty(message = "É obrigatório escolher um tipo de atividade")
+        @NotNull(message = "É obrigatório escolher um tipo de atividade")
         Integer activityTypeId
 ) {}

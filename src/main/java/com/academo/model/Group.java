@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class Group {
     private User user;
 
     @Column(name = "is_active", columnDefinition = "boolean default true")
-    private boolean isActive;
+    private boolean isActive = true;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
@@ -43,10 +44,10 @@ public class Group {
      */
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tb_groups_subjects",
+    @JoinTable(name = "group_subject",
             joinColumns = @JoinColumn(name = "id_group"),
             inverseJoinColumns = @JoinColumn(name = "id_subject"))
-    private List<Subject> subjects;
+    private List<Subject> subjects = new ArrayList<>();
 
 
     public int getId() {

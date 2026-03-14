@@ -1,6 +1,8 @@
 package com.academo.security.authuser;
 
 import com.academo.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +12,8 @@ import java.util.List;
 
 
 public class AuthUser implements UserDetails {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthUser.class);
 
     private final User user;
 
@@ -29,7 +33,8 @@ public class AuthUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getName();
+        logger.info("[DEBUG] Username do AuthUser: {}", user.getEmail());
+        return user.getEmail();
     }
 
     public User getUser() {return user;}

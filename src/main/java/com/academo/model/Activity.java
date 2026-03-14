@@ -128,8 +128,8 @@ public class Activity {
         return grade;
     }
 
-    public void setActivityValue(double activityValue) {
-        this.grade = activityValue;
+    public void setGrade(double grade) {
+        this.grade = grade;
     }
 
     public LocalDate getNotificationDate() {

@@ -3,6 +3,7 @@ package com.academo.controller;
 import com.academo.controller.dtos.security.LoginResponseDTO;
 import com.academo.controller.dtos.security.RegisterDTO;
 import com.academo.controller.dtos.security.UserAuthDTO;
+import com.academo.controller.dtos.user.UserDTO;
 import com.academo.model.User;
 import com.academo.security.authuser.*;
 import com.academo.security.service.TokenService;
@@ -12,6 +13,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 @Tag(name = "Usuários")
 public class UserController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final AuthenticationManager authenticationManager;
     private final IUserService userService;
@@ -41,11 +47,12 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody UserAuthDTO user) {
-        UsernamePasswordAuthenticationToken userPass = new UsernamePasswordAuthenticationToken(user.username(), user.password());
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid UserAuthDTO user) {
+        UsernamePasswordAuthenticationToken userPass = new UsernamePasswordAuthenticationToken(user.email(), user.password());
         Authentication auth = authenticationManager.authenticate(userPass);
         var token = tokenService.generateLoginToken((AuthUser) auth.getPrincipal());
-        User u = userService.findByEmail(user.username());
+        logger.info("[DEBUG] Token: {}", token);
+        User u = userService.findByEmail(user.email());
         return ResponseEntity.ok(new LoginResponseDTO(token, u.getId(), u.getName()));
     }
 
@@ -55,7 +62,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Este usuário já está cadastrado no sistema"),
     })
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDTO register) throws ExistingUserException {
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO register) throws ExistingUserException {
         userService.createUser(register);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -67,7 +74,8 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Token expirado")
     })
     @PostMapping("/activate")
-    public ResponseEntity<User> activate(@RequestParam("value") String token) {
+    public ResponseEntity<UserDTO> activate(@RequestParam("token") String token) {
+        logger.debug("[DEBUG] Token: {}", token);
         return ResponseEntity.status(HttpStatus.OK).body(userService.activateUser(token));
     }
 

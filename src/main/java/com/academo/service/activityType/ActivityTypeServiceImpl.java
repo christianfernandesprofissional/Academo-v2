@@ -1,6 +1,5 @@
 package com.academo.service.activityType;
 
-import com.academo.controller.dtos.activity.SaveActivityDTO;
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
 import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.model.ActivityType;
@@ -9,12 +8,16 @@ import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.activityType.ActivityTypeExistsException;
 import com.academo.util.exceptions.activityType.ActivityTypeNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class ActivityTypeServiceImpl implements IActivityTypeService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ActivityTypeServiceImpl.class);
 
     private final ActivityTypeRepository repository;
     private final IUserService userService;
@@ -30,7 +33,9 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
                 .map(t -> new ActivityTypeDTO(
                         t.getId(),
                         t.getName(),
-                        t.getDescription()
+                        t.getDescription(),
+                        t.getCreatedAt(),
+                        t.getUpdatedAt()
                 )).toList();
     }
 
@@ -43,7 +48,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
     @Override
     public ActivityTypeDTO findDTO(Integer ActivityTypeId, Integer userId) {
         ActivityType activityType =  repository.findByIdAndUserId(ActivityTypeId, userId).orElseThrow(ActivityTypeNotFoundException::new);
-        return new ActivityTypeDTO(activityType.getId(), activityType.getName(), activityType.getDescription());
+        return new ActivityTypeDTO(activityType.getId(), activityType.getName(), activityType.getDescription(), activityType.getCreatedAt(), activityType.getUpdatedAt());
     }
 
     @Override
@@ -57,22 +62,20 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
         newActivityType.setUser(userService.findById(userId));
         newActivityType.setId(repository.save(newActivityType).getId());
 
-        return new ActivityTypeDTO(newActivityType.getId(), newActivityType.getName(), newActivityType.getDescription());
+        return new ActivityTypeDTO(newActivityType.getId(), newActivityType.getName(), newActivityType.getDescription(), newActivityType.getCreatedAt(), newActivityType.getUpdatedAt());
     }
 
     @Override
-    public ActivityTypeDTO update(Integer userId, Integer id, SaveActivityDTO activityTypeDTO) {
+    public ActivityTypeDTO update(Integer userId, Integer id, SaveActivityTypeDTO activityTypeDTO) {
         ActivityType inDb = repository.findByIdAndUserId(id, userId).orElseThrow(ActivityTypeNotFoundException::new);
         if (!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
 
-        ActivityType updated = new ActivityType();
-        updated.setId(id);
-        updated.setUser(inDb.getUser());
-        updated.setName(activityTypeDTO.name());
-        updated.setDescription(activityTypeDTO.description());
-        repository.save(updated);
+        inDb.setName(activityTypeDTO.name());
+        inDb.setDescription(activityTypeDTO.description());
+        ActivityType updated = repository.save(inDb);
+        logger.info("[DEBUG] ActivityType updated - createdAt: {}", updated.getCreatedAt());
 
-        return new ActivityTypeDTO(updated.getId(), updated.getName(), updated.getDescription());
+        return new ActivityTypeDTO(updated.getId(), updated.getName(), updated.getDescription(), updated.getCreatedAt(), updated.getUpdatedAt());
     }
 
     @Override
