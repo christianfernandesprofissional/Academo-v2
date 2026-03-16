@@ -1,6 +1,4 @@
-package com.academo.util.exceptions.FileTransfer;
-
-import com.academo.model.User;
+package com.academo.util.exceptions.fileTransfer;
 
 public class UserStorageIsFullException extends RuntimeException {
 

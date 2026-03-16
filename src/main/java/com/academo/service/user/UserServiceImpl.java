@@ -1,5 +1,7 @@
 package com.academo.service.user;
 
+import com.academo.controller.dtos.mail.ActivateAccountMailDTO;
+import com.academo.controller.dtos.mail.WelcomeMailDTO;
 import com.academo.controller.dtos.user.UserDTO;
 import com.academo.model.Profile;
 import com.academo.model.User;
@@ -49,7 +51,7 @@ public class UserServiceImpl implements IUserService {
         user.setProfile(profile);
         User createdUser = userRepository.save(user);
         var token = tokenService.generateActivationToken(createdUser.getId());
-        mailService.sendActivationMail(createdUser.getEmail(), token);
+        mailService.sendActivationMail(new ActivateAccountMailDTO(createdUser.getName(), createdUser.getEmail(), token));
     }
 
     @Override
@@ -58,9 +60,9 @@ public class UserServiceImpl implements IUserService {
         Integer userId = Integer.parseInt(tokenService.validateActivationToken(token));
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if(!user.getAccountActivated()) {
-            user.setAccountActivated(true);
+            user.setAccountActivated(Boolean.TRUE);
             user.setActivationAccountTokenExpiration(LocalDateTime.now());
-            mailService.sendWelcomeMail(user.getEmail());
+            mailService.sendWelcomeMail(new WelcomeMailDTO(user.getName(), user.getEmail()));
             return UserDTO.fromUser(userRepository.save(user));
         } else {
             throw new AlreadyActivatedUserException("Usuário já ativado na plataforma!");
