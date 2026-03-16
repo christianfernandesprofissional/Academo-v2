@@ -16,6 +16,7 @@ public record ActivityTypeDTO (
         String description,
         String weight,
         List<ActivityDTO> activities,
+        Integer periodId,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ){
@@ -26,6 +27,7 @@ public record ActivityTypeDTO (
                 activityType.getDescription(),
                 activityType.getWeight().toString(),
                 activityType.getActivities().stream().map(ActivityDTO::fromActivity).toList(),
+                activityType.getPeriod().getPeriodId(),
                 activityType.getCreatedAt(),
                 activityType.getUpdatedAt()
         );
