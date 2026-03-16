@@ -64,7 +64,7 @@ public class ActivityTypeController {
     public ResponseEntity<ActivityTypeDTO> create(Authentication authentication, @RequestBody @Valid SaveActivityTypeDTO activityTypeDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityTypeDTO createdActivityType = activityTypeService.create(userId, activityTypeDTO);
-        URI uri = URI.create("/activity-types?id=" + createdActivityType.id());
+        URI uri = URI.create("/activity-types/" + createdActivityType.id());
         return ResponseEntity.created(uri).body(createdActivityType);
     }
 

@@ -1,14 +1,14 @@
 package com.academo.model;
 
+import com.academo.model.enums.CalculationType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "subjects")
@@ -40,6 +40,13 @@ public class Subject {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column(name = "final_grade")
+    private BigDecimal finalGrade = new BigDecimal("0");
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "calculation")
+    private CalculationType calculationType = CalculationType.MEDIA_ARITMETICA;
+
     /*
     FetchType.LAZY -> Define que, ao puxar uma Subject, a lista de Grupos não é automaticamente carregada
      */
@@ -59,6 +66,11 @@ public class Subject {
              cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<File> files = new ArrayList<>();
+
+    @OneToMany(mappedBy = "subject",
+                cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private Set<Period> periods = new HashSet<>();
 
 
     public int getId() {
@@ -147,6 +159,30 @@ public class Subject {
 
     public void setFiles(List<File> files) {
         this.files = files;
+    }
+
+    public Set<Period> getPeriods(){return this.periods;};
+
+    public void setPeriods(HashSet<Period> periods){this.periods = periods;};
+
+    public BigDecimal getFinalGrade() {
+        return finalGrade;
+    }
+
+    public void setFinalGrade(BigDecimal finalGrade) {
+        this.finalGrade = finalGrade;
+    }
+
+    public CalculationType getCalculationType() {
+        return calculationType;
+    }
+
+    public void setCalculationType(CalculationType calculationType) {
+        this.calculationType = calculationType;
+    }
+
+    public void setPeriods(Set<Period> periods) {
+        this.periods = periods;
     }
 
     @Override
