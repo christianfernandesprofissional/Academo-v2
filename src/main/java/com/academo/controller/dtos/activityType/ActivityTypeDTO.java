@@ -14,6 +14,7 @@ public record ActivityTypeDTO (
         @NotEmpty(message = "O nome do tipo de ativadade é obrigatório")
         String name,
         String description,
+        String weight,
         List<ActivityDTO> activities,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
@@ -23,6 +24,7 @@ public record ActivityTypeDTO (
                 activityType.getId(),
                 activityType.getName(),
                 activityType.getDescription(),
+                activityType.getWeight().toString(),
                 activityType.getActivities().stream().map(ActivityDTO::fromActivity).toList(),
                 activityType.getCreatedAt(),
                 activityType.getUpdatedAt()

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,9 @@ public class ActivityType {
     @ManyToOne
     @JoinColumn(name = "period_id")
     private Period period;
+
+    @Column(name = "weight")
+    private BigDecimal weight = new BigDecimal("1");
 
     @OneToMany(mappedBy = "activityType",
             cascade = CascadeType.REMOVE)
@@ -99,6 +103,14 @@ public class ActivityType {
     public void setPeriod(Period period) {this.period = period;}
 
     public List<Activity> getActivities() {return activities;}
+
+    public BigDecimal getWeight() {
+        return weight;
+    }
+
+    public void setWeight(BigDecimal weight) {
+        this.weight = weight;
+    }
 
     @Override
     public boolean equals(Object o) {

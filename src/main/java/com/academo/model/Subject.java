@@ -43,6 +43,7 @@ public class Subject {
     @Column(name = "final_grade")
     private BigDecimal finalGrade = new BigDecimal("0");
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "calculation")
     private CalculationType calculationType = CalculationType.MEDIA_ARITMETICA;
 

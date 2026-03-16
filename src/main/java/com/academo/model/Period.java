@@ -33,7 +33,7 @@ public class Period {
     private BigDecimal grade = new BigDecimal("0");
 
     @Column(name = "weight")
-    private BigDecimal weight;
+    private BigDecimal weight = new BigDecimal("1");
 
     @OneToMany(mappedBy = "period",
                 cascade = CascadeType.REMOVE)
@@ -110,7 +110,7 @@ public class Period {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Period period = (Period) o;
-        return name == period.name;
+        return name.equals(period.name);
     }
 
     @Override

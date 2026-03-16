@@ -77,6 +77,12 @@ databaseChangeLog:
                 nullable: false
               name: period_id
               type: INTEGER
+          - column:
+              constraints:
+                nullable: false
+              defaultValueNumeric: 1
+              name: weight
+              type: numeric
 - changeSet:
     id: 1771623768047-26
     author: christian-fernandes
