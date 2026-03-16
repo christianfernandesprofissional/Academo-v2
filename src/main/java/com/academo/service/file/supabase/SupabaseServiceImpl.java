@@ -1,5 +1,7 @@
 package com.academo.service.file.supabase;
 
+import com.academo.controller.dtos.file.DownloadGoogleFileDTO;
+import com.academo.controller.dtos.file.DownloadS3FileDTO;
 import com.academo.controller.dtos.file.FileDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.File;
@@ -16,7 +18,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -53,11 +54,11 @@ public class SupabaseServiceImpl implements IFileService {
         FileValidation.isMimeTypeValid(file);
         FileValidation.isFileSizeValid(file);
 
-        String fileUUIDName = UUID.randomUUID().toString();
+        String pathUUID = UUID.randomUUID().toString();
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(fileUUIDName)
+                    .key(pathUUID)
                     .contentType(file.getContentType())
                     .build();
 
@@ -71,7 +72,7 @@ public class SupabaseServiceImpl implements IFileService {
         user.increaseStorageUsage(file.getSize());
         userService.update(user);
 
-        File f = new File(file.getOriginalFilename(), fileUUIDName, file.getContentType(), file.getSize());
+        File f = new File(file.getOriginalFilename(), pathUUID, file.getContentType(), file.getSize());
         f.setUser(user);
         f.setSubject(subject);
         File createdFile = fileRepository.save(f);
@@ -81,7 +82,7 @@ public class SupabaseServiceImpl implements IFileService {
 
     @Override
     public FileDTO findById(String uuid) {
-        return FileDTO.fromFile(fileRepository.findById(uuid).orElseThrow(FileNotFoundException::new));
+        return FileDTO.fromFile(fileRepository.findById(UUID.fromString(uuid)).orElseThrow(FileNotFoundException::new));
 
     }
 
@@ -93,7 +94,7 @@ public class SupabaseServiceImpl implements IFileService {
     @Transactional
     @Override
     public void delete(String uuid, Integer userId) {
-        File file = fileRepository.findByIdAndUserId(uuid, userId).orElseThrow(FileNotFoundException::new);
+        File file = fileRepository.findByUuidAndUserId(UUID.fromString(uuid), userId).orElseThrow(FileNotFoundException::new);
 
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
@@ -105,12 +106,23 @@ public class SupabaseServiceImpl implements IFileService {
         fileRepository.delete(file);
     }
 
-    public ResponseInputStream<GetObjectResponse> downloadStream(String fileUUIDName) {
+    @Override
+    public DownloadS3FileDTO downloadStream(String fileUUID) {
+        File file = fileRepository.findById(UUID.fromString(fileUUID)).orElseThrow(FileNotFoundException::new);
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
-                .key(fileUUIDName)
+                .key(file.getPath())
                 .build();
 
-        return s3Client.getObject(getObjectRequest);
+        return new DownloadS3FileDTO(
+                file.getFileName(),
+                file.getFileType(),
+                file.getSize(),
+                s3Client.getObject(getObjectRequest));
+    }
+
+    @Override
+    public DownloadGoogleFileDTO downloadGoogleFile(String fileUUID) throws Exception {
+        return null;
     }
 }

@@ -197,13 +197,12 @@ databaseChangeLog:
     - createTable:
         columns:
         - column:
-            autoIncrement: true
             constraints:
               nullable: false
               primaryKey: true
               primaryKeyName: files_pkey
             name: uuid
-            type: VARCHAR(255)
+            type: uuid
         - column:
             constraints:
               nullable: false

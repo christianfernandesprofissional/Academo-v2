@@ -1,5 +1,6 @@
 package com.academo.controller;
 
+import com.academo.controller.dtos.file.DownloadS3FileDTO;
 import com.academo.controller.dtos.file.FileDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.file.IFileService;
@@ -7,7 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,10 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -29,7 +28,8 @@ import java.util.List;
 public class FileController {
 
     private final IFileService fileService;
-    //private final DriveService driveService;
+
+    private static final Logger log = LoggerFactory.getLogger(FileController.class);
 
     public FileController(IFileService fileService) {
         this.fileService = fileService;
@@ -57,36 +57,17 @@ public class FileController {
     @GetMapping("/download/{fileUUID}")
     public ResponseEntity<InputStreamResource> download(@PathVariable String fileUUID) {
 
-        ResponseInputStream<GetObjectResponse> fileStream = fileService.downloadStream(fileUUID);
-        Tika tika = new Tika();
-        String mimeType;
-        try {
-            mimeType = tika.detect(fileStream, fileUUID);
-        } catch (IOException e) {
-            throw new RuntimeException("Erro ao detectar MimeType: " + e.getMessage());
-        }
+        DownloadS3FileDTO fileDTO = fileService.downloadStream(fileUUID);
 
-        InputStreamResource resource = new InputStreamResource(fileStream);
+        InputStreamResource resource = new InputStreamResource(fileDTO.response());
 
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(mimeType))
+        return ResponseEntity.ok()
+                .contentLength(fileDTO.response().response().contentLength())
+                .contentType(MediaType.parseMediaType(fileDTO.mimeType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileUUID + "\"")
                 .body(resource);
     }
 
-//        DriveService.DownloadedFile downloaded = null;
-//        try {
-//            downloaded = driveService.getFile(fileId);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//        ByteArrayResource resource = new ByteArrayResource(downloaded.content());
-//        String mimeType = downloaded.mimeType() != null ? downloaded.mimeType() : MediaType.APPLICATION_OCTET_STREAM_VALUE;
-//
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloaded.name() + "\"")
-//                .contentType(MediaType.parseMediaType(mimeType))
-//                .body(resource);
-//    }
 
     @Operation(summary = "Remove um arquivo", method = "DELETE")
     @ApiResponses(value = {

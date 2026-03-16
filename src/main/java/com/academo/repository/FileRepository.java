@@ -5,8 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface FileRepository extends JpaRepository<File, String> {
+public interface FileRepository extends JpaRepository<File, UUID> {
     List<File> findAllBySubjectIdAndUserId(Integer subjectId, Integer userId);
-    Optional<File> findByIdAndUserId(String id, Integer userId);
+    Optional<File> findByUuidAndUserId(UUID uuid, Integer userId);
 }

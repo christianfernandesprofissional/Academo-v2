@@ -1,6 +1,7 @@
 package com.academo.service.file.google;
 
-import com.academo.controller.dtos.file.DownloadedFileDTO;
+import com.academo.controller.dtos.file.DownloadGoogleFileDTO;
+import com.academo.controller.dtos.file.DownloadS3FileDTO;
 import com.academo.controller.dtos.file.FileDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.File;
@@ -19,6 +20,7 @@ import com.google.api.services.drive.Drive;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.UUID;
 
 //@Component
 public class GoogleDriveServiceImpl implements IFileService {
@@ -79,7 +81,7 @@ public class GoogleDriveServiceImpl implements IFileService {
 
     @Override
     public FileDTO findById(String uuid){
-        return FileDTO.fromFile(fileRepository.findById(uuid).orElseThrow(FileNotFoundException::new));
+        return FileDTO.fromFile(fileRepository.findById(UUID.fromString(uuid)).orElseThrow(FileNotFoundException::new));
     }
 
     @Override
@@ -91,14 +93,14 @@ public class GoogleDriveServiceImpl implements IFileService {
     @Override
     public void delete(String uuid, Integer userId) {
         User user = userService.findById(userId);
-        File file = fileRepository.findById(uuid).orElseThrow(FileNotFoundException::new);
+        File file = fileRepository.findById(UUID.fromString(uuid)).orElseThrow(FileNotFoundException::new);
 
         long newUserStorage = user.getStorageUsage() - file.getSize();
         user.setStorageUsage(newUserStorage);
 
         String drivePath = file.getPath().substring(37);
 
-        fileRepository.deleteById(uuid);
+        fileRepository.deleteById(UUID.fromString(uuid));
         userService.update(user);
         try {
             drive.files().delete(drivePath).execute();
@@ -107,7 +109,14 @@ public class GoogleDriveServiceImpl implements IFileService {
         }
     }
 
-    public DownloadedFileDTO getDownloadedFile(String fileId) throws Exception {
+    @Override
+    public DownloadS3FileDTO downloadStream(String fileUUIDName) {
+        return null;
+    }
+
+
+    @Override
+    public DownloadGoogleFileDTO downloadGoogleFile(String fileId) throws Exception {
         // Recupera o metadado do arquivo
         com.google.api.services.drive.model.File fileMetadata = drive.files()
                 .get(fileId)
@@ -121,7 +130,7 @@ public class GoogleDriveServiceImpl implements IFileService {
         drive.files().get(fileId).executeMediaAndDownloadTo(outputStream);
 
         // Retorna um objeto com as informações do arquivo
-        return new DownloadedFileDTO(
+        return new DownloadGoogleFileDTO(
                 fileMetadata.getName(),
                 fileMetadata.getMimeType(),
                 outputStream.toByteArray()

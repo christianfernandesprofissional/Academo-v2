@@ -16,7 +16,7 @@ public record FileDTO(
 
     public static FileDTO fromFile(File file) {
         return new FileDTO(
-                file.getUuid(),
+                file.getUuid().toString(),
                 file.getFileName(),
                 file.getPath(),
                 file.getFileType(),
