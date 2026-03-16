@@ -37,6 +37,7 @@ academostorage-6d230d1bc095.json
 ### Arquivos .env de configuração ###
 *.env
 *.json
+!Academo.postman_collection.json
 /academostorage-6d230d1bc095.json
 /src/main/resources/client_secret_685572874715-63fravm0v1rqfllot0bpq1oacvioi3j3.apps.googleusercontent.com.json
 tokens/

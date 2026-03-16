@@ -1,7 +1,9 @@
 package com.academo.controller.dtos.subject;
 
 import com.academo.model.Subject;
+import com.academo.model.enums.CalculationType;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record SubjectDTO(
@@ -9,6 +11,8 @@ public record SubjectDTO(
         String name,
         String description,
         Boolean isActive,
+        String calculationType,
+        String finalGrade,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -19,6 +23,8 @@ public record SubjectDTO(
                 subject.getName(),
                 subject.getDescription(),
                 subject.getIsActive(),
+                subject.getCalculationType().name(),
+                subject.getFinalGrade().toString(),
                 subject.getCreatedAt(),
                 subject.getUpdatedAt()
         );
@@ -29,6 +35,8 @@ public record SubjectDTO(
         subject.setId(subjectId);
         subject.setName(subjectDTO.name());
         subject.setDescription(subjectDTO.description());
+        subject.setCalculationType(CalculationType.valueOf(subjectDTO.calculationType));
+        subject.setFinalGrade(new BigDecimal(subjectDTO.finalGrade));
         subject.setIsActive(subjectDTO.isActive());
         subject.setCreatedAt(subjectDTO.createdAt());
         subject.setUpdatedAt(subjectDTO.updatedAt());

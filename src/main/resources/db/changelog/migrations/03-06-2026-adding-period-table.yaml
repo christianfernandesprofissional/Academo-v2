@@ -1,0 +1,130 @@
+databaseChangeLog:
+- changeSet:
+    id: 1771623768047-22
+    author: christian-fernandes
+    changes:
+    - sql:
+        sql: CREATE TYPE calculation_type AS ENUM ('MEDIA_ARITMETICA', 'MEDIA_PONDERADA');
+- changeSet:
+    id: 1771623768047-23
+    author: christian-fernandes
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: periods_pkey
+            name: id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: subject_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: grade
+            type: NUMERIC
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float "1"
+            name: weight
+            type: NUMERIC
+        tableName: periods
+- changeSet:
+    id: 1771623768047-24
+    author: christian-fernandes
+    changes:
+    - addColumn:
+        tableName: subjects
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float "0"
+            name: final_grade
+            type: NUMERIC
+        - column:
+            constraints:
+              nullable: false
+            name: calculation
+            type: calculation_type
+- changeSet:
+    id: 1771623768047-25
+    author: christian-fernandes
+    changes:
+      - addColumn:
+          tableName: activity_types
+          columns:
+          - column:
+              constraints:
+                nullable: false
+              name: period_id
+              type: INTEGER
+          - column:
+              constraints:
+                nullable: false
+              defaultValueNumeric: 1
+              name: weight
+              type: numeric
+- changeSet:
+    id: 1771623768047-26
+    author: christian-fernandes
+    changes:
+      - addForeignKeyConstraint:
+          baseColumnNames: user_id
+          baseTableName: periods
+          constraintName: periods_user_id_fkey
+          deferrable: false
+          initiallyDeferred: false
+          onDelete: CASCADE
+          onUpdate: CASCADE
+          referencedColumnNames: id
+          referencedTableName: tb_users
+          validate: true
+- changeSet:
+    id: 1771623768047-27
+    author: christian-fernandes
+    changes:
+      - addForeignKeyConstraint:
+          baseColumnNames: subject_id
+          baseTableName: periods
+          constraintName: subject_user_id_fkey
+          deferrable: false
+          initiallyDeferred: false
+          onDelete: CASCADE
+          onUpdate: CASCADE
+          referencedColumnNames: id
+          referencedTableName: subjects
+          validate: true
+- changeSet:
+    id: 1771623768047-28
+    author: christian-fernandes
+    changes:
+      - addForeignKeyConstraint:
+          baseColumnNames: period_id
+          baseTableName: activity_types
+          constraintName: activity_types_period_id_fkey
+          deferrable: false
+          initiallyDeferred: false
+          onDelete: CASCADE
+          onUpdate: CASCADE
+          referencedColumnNames: id
+          referencedTableName: periods
+          validate: true

@@ -23,15 +23,7 @@ public record GroupDTO (
                         g.getIsActive(),
                         g.getCreatedAt(),
                         g.getUpdatedAt(),
-                        g.getSubjects().stream() //A lista de Subject do grupo é transformada em uma lista de SubjectDTO
-                                .map(s -> new SubjectDTO(
-                                        s.getId(),
-                                        s.getName(),
-                                        s.getDescription(),
-                                        s.getIsActive(),
-                                        s.getCreatedAt(),
-                                        s.getUpdatedAt()
-                                )).toList()
+                        g.getSubjects().stream().map(SubjectDTO::fromSubject).toList()
                 );
     }
 
