@@ -90,16 +90,6 @@ public class SupabaseServiceImpl implements IFileService {
         return fileRepository.findAllBySubjectIdAndUserId(subjectId, userId).stream().map(FileDTO::fromFile).toList();
     }
 
-    @Override
-    public ResponseInputStream<GetObjectResponse> downloadStream(String fileUUIDName) {
-        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileUUIDName)
-                .build();
-
-        return s3Client.getObject(getObjectRequest);
-    }
-
     @Transactional
     @Override
     public void delete(String uuid, Integer userId) {
@@ -113,5 +103,14 @@ public class SupabaseServiceImpl implements IFileService {
         s3Client.deleteObject(deleteObjectRequest);
 
         fileRepository.delete(file);
+    }
+
+    public ResponseInputStream<GetObjectResponse> downloadStream(String fileUUIDName) {
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileUUIDName)
+                .build();
+
+        return s3Client.getObject(getObjectRequest);
     }
 }

@@ -1,7 +1,5 @@
 package com.academo.util.config.storage.supabase;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +12,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import java.net.URI;
 
 @Configuration
-public class SupabaseConfigService {
+public class SupabaseConfig {
 
     @Value("${storage.endpoint}")
     private String endpoint;

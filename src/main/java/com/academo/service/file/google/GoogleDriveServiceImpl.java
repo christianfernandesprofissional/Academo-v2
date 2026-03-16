@@ -1,5 +1,6 @@
 package com.academo.service.file.google;
 
+import com.academo.controller.dtos.file.DownloadedFileDTO;
 import com.academo.controller.dtos.file.FileDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.File;
@@ -9,29 +10,29 @@ import com.academo.repository.FileRepository;
 import com.academo.service.file.IFileService;
 import com.academo.service.subject.ISubjectService;
 import com.academo.service.user.IUserService;
-import com.academo.service.storage.google.DriveService;
 import com.academo.util.config.storage.FileValidation;
 import com.academo.util.exceptions.fileTransfer.*;
+import com.google.api.client.http.InputStreamContent;
 import jakarta.transaction.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import com.google.api.services.drive.Drive;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-
+//@Component
 public class GoogleDriveServiceImpl implements IFileService {
 
     private final FileRepository fileRepository;
     private final IUserService userService;
     private final ISubjectService subjectService;
-    private final DriveService driveService;
+    private final Drive drive;
 
-    public GoogleDriveServiceImpl(FileRepository fileRepository, IUserService userService, ISubjectService subjectService, DriveService driveService) {
+    public GoogleDriveServiceImpl(FileRepository fileRepository, IUserService userService, ISubjectService subjectService, Drive drive) {
         this.fileRepository = fileRepository;
         this.userService = userService;
         this.subjectService = subjectService;
-        this.driveService = driveService;
+        this.drive = drive;
     }
 
 
@@ -45,10 +46,20 @@ public class GoogleDriveServiceImpl implements IFileService {
         FileValidation.isMimeTypeValid(file);
         FileValidation.isFileSizeValid(file);
 
-
         String driveFileId = null;
         try {
-            driveFileId = driveService.uploadFile(file);
+            com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
+            fileMetadata.setName(file.getOriginalFilename());
+
+            com.google.api.services.drive.model.File uploadedFile = drive.files().create(
+                    fileMetadata,
+                    new InputStreamContent(
+                            file.getContentType(),
+                            file.getInputStream()
+                    )
+            ).setFields("id").execute();
+
+            driveFileId = uploadedFile.getId();
         } catch (Exception e) {
             throw new FileStorageException("Erro ao fazer o upload do arquivo!");
         }
@@ -76,11 +87,6 @@ public class GoogleDriveServiceImpl implements IFileService {
         return fileRepository.findAllBySubjectIdAndUserId(subjectId, userId).stream().map(FileDTO::fromFile).toList();
     }
 
-    @Override
-    public ResponseInputStream<GetObjectResponse> downloadStream(String uuid) {
-        return null;
-    }
-
     @Transactional
     @Override
     public void delete(String uuid, Integer userId) {
@@ -95,9 +101,30 @@ public class GoogleDriveServiceImpl implements IFileService {
         fileRepository.deleteById(uuid);
         userService.update(user);
         try {
-            driveService.deleteFile(drivePath);
+            drive.files().delete(drivePath).execute();
         } catch (Exception e) {
            throw new FileStorageException("Erro ao deletar arquivo!");
         }
+    }
+
+    public DownloadedFileDTO getDownloadedFile(String fileId) throws Exception {
+        // Recupera o metadado do arquivo
+        com.google.api.services.drive.model.File fileMetadata = drive.files()
+                .get(fileId)
+                .setFields("name, mimeType")
+                .execute();
+
+        // Cria o fluxo de saída para armazenar os bytes
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // Faz o download do conteúdo
+        drive.files().get(fileId).executeMediaAndDownloadTo(outputStream);
+
+        // Retorna um objeto com as informações do arquivo
+        return new DownloadedFileDTO(
+                fileMetadata.getName(),
+                fileMetadata.getMimeType(),
+                outputStream.toByteArray()
+        );
     }
 }
