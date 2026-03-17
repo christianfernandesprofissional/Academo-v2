@@ -4,7 +4,9 @@ import com.academo.model.enums.CalculationType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -44,7 +46,8 @@ public class Subject {
     private BigDecimal finalGrade = new BigDecimal("0");
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "calculation")
+    @Column(name = "calculation", columnDefinition = "calculation_type")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     private CalculationType calculationType = CalculationType.MEDIA_ARITMETICA;
 
     /*

@@ -56,6 +56,7 @@ public class SubjectServiceImpl implements ISubjectService {
         subject.setName(createSubjectDTO.name());
         subject.setDescription(createSubjectDTO.description());
         subject.setUser(user);
+        //subject.setCalculationType(CalculationType.MEDIA_ARITMETICA);
         subject = subjectRepository.save(subject);
         return SubjectDTO.fromSubject(subject);
     }
