@@ -1,6 +1,7 @@
 package com.academo.security.service;
 
 import com.academo.security.authuser.AuthUser;
+import com.academo.security.enums.TokenExpirationType;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -15,22 +16,26 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    @Value("${api.security.token.secret}")
+    @Value("${api.security.token.jwt.secret}")
     private String secret;
+    @Value("${api.security.token.activation.secret}")
+    private String activationSecret;
+    @Value("${api.security.token.reset-password.secret}")
+    private String resetPasswordSecret;
 
-    private final String ACTIVATION_SECRET = "activationKey";
-
-    private static final Instant ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00"));
-    private static final Instant ACCESS_TOKEN = LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
+    private static final Instant EXPIRATION_ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00"));
+    private static final Instant EXPIRATION_RESET_PASSWORD_TOKEN = LocalDateTime.now().plusMinutes(15).toInstant(ZoneOffset.of("-03:00"));
+    private static final Instant EXPIRATION_ACCESS_TOKEN = LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
 
     // ---------------- LOGIN TOKEN -----------------------
     public String generateLoginToken(AuthUser user) {
+        System.out.println("ESTE É O VALOR DE SECRET:" + secret);
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
                     .withIssuer("academo")
                     .withSubject(user.getUsername())
-                    .withExpiresAt(generationExpirationDate(false))
+                    .withExpiresAt(generateExpiration(TokenExpirationType.ACCESS_TOKEN))
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException e) {
@@ -55,11 +60,11 @@ public class TokenService {
     // ---------------- ACCOUNT ACTIVATION TOKEN -----------------------
     public String generateActivationToken(Integer userId) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(ACTIVATION_SECRET);
+            Algorithm algorithm = Algorithm.HMAC256(activationSecret);
             String token = JWT.create()
                     .withIssuer("academo")
                     .withSubject(String.valueOf(userId))
-                    .withExpiresAt(generationExpirationDate(true))
+                    .withExpiresAt(generateExpiration(TokenExpirationType.ACTIVATION_TOKEN))
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException e) {
@@ -69,7 +74,7 @@ public class TokenService {
 
     public String validateActivationToken(String token) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(ACTIVATION_SECRET);
+            Algorithm algorithm = Algorithm.HMAC256(activationSecret);
             return JWT.require(algorithm)
                     .withIssuer("academo")
                     .build()
@@ -80,11 +85,47 @@ public class TokenService {
         }
     }
 
-    private Instant generationExpirationDate(boolean isActivationToken) {
-        if(isActivationToken) {
-            return ACTIVATION_TOKEN;
+    public String generateForgotPasswordToken(String email) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(resetPasswordSecret);
+            return JWT.create()
+                    .withIssuer("academo")
+                    .withSubject(email)
+                    .withExpiresAt(generateExpiration(TokenExpirationType.RESET_PASSWORD_TOKEN))
+                    .sign(algorithm);
+        } catch (JWTCreationException e) {
+            return null;
         }
-        return ACCESS_TOKEN;
+    }
+
+    public String validateForgotPasswordToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(resetPasswordSecret);
+            return JWT.require(algorithm)
+                    .withIssuer("academo")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (JWTVerificationException e) {
+            return null;
+        }
+    }
+
+    private Instant generateExpiration(TokenExpirationType expirationType) {
+        switch (expirationType) {
+            case ACCESS_TOKEN -> {
+                return EXPIRATION_ACCESS_TOKEN;
+            }
+            case ACTIVATION_TOKEN -> {
+                return EXPIRATION_ACTIVATION_TOKEN;
+            }
+            case RESET_PASSWORD_TOKEN -> {
+                return EXPIRATION_RESET_PASSWORD_TOKEN;
+            }
+            default -> {
+                throw new RuntimeException("Erro ao gerar prazo de expiração do Token");
+            }
+        }
     }
 
 
