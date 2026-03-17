@@ -1,8 +1,6 @@
 package com.academo.controller;
 
-import com.academo.controller.dtos.security.LoginResponseDTO;
-import com.academo.controller.dtos.security.RegisterDTO;
-import com.academo.controller.dtos.security.UserAuthDTO;
+import com.academo.controller.dtos.security.*;
 import com.academo.controller.dtos.user.UserDTO;
 import com.academo.model.User;
 import com.academo.security.authuser.*;
@@ -77,6 +75,17 @@ public class UserController {
     public ResponseEntity<UserDTO> activate(@RequestParam("token") String token) {
         logger.debug("[DEBUG] Token: {}", token);
         return ResponseEntity.status(HttpStatus.OK).body(userService.activateUser(token));
+    }
+
+    @PostMapping("forgot-password")
+    public ResponseEntity<TokenPasswordDTO> forgotPassword(@RequestBody @Valid ForgotPasswordDTO forgotPasswordDTO) {
+        return ResponseEntity.ok(userService.forgotPassword(forgotPasswordDTO));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@RequestParam("token") String token, @Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+        userService.resetPassword(token, resetPasswordDTO);
+        return ResponseEntity.ok().build();
     }
 
 
