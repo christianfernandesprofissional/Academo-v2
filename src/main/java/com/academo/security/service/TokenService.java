@@ -85,12 +85,12 @@ public class TokenService {
         }
     }
 
-    public String generateForgotPasswordToken(String email) {
+    public String generateForgotPasswordToken(Integer userId) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(resetPasswordSecret);
             return JWT.create()
                     .withIssuer("academo")
-                    .withSubject(email)
+                    .withSubject(String.valueOf(userId))
                     .withExpiresAt(generateExpiration(TokenExpirationType.RESET_PASSWORD_TOKEN))
                     .sign(algorithm);
         } catch (JWTCreationException e) {
