@@ -12,7 +12,7 @@ public record ActivityDTO(
         LocalDate notificationDate,
         LocalDate activityDate,
         String name,
-        Double value,
+        Double grade,
         String description,
         String subjectName,
         String activityTypeName,

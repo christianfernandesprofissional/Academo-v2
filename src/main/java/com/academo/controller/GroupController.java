@@ -64,7 +64,7 @@ public class GroupController {
     public ResponseEntity<GroupDTO> create(Authentication authentication, @RequestBody @Valid CreateGroupDTO groupDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         GroupDTO createdGroup = groupService.create(userId,groupDTO);
-        URI uri  = URI.create("/groups?groupId=" + createdGroup.id());
+        URI uri  = URI.create("/groups/" + createdGroup.id());
         return ResponseEntity.created(uri).body(createdGroup);
     }
 
