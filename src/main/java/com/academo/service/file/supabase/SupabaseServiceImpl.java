@@ -95,6 +95,7 @@ public class SupabaseServiceImpl implements IFileService {
     @Override
     public void delete(String uuid, Integer userId) {
         File file = fileRepository.findByUuidAndUserId(UUID.fromString(uuid), userId).orElseThrow(FileNotFoundException::new);
+        User user = userService.findById(userId);
 
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
@@ -103,6 +104,8 @@ public class SupabaseServiceImpl implements IFileService {
 
         s3Client.deleteObject(deleteObjectRequest);
 
+        user.decreaseStorageUsage(file.getSize());
+        userService.update(user);
         fileRepository.delete(file);
     }
 

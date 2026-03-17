@@ -118,6 +118,10 @@ public class User {
         this.storageUsage += size;
     }
 
+    public void decreaseStorageUsage(Long size) {
+        this.storageUsage -= size;
+    }
+
     public Profile getProfile() {
         return profile;
     }
