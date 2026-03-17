@@ -64,7 +64,7 @@ public class FileController {
         return ResponseEntity.ok()
                 .contentLength(fileDTO.response().response().contentLength())
                 .contentType(MediaType.parseMediaType(fileDTO.mimeType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileUUID + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileDTO.fileName() + "\"")
                 .body(resource);
     }
 
