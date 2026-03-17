@@ -2,6 +2,9 @@ package com.academo.service.user;
 
 import com.academo.controller.dtos.mail.ActivateAccountMailDTO;
 import com.academo.controller.dtos.mail.WelcomeMailDTO;
+import com.academo.controller.dtos.security.ForgotPasswordDTO;
+import com.academo.controller.dtos.security.ResetPasswordDTO;
+import com.academo.controller.dtos.security.TokenPasswordDTO;
 import com.academo.controller.dtos.user.UserDTO;
 import com.academo.model.Profile;
 import com.academo.model.User;
@@ -25,7 +28,8 @@ public class UserServiceImpl implements IUserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    private static final LocalDateTime ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
+    private static final LocalDateTime EXPIRATION_ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
+    //private static final LocalDateTime EXPIRATION_RESET_PASSWORD_TOKEN = LocalDateTime.now().plusMinutes(15).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
 
     private final UserRepository userRepository;
     private final IMailService mailService;
@@ -45,7 +49,7 @@ public class UserServiceImpl implements IUserService {
         user.setEmail(registerDTO.email());
         user.setPassword(encryptedPassword);
         user.setName(registerDTO.name());
-        user.setActivationAccountTokenExpiration(ACTIVATION_TOKEN);
+        user.setActivationAccountTokenExpiration(EXPIRATION_ACTIVATION_TOKEN);
         Profile profile = new Profile();
         profile.setUser(user);
         user.setProfile(profile);
@@ -83,5 +87,22 @@ public class UserServiceImpl implements IUserService {
     public UserDTO update(User user) {
         return UserDTO.fromUser(userRepository.save(user));
     }
+
+    @Override
+    public TokenPasswordDTO forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
+        User user = userRepository.findByEmail(forgotPasswordDTO.email()).orElseThrow(UserNotFoundException::new);
+        var token = tokenService.generateForgotPasswordToken(user.getId());
+        return new TokenPasswordDTO(token);
+    }
+
+    @Override
+    public void resetPassword(String token, ResetPasswordDTO resetPasswordDTO) {
+        Integer userId = Integer.parseInt(tokenService.validateForgotPasswordToken(token));
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        user.setPassword(new BCryptPasswordEncoder().encode(resetPasswordDTO.newPassword()));
+        userRepository.save(user);
+    }
+
 
 }
