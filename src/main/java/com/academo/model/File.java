@@ -7,6 +7,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "files")
@@ -14,8 +15,8 @@ public class File implements Serializable {
 
     @Id
     @UuidGenerator
-    @Column(name = "uuid", length = 255, nullable = false)
-    private String uuid;
+    @Column(name = "uuid", nullable = false)
+    private UUID uuid;
 
     @Column(name = "file_name", length = 255 ,nullable = false)
     private String fileName;  // Nome original do arquivo
@@ -55,11 +56,11 @@ public class File implements Serializable {
         this.size = size;
     }
 
-    public String getUuid() {
+    public UUID getUuid() {
         return uuid;
     }
 
-    public void setUuid(String uuid) {
+    public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
 

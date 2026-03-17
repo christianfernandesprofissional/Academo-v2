@@ -26,7 +26,7 @@ public class ResendMailService implements IMailService {
 
     private final Resend resend;
 
-    public ResendMailService(@Value("${mail.service.api.key}") String resendAPIKey, @Value("${academo.mail}") String academoMail) {
+    public ResendMailService(@Value("${resend.service.api.key}") String resendAPIKey, @Value("${resend.academo.mail}") String academoMail) {
         this.resend = new Resend(resendAPIKey);
         this.academoMail = academoMail;
     }

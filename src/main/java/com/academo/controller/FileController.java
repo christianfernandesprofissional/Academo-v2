@@ -1,14 +1,16 @@
 package com.academo.controller;
 
+import com.academo.controller.dtos.file.DownloadS3FileDTO;
 import com.academo.controller.dtos.file.FileDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.file.IFileService;
-import com.academo.service.storage.google.DriveService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.core.io.ByteArrayResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,11 +28,11 @@ import java.util.List;
 public class FileController {
 
     private final IFileService fileService;
-    private final DriveService driveService;
 
-    public FileController(IFileService fileService, DriveService driveService) {
+    private static final Logger log = LoggerFactory.getLogger(FileController.class);
+
+    public FileController(IFileService fileService) {
         this.fileService = fileService;
-        this.driveService = driveService;
     }
 
     @Operation(summary = "Realiza o Upload de um arquivo", method = "POST")
@@ -38,10 +40,10 @@ public class FileController {
             @ApiResponse(responseCode = "201", description = "Upload realizado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro ao tentar realizar upload")
     })
-    @PostMapping("/upload-file/{file}/{subjectId}")
-    public ResponseEntity<FileDTO> upload(@PathVariable("file") MultipartFile file, @PathVariable("subjectId") Integer subjectId, Authentication authentication){
+    @PostMapping("/upload-file/{subjectId}")
+    public ResponseEntity<FileDTO> upload(@RequestParam("file") MultipartFile file, @PathVariable("subjectId") Integer subjectId, Authentication authentication){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        FileDTO uploadedFile = fileService.createFile(file, userId, subjectId);
+        FileDTO uploadedFile = fileService.upload(file, userId, subjectId);
         URI uri = URI.create(uploadedFile.path());
         return ResponseEntity.created(uri).body(uploadedFile);
     }
@@ -52,22 +54,20 @@ public class FileController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar realizar download do arquivo"),
             @ApiResponse(responseCode = "404", description = "Nenhum arquivo encontrado com este ID")
     })
-    @GetMapping("/download/{fileId}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileId) {
-        DriveService.DownloadedFile downloaded = null;
-        try {
-            downloaded = driveService.getFile(fileId);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        ByteArrayResource resource = new ByteArrayResource(downloaded.content());
-        String mimeType = downloaded.mimeType() != null ? downloaded.mimeType() : MediaType.APPLICATION_OCTET_STREAM_VALUE;
+    @GetMapping("/download/{fileUUID}")
+    public ResponseEntity<InputStreamResource> download(@PathVariable String fileUUID) {
+
+        DownloadS3FileDTO fileDTO = fileService.downloadStream(fileUUID);
+
+        InputStreamResource resource = new InputStreamResource(fileDTO.response());
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloaded.name() + "\"")
-                .contentType(MediaType.parseMediaType(mimeType))
+                .contentLength(fileDTO.response().response().contentLength())
+                .contentType(MediaType.parseMediaType(fileDTO.mimeType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileDTO.fileName() + "\"")
                 .body(resource);
     }
+
 
     @Operation(summary = "Remove um arquivo", method = "DELETE")
     @ApiResponses(value = {
@@ -76,9 +76,9 @@ public class FileController {
             @ApiResponse(responseCode = "404", description = "Nenhuma arquivo encontrado com este ID")
     })
     @DeleteMapping("/delete/{uuid}")
-    public ResponseEntity<String> deleteFile(@PathVariable String uuid, Authentication authentication) {
+    public ResponseEntity<String> delete(@PathVariable String uuid, Authentication authentication) {
             Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-            fileService.deleteFile(uuid, userId);
+            fileService.delete(uuid, userId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -92,11 +92,6 @@ public class FileController {
     @GetMapping("/{subjectId}")
     public ResponseEntity<List<FileDTO>> findAll(Authentication authentication, @PathVariable Integer subjectId){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(fileService.findAllFilesBySubjectId(userId, subjectId));
+        return ResponseEntity.ok(fileService.findAllBySubject(userId, subjectId));
     }
-
-
-
-
-
 }

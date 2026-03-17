@@ -202,7 +202,7 @@ databaseChangeLog:
               primaryKey: true
               primaryKeyName: files_pkey
             name: uuid
-            type: VARCHAR(255)
+            type: uuid
         - column:
             constraints:
               nullable: false
