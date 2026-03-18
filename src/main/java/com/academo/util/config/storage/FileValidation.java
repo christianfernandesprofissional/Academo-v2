@@ -11,7 +11,7 @@ import java.util.Set;
 public class FileValidation {
 
     private static final long ONE_MB = 1024L * 1024L;
-    private static final long FIFTEEN_MB = 15 * ONE_MB;
+    private static final long FIVE_MB = 5 * ONE_MB;
     private static final long THREE_HUNDRED_MB = 300 * ONE_MB;
     private static final Set<String> ALLOWED_TYPES = Set.of(
             "image/jpeg",
@@ -35,7 +35,7 @@ public class FileValidation {
     }
 
     public static Boolean isFileSizeValid(MultipartFile file) {
-        if(file.getSize() > FIFTEEN_MB) throw new FileSizeException("O tamanho do arquivo ultrapassou o limite permitido");
+        if(file.getSize() > FIVE_MB) throw new FileSizeException("O tamanho do arquivo ultrapassou o limite permitido");
         return true;
     }
 

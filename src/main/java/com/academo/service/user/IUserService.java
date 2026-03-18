@@ -14,6 +14,6 @@ public interface IUserService {
     User findById(Integer id);
     User findByEmail(String email);
     UserDTO update(User user);
-    TokenPasswordDTO forgotPassword(ForgotPasswordDTO forgotPasswordDTO);
+    void forgotPassword(ForgotPasswordDTO forgotPasswordDTO);
     void resetPassword(String token, ResetPasswordDTO resetPasswordDTO);
 }
