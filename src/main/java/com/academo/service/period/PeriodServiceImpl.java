@@ -31,7 +31,7 @@ public class PeriodServiceImpl implements IPeriodService{
 
     @Override
     public PeriodDTO findById(Integer userId, Integer periodId) {
-        return PeriodDTO.fromPeriod(repository.findByPeriodIdAndUserId(userId,periodId).orElseThrow(PeriodNotFoundException::new));
+        return PeriodDTO.fromPeriod(repository.findByIdAndUserId(userId,periodId).orElseThrow(PeriodNotFoundException::new));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PeriodServiceImpl implements IPeriodService{
 
     @Override
     public PeriodDTO update(Integer userId, UpdatePeriodDTO periodDTO) {
-        Period inDB = repository.findByPeriodIdAndUserId(periodDTO.id(),userId).orElseThrow(PeriodNotFoundException::new);
+        Period inDB = repository.findByIdAndUserId(periodDTO.id(),userId).orElseThrow(PeriodNotFoundException::new);
         inDB.setName(PeriodName.valueOf(periodDTO.name()).name());
         inDB.setWeight(new BigDecimal(periodDTO.weight()));
         inDB.setGrade(new BigDecimal(periodDTO.grade()));
@@ -59,7 +59,7 @@ public class PeriodServiceImpl implements IPeriodService{
 
     @Override
     public void delete(Integer userId,Integer subjectId, Integer periodId){
-        repository.deleteByPeriodIdAndSubjectIdAndUserId(periodId, subjectId, userId);
+        repository.deleteByIdAndSubjectIdAndUserId(periodId, subjectId, userId);
     }
 
     @Override

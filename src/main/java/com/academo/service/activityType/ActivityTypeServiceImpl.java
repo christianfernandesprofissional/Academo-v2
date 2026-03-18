@@ -1,13 +1,11 @@
 package com.academo.service.activityType;
 
-import com.academo.controller.dtos.activity.ActivityDTO;
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
 import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.controller.dtos.activityType.UpdateActivityTypeDTO;
 import com.academo.model.ActivityType;
 import com.academo.model.Period;
 import com.academo.repository.ActivityTypeRepository;
-import com.academo.service.period.IPeriodService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.activityType.ActivityTypeExistsException;
@@ -17,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -59,7 +56,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
         newActivityType.setName(activityTypeDTO.name());
         newActivityType.setDescription(activityTypeDTO.description());
         Period p = new Period();
-        p.setPeriodId(activityTypeDTO.periodId());
+        p.setId(activityTypeDTO.periodId());
         newActivityType.setPeriod(p);
         newActivityType.setUser(userService.findById(userId));
         newActivityType.setId(repository.save(newActivityType).getId());
