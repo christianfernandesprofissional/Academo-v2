@@ -78,8 +78,9 @@ public class UserController {
     }
 
     @PostMapping("forgot-password")
-    public ResponseEntity<TokenPasswordDTO> forgotPassword(@RequestBody @Valid ForgotPasswordDTO forgotPasswordDTO) {
-        return ResponseEntity.ok(userService.forgotPassword(forgotPasswordDTO));
+    public ResponseEntity<Void> forgotPassword(@RequestBody @Valid ForgotPasswordDTO forgotPasswordDTO) {
+        userService.forgotPassword(forgotPasswordDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/reset-password")

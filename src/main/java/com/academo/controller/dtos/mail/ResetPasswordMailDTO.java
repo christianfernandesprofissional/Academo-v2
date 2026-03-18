@@ -1,6 +1,6 @@
-package com.academo.controller.dtos.security;
+package com.academo.controller.dtos.mail;
 
-public record TokenPasswordDTO(
+public record ResetPasswordMailDTO(
         String name,
         String email,
         String resetPasswordToken

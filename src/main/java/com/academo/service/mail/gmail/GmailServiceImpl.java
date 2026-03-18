@@ -2,6 +2,7 @@ package com.academo.service.mail.gmail;
 
 import com.academo.controller.dtos.activity.ActivityNotificationDTO;
 import com.academo.controller.dtos.mail.ActivateAccountMailDTO;
+import com.academo.controller.dtos.mail.ResetPasswordMailDTO;
 import com.academo.controller.dtos.mail.WelcomeMailDTO;
 import com.academo.controller.dtos.notification.NotificationDTO;
 import com.academo.service.mail.IMailService;
@@ -61,6 +62,11 @@ public class GmailServiceImpl implements IMailService {
 
         email.setFrom("Equipe ACADEMO <" + System.getenv("MAIL_USERNAME").trim() + ">");
         mailSender.send(email);
+    }
+
+    @Override
+    public void sendResetPasswordMail(ResetPasswordMailDTO resetPasswordMailDTO) {
+
     }
 
     @Override
