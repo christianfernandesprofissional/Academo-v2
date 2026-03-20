@@ -11,9 +11,7 @@ public record UpdateActivityTypeDTO (
         String name,
         String description,
         String weight,
-        Integer periodId,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        Integer periodId
 ){
 
 }

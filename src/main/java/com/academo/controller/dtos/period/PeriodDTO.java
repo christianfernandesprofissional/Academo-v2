@@ -9,7 +9,7 @@ import java.util.List;
 
 public record PeriodDTO(
         Integer id,
-        SubjectDTO subject,
+        Integer subjectId,
         String name,
         BigDecimal grade,
         BigDecimal weight,
@@ -19,7 +19,7 @@ public record PeriodDTO(
     public static PeriodDTO fromPeriod(Period period){
         return new PeriodDTO(
                 period.getId(),
-                SubjectDTO.fromSubject(period.getSubject()),
+                period.getSubject().getId(),
                 period.getName(),
                 period.getGrade(),
                 period.getWeight(),

@@ -9,7 +9,12 @@ import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.model.enums.PeriodName;
 import com.academo.repository.PeriodRepository;
+import com.academo.repository.SubjectRepository;
+import com.academo.util.exceptions.period.PeriodAlreadyExistsException;
+import com.academo.util.exceptions.period.PeriodLimitException;
 import com.academo.util.exceptions.period.PeriodNotFoundException;
+import com.academo.util.exceptions.subject.SubjectNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,9 +24,11 @@ import java.util.List;
 public class PeriodServiceImpl implements IPeriodService{
 
     private final PeriodRepository repository;
+    private final SubjectRepository subjectRepository;
 
-    public PeriodServiceImpl(PeriodRepository repository){
+    public PeriodServiceImpl(PeriodRepository repository, SubjectRepository subjectRepository){
         this.repository = repository;
+        this.subjectRepository = subjectRepository;
     }
 
     @Override
@@ -36,6 +43,16 @@ public class PeriodServiceImpl implements IPeriodService{
 
     @Override
     public PeriodDTO create(Integer userId, SavePeriodDTO periodDTO) {
+        if(!subjectRepository.existsById(periodDTO.subjectId())) throw new SubjectNotFoundException();
+
+        List<PeriodDTO> periods = findAll(userId, periodDTO.subjectId());
+        if(periods.size() == 3) throw new PeriodLimitException();
+        periods.forEach(p -> {
+            if(p.name().equals(periodDTO.name())) throw new PeriodAlreadyExistsException();
+        });
+
+        verifyCreatedPeriodsFromSubject(periodDTO.subjectId(), userId);
+
         Period newPeriod = new Period();
         newPeriod.setName(PeriodName.valueOf(periodDTO.name()).name());
         newPeriod.setGrade(new BigDecimal(periodDTO.grade()));
@@ -45,6 +62,10 @@ public class PeriodServiceImpl implements IPeriodService{
         newPeriod.setUser(new User());
         newPeriod.getUser().setId(userId);
          return PeriodDTO.fromPeriod(repository.save(newPeriod));
+    }
+
+    private void verifyCreatedPeriodsFromSubject(Integer subjectId, Integer userId) {
+
     }
 
     @Override
@@ -58,8 +79,14 @@ public class PeriodServiceImpl implements IPeriodService{
     }
 
     @Override
+    @Transactional //Anotação necessária porque para queries customizadas de Delete não abrem transação automaticamente, então o JPA bloqueia sem para garantir consistência
     public void delete(Integer userId,Integer subjectId, Integer periodId){
         repository.deleteByIdAndSubjectIdAndUserId(periodId, subjectId, userId);
+    }
+
+    @Override
+    public boolean existsById(Integer periodId){
+        return repository.existsById(periodId);
     }
 
     @Override

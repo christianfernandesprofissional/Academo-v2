@@ -1,5 +1,6 @@
 package com.academo.service.subject;
 
+import com.academo.controller.dtos.period.SavePeriodDTO;
 import com.academo.controller.dtos.subject.CreateSubjectDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.controller.dtos.subject.UpdateSubjectDTO;
@@ -7,9 +8,11 @@ import com.academo.model.Group;
 import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.model.enums.CalculationType;
+import com.academo.model.enums.PeriodName;
 import com.academo.repository.GroupRepository;
 import com.academo.repository.SubjectRepository;
 import com.academo.repository.UserRepository;
+import com.academo.service.period.IPeriodService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
@@ -26,11 +29,13 @@ public class SubjectServiceImpl implements ISubjectService {
     private final SubjectRepository subjectRepository;
     private final GroupRepository groupRepository;
     private final IUserService userService;
+    private final IPeriodService periodService;
 
-    public SubjectServiceImpl(SubjectRepository subjectRepository, UserRepository userRepository, GroupRepository groupRepository, IUserService userService) {
+    public SubjectServiceImpl(SubjectRepository subjectRepository, GroupRepository groupRepository, IUserService userService, IPeriodService periodService) {
         this.subjectRepository = subjectRepository;
         this.groupRepository = groupRepository;
         this.userService = userService;
+        this.periodService = periodService;
     }
 
     @Override
@@ -50,14 +55,20 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
+    @Transactional
     public SubjectDTO create(Integer userId, CreateSubjectDTO createSubjectDTO) {
         User user = userService.findById(userId);
         Subject subject = new Subject();
         subject.setName(createSubjectDTO.name());
         subject.setDescription(createSubjectDTO.description());
         subject.setUser(user);
-        //subject.setCalculationType(CalculationType.MEDIA_ARITMETICA);
         subject = subjectRepository.save(subject);
+
+        SavePeriodDTO p1 = new SavePeriodDTO(subject.getId(), PeriodName.P1.name(), "0", "1");
+        SavePeriodDTO p2 = new SavePeriodDTO(subject.getId(), PeriodName.P2.name(), "0", "1");
+        periodService.create(userId, p1);
+        periodService.create(userId, p2);
+
         return SubjectDTO.fromSubject(subject);
     }
 

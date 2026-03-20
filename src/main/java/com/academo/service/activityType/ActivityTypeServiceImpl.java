@@ -6,10 +6,12 @@ import com.academo.controller.dtos.activityType.UpdateActivityTypeDTO;
 import com.academo.model.ActivityType;
 import com.academo.model.Period;
 import com.academo.repository.ActivityTypeRepository;
+import com.academo.service.period.IPeriodService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.activityType.ActivityTypeExistsException;
 import com.academo.util.exceptions.activityType.ActivityTypeNotFoundException;
+import com.academo.util.exceptions.period.PeriodNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,10 +26,12 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
 
     private final ActivityTypeRepository repository;
     private final IUserService userService;
+    private final IPeriodService periodService;
 
-    public ActivityTypeServiceImpl(IUserService userService, ActivityTypeRepository repository) {
+    public ActivityTypeServiceImpl(IUserService userService, ActivityTypeRepository repository, IPeriodService periodService) {
         this.userService = userService;
         this.repository = repository;
+        this.periodService = periodService;
     }
 
     @Override
@@ -49,7 +53,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
 
     @Override
     public ActivityTypeDTO create(Integer userId, SaveActivityTypeDTO activityTypeDTO) {
-
+        if(!periodService.existsById(activityTypeDTO.periodId())) throw new PeriodNotFoundException();
         if(repository.existsByNameAndUserIdAndPeriodId(activityTypeDTO.name(), userId, activityTypeDTO.periodId())) throw new ActivityTypeExistsException();
 
         ActivityType newActivityType = new ActivityType();

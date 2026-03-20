@@ -36,8 +36,8 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar tipos de atividade"),
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrada")
     })
-    @GetMapping
-    public ResponseEntity<List<ActivityTypeDTO>> findAll(Authentication authentication, Integer periodId) {
+    @GetMapping("/all/{periodId}")
+    public ResponseEntity<List<ActivityTypeDTO>> findAll(Authentication authentication, @PathVariable Integer periodId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         List<ActivityTypeDTO> types  = activityTypeService.findAll(userId, periodId);
         return ResponseEntity.ok(types);
