@@ -3,7 +3,7 @@ package com.academo.service.payment.asaas;
 import com.academo.controller.dtos.payment.CallbackPaymentDTO;
 import com.academo.controller.dtos.payment.GetPaymentLinkDTO;
 import com.academo.controller.dtos.payment.PaymentLinkDTO;
-import com.academo.controller.dtos.payment.PaymentOptionsData;
+import com.academo.controller.dtos.payment.PaymentOptionsDTO;
 import com.academo.controller.dtos.payment.enums.BillingType;
 import com.academo.controller.dtos.payment.enums.ChargeType;
 import com.academo.controller.dtos.payment.enums.SubscriptionCycle;
@@ -35,24 +35,24 @@ public class AsaasPaymentService implements IPaymentService {
 
 
     @Override
-    public PaymentLinkDTO createPaymentLink(PaymentOptionsData paymentOptionsData) {
-        Double price = getPlanPrice(paymentOptionsData);
+    public PaymentLinkDTO createPaymentLink(PaymentOptionsDTO paymentOptionsDTO) {
+        Double price = getPlanPrice(paymentOptionsDTO);
         CallbackPaymentDTO callbackPaymentDTO = new CallbackPaymentDTO(successUrl, true);
-        GetPaymentLinkDTO getPaymentLinkDTO = GetPaymentLinkDTO.fromPaymentOptions(paymentOptionsData, price, callbackPaymentDTO);
+        GetPaymentLinkDTO getPaymentLinkDTO = GetPaymentLinkDTO.fromPaymentOptions(paymentOptionsDTO, price, callbackPaymentDTO);
         return requestPaymentLink(getPaymentLinkDTO);
     }
 
-    private Double getPlanPrice(PaymentOptionsData paymentOptionsData) {
-        if(paymentOptionsData.billingType() == BillingType.BOLETO || paymentOptionsData.billingType() == BillingType.PIX) {
+    private Double getPlanPrice(PaymentOptionsDTO paymentOptionsDTO) {
+        if(paymentOptionsDTO.billingType() == BillingType.BOLETO || paymentOptionsDTO.billingType() == BillingType.PIX) {
             return YEARLY_IN_CASH;
         }
-        if(paymentOptionsData.chargeType() == ChargeType.INSTALLMENT) {
+        if(paymentOptionsDTO.chargeType() == ChargeType.INSTALLMENT) {
             return IN_INSTALLMENTS;
         }
-        if(paymentOptionsData.subscriptionCycle() == SubscriptionCycle.MONTHLY) {
+        if(paymentOptionsDTO.subscriptionCycle() == SubscriptionCycle.MONTHLY) {
             return MONTHLY_RECURRENT;
         }
-        if(paymentOptionsData.subscriptionCycle() == SubscriptionCycle.YEARLY) {
+        if(paymentOptionsDTO.subscriptionCycle() == SubscriptionCycle.YEARLY) {
             return YEARLY_RECURRENT;
         }
         throw new PremiumPlanException("Erro ao defenir plano Premium");

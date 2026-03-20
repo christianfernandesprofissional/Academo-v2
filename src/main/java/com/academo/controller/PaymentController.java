@@ -1,7 +1,7 @@
 package com.academo.controller;
 
 import com.academo.controller.dtos.payment.PaymentLinkDTO;
-import com.academo.controller.dtos.payment.PaymentOptionsData;
+import com.academo.controller.dtos.payment.PaymentOptionsDTO;
 import com.academo.service.payment.IPaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +20,8 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<PaymentLinkDTO> createPaymentLink(@RequestBody PaymentOptionsData paymentOptionsData) {
-        return ResponseEntity.ok(paymentService.createPaymentLink(paymentOptionsData));
+    public ResponseEntity<PaymentLinkDTO> createPaymentLink(@RequestBody PaymentOptionsDTO paymentOptionsDTO) {
+        return ResponseEntity.ok(paymentService.createPaymentLink(paymentOptionsDTO));
     }
 
 

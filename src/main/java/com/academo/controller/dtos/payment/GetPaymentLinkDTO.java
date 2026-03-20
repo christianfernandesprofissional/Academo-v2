@@ -5,9 +5,7 @@ import com.academo.controller.dtos.payment.enums.ChargeType;
 import com.academo.controller.dtos.payment.enums.SubscriptionCycle;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 
 public record GetPaymentLinkDTO(
         String name,
@@ -30,16 +28,16 @@ public record GetPaymentLinkDTO(
     static final boolean NOTIFICATION_ENABLED = false;
     static final boolean IS_ADDRESS_REQUIRED = false;
 
-    public static GetPaymentLinkDTO fromPaymentOptions(PaymentOptionsData paymentOptionsData, Double price, CallbackPaymentDTO callback) {
+    public static GetPaymentLinkDTO fromPaymentOptions(PaymentOptionsDTO paymentOptionsDTO, Double price, CallbackPaymentDTO callback) {
         return new GetPaymentLinkDTO(
                 "Pagamento do Plano",
                 "Link de Pagamento do Plano Premium",
                 END_DATE,
                 price,
-                paymentOptionsData.billingType(),
-                paymentOptionsData.chargeType(),
+                paymentOptionsDTO.billingType(),
+                paymentOptionsDTO.chargeType(),
                 DUE_DATE_LIMIT_DAYS,
-                paymentOptionsData.subscriptionCycle(),
+                paymentOptionsDTO.subscriptionCycle(),
                 MAX_INSTALLMENT_COUNT,
                 NOTIFICATION_ENABLED,
                 callback,
