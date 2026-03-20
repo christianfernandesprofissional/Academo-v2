@@ -1,7 +1,8 @@
 package com.academo.controller;
 
 import com.academo.controller.dtos.payment.PaymentLinkDTO;
-import org.hibernate.validator.internal.constraintvalidators.bv.time.past.PastValidatorForYear;
+import com.academo.controller.dtos.payment.PaymentOptionsData;
+import com.academo.service.payment.IPaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,19 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/payment")
 public class PaymentController {
 
-    @PostMapping("/credit-card")
-    public ResponseEntity<PaymentLinkDTO> creditCardPayment(@RequestBody PaymentLinkDTO paymentLinkDTO) {
-        return null;
+    private final IPaymentService paymentService;
+
+    public PaymentController(IPaymentService paymentService) {
+        this.paymentService = paymentService;
     }
 
-    @PostMapping("/boleto")
-    public ResponseEntity<PaymentLinkDTO> boletoPayment(@RequestBody PaymentLinkDTO paymentLinkDTO) {
-        return null;
+    @PostMapping
+    public ResponseEntity<PaymentLinkDTO> createPaymentLink(@RequestBody PaymentOptionsData paymentOptionsData) {
+        return ResponseEntity.ok(paymentService.createPaymentLink(paymentOptionsData));
     }
 
-    @PostMapping("/pix")
-    public ResponseEntity<PaymentLinkDTO> pixPayment(@RequestBody PaymentLinkDTO paymentLinkDTO) {
-        return null;
-    }
+
 
 }

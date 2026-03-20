@@ -1,6 +1,7 @@
 package com.academo.util.exceptions;
 
 import com.academo.controller.dtos.mail.ActivateAccountMailDTO;
+import com.academo.controller.dtos.payment.PaymentLinkDTO;
 import com.academo.controller.dtos.validation.ValidationErrors;
 import com.academo.model.User;
 import com.academo.security.service.TokenService;
@@ -13,6 +14,8 @@ import com.academo.util.exceptions.activityType.ActivityTypeNotFoundException;
 import com.academo.controller.dtos.exception.ExceptionDTO;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import com.academo.util.exceptions.mail.MailException;
+import com.academo.util.exceptions.payment.PaymentLinkException;
+import com.academo.util.exceptions.payment.PremiumPlanException;
 import com.academo.util.exceptions.profile.ProfileNotFoundException;
 import com.academo.util.exceptions.subject.SubjectNotFoundException;
 import com.academo.util.exceptions.user.*;
@@ -181,6 +184,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(MailException.class)
     private ResponseEntity<ExceptionDTO> mailException(MailException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(PaymentLinkException.class)
+    private ResponseEntity<ExceptionDTO> paymentLinkException(PaymentLinkException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(PremiumPlanException.class)
+    private ResponseEntity<ExceptionDTO>  premiumPlanException(PremiumPlanException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
     }
 

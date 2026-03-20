@@ -7,27 +7,22 @@ import com.academo.controller.dtos.payment.enums.SubscriptionCycle;
 import java.time.LocalDate;
 
 public record PaymentLinkDTO(
-
-        // Enviados pelo Cliente
-        BillingType billingType,
-        ChargeType chargeType,
-        SubscriptionCycle subscriptionCycle,
-
-
-        // Geridos pelo ACADEMO
+        String id,
         String name,
-        String description,
-        LocalDate endDate,
         Double value,
-
-
-
-
-
-        Integer dueDateLimitDays,
+        boolean active,
+        ChargeType chargeType,
+        String url,
+        BillingType billingType,
+        SubscriptionCycle subscriptionCycle,
+        String description,
+        LocalDate date,
+        boolean deleted,
+        Integer viewCount,
         Integer maxInstallmentCount,
-        boolean notificationEnabled, // = false
-        CallbackPaymentDTO callback,
-        boolean isAddressRequired // = false
+        Integer dueDateLimitDays,
+        boolean notificationEnabled,
+        boolean isAddressRequired,
+        String externalReference
 ) {
 }
