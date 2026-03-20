@@ -18,10 +18,10 @@ import org.springframework.web.client.RestClient;
 @Component
 public class AsaasPaymentService implements IPaymentService {
 
-    private static final Double ANUAL_A_VISTA = 179.9;
-    private static final Double RECORRENTE_MENSAL = 15.9;
-    private static final Double RECORRENTE_ANUAL = 149.9;
-    private static final Double PARCELADO = 179.9;
+    private static final Double YEARLY_IN_CASH = 179.9;
+    private static final Double MONTHLY_RECURRENT = 15.9;
+    private static final Double YEARLY_RECURRENT = 149.9;
+    private static final Double IN_INSTALLMENTS = 179.9;
 
     private String asaasUrl;
     private String apiKey;
@@ -44,16 +44,16 @@ public class AsaasPaymentService implements IPaymentService {
 
     private Double getPlanPrice(PaymentOptionsData paymentOptionsData) {
         if(paymentOptionsData.billingType() == BillingType.BOLETO || paymentOptionsData.billingType() == BillingType.PIX) {
-            return ANUAL_A_VISTA;
+            return YEARLY_IN_CASH;
         }
         if(paymentOptionsData.chargeType() == ChargeType.INSTALLMENT) {
-            return PARCELADO;
+            return IN_INSTALLMENTS;
         }
         if(paymentOptionsData.subscriptionCycle() == SubscriptionCycle.MONTHLY) {
-            return RECORRENTE_MENSAL;
+            return MONTHLY_RECURRENT;
         }
         if(paymentOptionsData.subscriptionCycle() == SubscriptionCycle.YEARLY) {
-            return RECORRENTE_ANUAL;
+            return YEARLY_RECURRENT;
         }
         throw new PremiumPlanException("Erro ao defenir plano Premium");
     }

@@ -25,6 +25,11 @@ public record GetPaymentLinkDTO(
 ) {
 
     static final LocalDate END_DATE = LocalDate.now(ZoneId.of("America/Sao_Paulo")).plusDays(2);
+    static final Integer DUE_DATE_LIMIT_DAYS = 10;
+    static final Integer MAX_INSTALLMENT_COUNT = 12;
+    static final boolean NOTIFICATION_ENABLED = false;
+    static final boolean IS_ADDRESS_REQUIRED = false;
+
     public static GetPaymentLinkDTO fromPaymentOptions(PaymentOptionsData paymentOptionsData, Double price, CallbackPaymentDTO callback) {
         return new GetPaymentLinkDTO(
                 "Pagamento do Plano",
@@ -33,11 +38,11 @@ public record GetPaymentLinkDTO(
                 price,
                 paymentOptionsData.billingType(),
                 paymentOptionsData.chargeType(),
-                10,
+                DUE_DATE_LIMIT_DAYS,
                 paymentOptionsData.subscriptionCycle(),
-                12,
-                false,
+                MAX_INSTALLMENT_COUNT,
+                NOTIFICATION_ENABLED,
                 callback,
-                false);
+                IS_ADDRESS_REQUIRED);
     }
 }
