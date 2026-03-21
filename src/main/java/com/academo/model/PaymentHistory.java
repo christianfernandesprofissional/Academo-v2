@@ -8,7 +8,7 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "tb_payment_history")
+@Table(name = "payment_history")
 public class PaymentHistory {
 
     @Id
@@ -20,15 +20,15 @@ public class PaymentHistory {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "payment_id", nullable = false)
+    @Column(name = "payment_id", nullable = false, length = 255)
     private String paymentId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", columnDefinition = "payment_status")
+    @Column(name = "status", columnDefinition = "payment_status", nullable = false)
     @JdbcType(PostgreSQLEnumJdbcType.class)
-    private PaymentStatus paymentStatus;
+    private PaymentStatus status;
 
-    @Column(name = "value")
+    @Column(name = "value", nullable = false)
     private BigDecimal value;
 
     public Integer getId() {
@@ -55,12 +55,12 @@ public class PaymentHistory {
         this.paymentId = paymentId;
     }
 
-    public PaymentStatus getPaymentStatus() {
-        return paymentStatus;
+    public PaymentStatus getStatus() {
+        return status;
     }
 
-    public void setPaymentStatus(PaymentStatus paymentStatus) {
-        this.paymentStatus = paymentStatus;
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
     }
 
     public BigDecimal getValue() {

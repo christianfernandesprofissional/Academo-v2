@@ -49,12 +49,12 @@ public class User {
     private Profile profile;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "plan_type", columnDefinition = "plan_type")
+    @Column(name = "plan_type", columnDefinition = "plan_type", nullable = false)
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private PlanType planType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_role", columnDefinition = "user_role")
+    @Column(name = "user_role", columnDefinition = "user_role", nullable = false)
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private UserRole role;
 
