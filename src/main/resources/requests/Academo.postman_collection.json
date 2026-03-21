@@ -1,1091 +1,1426 @@
 {
-	"info": {
-		"_postman_id": "837e25a1-59a7-407e-86be-da9009632d61",
-		"name": "Academo",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38290822",
-		"_collection_link": "https://asd000-0119.postman.co/workspace/Academo-Workspace~c0d246e7-bbb5-4eea-86ae-e48752e69256/collection/38290822-837e25a1-59a7-407e-86be-da9009632d61?action=share&source=collection_link&creator=38290822"
-	},
-	"item": [
-		{
-			"name": "UserLogin",
-			"item": [
-				{
-					"name": "Criar Usuário",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "username",
-									"value": "",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"fabio.tritono@gmail.com\",\r\n    \"password\":\"12345678\",\r\n    \"email\":\"fabio.tritono@gmail.com\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/auth/register",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"auth",
-								"register"
-							],
-							"query": [
-								{
-									"key": "name",
-									"value": "christian",
-									"disabled": true
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"disabled": true
-								},
-								{
-									"key": "email",
-									"value": "christian@email.com",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const response = pm.response.json();",
-									"pm.environment.set(\"token\", response.token);",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript",
-								"packages": {},
-								"requests": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "username",
-									"value": "",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"fabio.tritono@gmail.com\",\r\n    \"password\":\"12345678\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/auth/login",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							],
-							"query": [
-								{
-									"key": "name",
-									"value": "christian",
-									"disabled": true
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"disabled": true
-								},
-								{
-									"key": "email",
-									"value": "christian@email.com",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Ativar Usuário",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/auth/activate?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhY2FkZW1vIiwic3ViIjoiMSIsImV4cCI6MTc3MjY0MDM3NX0.3VBYk4tUTjK1WvKCrNQa9euvyXudkQx1gXfXXpHYmKQ",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"auth",
-								"activate"
-							],
-							"query": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhY2FkZW1vIiwic3ViIjoiMSIsImV4cCI6MTc3MjY0MDM3NX0.3VBYk4tUTjK1WvKCrNQa9euvyXudkQx1gXfXXpHYmKQ"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Profile",
-			"item": [
-				{
-					"name": "Recuperar Usuário",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/profile",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"profile"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Atualizar dados do Usuário",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"fullName\": \"Fabio da Silva Britto\",\n    \"birthDate\": \"1996-09-14\",\n    \"gender\": \"M\",\n    \"institution\": \"FATEC SCS - Antônio Carlos Russo\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/profile",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"profile"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Subject",
-			"item": [
-				{
-					"name": "Encontrar todas as Matérias",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/subjects",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"subjects"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Encontrar uma Matéria pelo ID",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/subjects/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"subjects",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Criar Matéria",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Português\",\r\n    \"description\": \"Portugoes financeira!\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/subjects",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"subjects"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Atualizar Subject",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Matemática\",\r\n    \"description\": \"Matematica básica!\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/subjects",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"subjects"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Deletar Subject",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"groupId\": 1\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/subjects/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"subjects",
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Activity",
-			"item": [
-				{
-					"name": "Encontrar todas as Atividades",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/activities",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"activities"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Encontrar uma Atividade pelo ID",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/activities/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"activities",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Criar Atividade",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"activityDate\": \"2026-09-07\",\r\n  \"notificationDate\": \"2026-09-07\",\r\n  \"name\": \"POO\",\r\n  \"description\": \"Prática de exercícios sobre Streams, Lambdas e Generics.\",\r\n  \"grade\": 1.2,\r\n  \"subjectId\": 1,\r\n  \"activityTypeId\": 2\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/activities",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"activities"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Atualizar Activity",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"activityDate\": \"2026-11-07\",\r\n  \"notificationDate\": \"2026-11-27\",\r\n  \"name\": \"Programação Orientada a Objetos\",\r\n  \"description\": \"Prática de exercícios sobre Streams, Lambdas e Generics.\",\r\n  \"grade\": 10,\r\n  \"subjectId\": 1,\r\n  \"activityTypeId\": 2\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/activities/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"activities",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Deletar Atividade",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/activities/3",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"activities",
-								"3"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "ActivityType",
-			"item": [
-				{
-					"name": "Encontrar todos os Tipos de Atividade",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/activity-types",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"activity-types"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Encontrar um Tipo de Atividade pelo ID",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/activity-types/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"activity-types",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Criar Tipo de Atividade",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Prova\",\r\n  \"description\": \"Prova que avalia meus conhecimentos básicos\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/activity-types",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"activity-types"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Atualizar ActivityType",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Atividade avaliativa\",\r\n  \"description\": \"Atividades realizadas em sala\",\r\n  \"isActive\": true\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/activity-types/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"activity-types",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Deletar Tipo de Atividade",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/activity-types/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"activity-types",
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Groups",
-			"item": [
-				{
-					"name": "Encontrar todos os grupos",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/groups",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"groups"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Encontrar um Grupo pelo ID",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/groups/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"groups",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Criar Grupo",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Programação Orientada a Objetos 3\",\r\n  \"description\": \"Grupo focado em praticar Generics, Streams e Lambdas\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/groups",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"groups"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Adicionar Matéria ao Grupo",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Grupo de Estudos de Java\",\r\n  \"description\": \"Grupo focado em praticar Generics, Streams e Lambdas\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/groups/add-subject/1/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"groups",
-								"add-subject",
-								"1",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Remover Matéria do Grupo",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Grupo de Estudos de Java\",\r\n  \"description\": \"Grupo focado em praticar Generics, Streams e Lambdas\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/groups/delete-subject/1/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"groups",
-								"delete-subject",
-								"1",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Atualizar Grupo",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Grupo de Estudos de Spring\",\r\n  \"description\": \"Grupo dedicado a aprender Spring Boot e Spring Security\",\r\n  \"isActive\": true\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/groups/1",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"groups",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Deletar Grupo",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/groups/2",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"groups",
-								"2"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Files",
-			"item": [
-				{
-					"name": "Fazer Upload de Arquivo",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"type": "file",
-									"src": "/C:/Users/chris/Pictures/picture.jpg"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{localhost}}/files/upload-file",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"files",
-								"upload-file"
-							],
-							"query": [
-								{
-									"key": "name",
-									"value": "christian",
-									"disabled": true
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"disabled": true
-								},
-								{
-									"key": "email",
-									"value": "christian@email.com",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Fazer Download de Arquivo",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": ""
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Deletar Arquivo",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/files/delete/1DwevZb9SS6KBWR0hJZrDkKAJRmAL0bl2",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"files",
-								"delete",
-								"1DwevZb9SS6KBWR0hJZrDkKAJRmAL0bl2"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "488a9dd0-8c6c-42d6-8edd-68075b954c88",
+    "name": "Academo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "38361779"
+  },
+  "item": [
+    {
+      "name": "UserLogin",
+      "item": [
+        {
+          "name": "Criar Usuário",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"christianfernandes0@gmail.com\",\r\n    \"password\":\"12345678\",\r\n    \"email\":\"christianfernandes0@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/auth/register",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "christian",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "123456",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "christian@email.com",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "pm.environment.set(\"token\", response.token);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"{{login}}\",\r\n    \"password\":\"{{senha}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/auth/login",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "christian",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "123456",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "christian@email.com",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ativar Usuário",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/auth/activate?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhY2FkZW1vIiwic3ViIjoiMSIsImV4cCI6MTc3MzQzMjU1OH0.jDPDv6Om71HD1rdwl5pf9Wp39-84im-YOkNy_nIbY0k",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "auth",
+                "activate"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhY2FkZW1vIiwic3ViIjoiMSIsImV4cCI6MTc3MzQzMjU1OH0.jDPDv6Om71HD1rdwl5pf9Wp39-84im-YOkNy_nIbY0k"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Esqueci minha Senha",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"academo.contato@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/auth/forgot-password",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Redefinir Senha",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"newPassword\": \"fabio124\",\r\n    \"confirmNewPassword\": \"fabio124\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/auth/reset-password?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhY2FkZW1vIiwic3ViIjoiMSIsImV4cCI6MTc3Mzc3MTg1NX0.u2mzCt45fv8NXVVNTE7oACCs2BqVnv1kvowMITx3O8M",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhY2FkZW1vIiwic3ViIjoiMSIsImV4cCI6MTc3Mzc3MTg1NX0.u2mzCt45fv8NXVVNTE7oACCs2BqVnv1kvowMITx3O8M"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Recuperar Usuário",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/profile",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar dados do Usuário",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"fullName\": \"Fabio da Silva Britto\",\n    \"birthDate\": \"1996-09-14\",\n    \"gender\": \"M\",\n    \"institution\": \"FATEC SCS - Antônio Carlos Russo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/profile",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Subject",
+      "item": [
+        {
+          "name": "Encontrar todas as Matérias",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/subjects",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "subjects"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Encontrar uma Matéria pelo ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/subjects/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "subjects",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Matéria",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Matematica discreta\",\r\n    \"description\": \"Reinaldo\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/subjects",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "subjects"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Subject",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Matemática\",\r\n    \"description\": \"Matematica básica!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/subjects",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "subjects"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar Subject",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"groupId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/subjects/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "subjects",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Activity",
+      "item": [
+        {
+          "name": "Encontrar todas as Atividades",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/activities",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "activities"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Encontrar uma Atividade pelo ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/activities/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "activities",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Atividade",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"activityDate\": \"2026-09-07\",\r\n  \"notificationDate\": \"2026-09-07\",\r\n  \"name\": \"POO\",\r\n  \"description\": \"Prática de exercícios sobre Streams, Lambdas e Generics.\",\r\n  \"grade\": 1.2,\r\n  \"subjectId\": 3,\r\n  \"activityTypeId\": 3\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/activities",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "activities"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Activity",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"activityDate\": \"2026-11-07\",\r\n  \"notificationDate\": \"2026-11-27\",\r\n  \"name\": \"Programação Orientada a Objetos\",\r\n  \"description\": \"Prática de exercícios sobre Streams, Lambdas e Generics.\",\r\n  \"grade\": 10,\r\n  \"subjectId\": 1,\r\n  \"activityTypeId\": 2\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/activities/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "activities",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar Atividade",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/activities/3",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "activities",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ActivityType",
+      "item": [
+        {
+          "name": "Encontrar todos os Tipos de Atividade pelo ID de periodo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/activity-types/all/9",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "activity-types",
+                "all",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Encontrar um Tipo de Atividade pelo ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/activity-types/2",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "activity-types",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Tipo de Atividade",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Prova\",\r\n  \"description\": \"Prova que avalia meus conhecimentos básicos\",\r\n  \"periodId\": 9\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/activity-types",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "activity-types"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar ActivityType",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Atividade avaliativa\",\r\n  \"description\": \"Atividades realizadas em sala\",\r\n  \"weight\": \"5\",\r\n  \"periodId\": 2\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/activity-types/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "activity-types",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar Tipo de Atividade",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/activity-types/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "activity-types",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Groups",
+      "item": [
+        {
+          "name": "Encontrar todos os grupos",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/groups",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "groups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Encontrar um Grupo pelo ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/groups/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "groups",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Grupo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"MOMBILLLe\",\r\n  \"description\": \"Grupo focado em praticar Generics, Streams e Lambdas\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/groups",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "groups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Adicionar Matéria ao Grupo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Grupo de Estudos de Java\",\r\n  \"description\": \"Grupo focado em praticar Generics, Streams e Lambdas\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/groups/add-subject/1/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "groups",
+                "add-subject",
+                "1",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remover Matéria do Grupo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Grupo de Estudos de Java\",\r\n  \"description\": \"Grupo focado em praticar Generics, Streams e Lambdas\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/groups/delete-subject/1/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "groups",
+                "delete-subject",
+                "1",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Grupo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Grupo de Estudos de Spring\",\r\n  \"description\": \"Grupo dedicado a aprender Spring Boot e Spring Security\",\r\n  \"isActive\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/groups/2",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "groups",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar Grupo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/groups/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "groups",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Associar matérias de um vez Só",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\r\n    \"subjectsIds\":[1,2,3]\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/groups/associate-subjects/3",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "groups",
+                "associate-subjects",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Files",
+      "item": [
+        {
+          "name": "Fazer Upload de Arquivo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/home/fabio-britto/Downloads/vtalk.txt"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{localhost}}/files/upload-file/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "files",
+                "upload-file",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "christian",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "123456",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "christian@email.com",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar Arquivo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/files/delete/1DwevZb9SS6KBWR0hJZrDkKAJRmAL0bl2",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "files",
+                "delete",
+                "1DwevZb9SS6KBWR0hJZrDkKAJRmAL0bl2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fazer Download de Arquivo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/files/download/43cd6f30-35ff-4840-8d0b-72d17a313d9a",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "files",
+                "download",
+                "43cd6f30-35ff-4840-8d0b-72d17a313d9a"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Encontrar todos os arquivos de uma Matéria",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/files/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "files",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Periods",
+      "item": [
+        {
+          "name": "Encontrar todos os períodos de uma matéria",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{localhost}}/periods/all/3",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "periods",
+                "all",
+                "3"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "christian",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "123456",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "christian@email.com",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Encontrar um período por ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/periods/1/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "periods",
+                "1",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar período",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"subjectId\": 2,\r\n    \"name\": \"P3\",\r\n    \"grade\": \"0\",\r\n    \"weight\":\"4.0\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/periods",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "periods"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar período",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": 1,\r\n    \"subjectId\": 1,\r\n    \"name\": \"P2\",\r\n    \"grade\": \"0\",\r\n    \"weight\":\"5.0\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost}}/periods",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "periods"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar período",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{localhost}}/periods/1/1",
+              "host": [
+                "{{localhost}}"
+              ],
+              "path": [
+                "periods",
+                "1",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
 }
