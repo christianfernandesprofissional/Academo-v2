@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrada")
     })
     @GetMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<List<ActivityTypeDTO>> findAll(Authentication authentication) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         List<ActivityTypeDTO> types  = activityTypeService.findAll(userId);
@@ -49,6 +51,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<ActivityTypeDTO> findById(Authentication authentication, @PathVariable Integer id) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityTypeDTO activityTypeDTO = activityTypeService.findDTO(id, userId);
@@ -61,6 +64,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar tipo de atividade"),
     })
     @PostMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<ActivityTypeDTO> create(Authentication authentication, @RequestBody @Valid SaveActivityTypeDTO activityTypeDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityTypeDTO createdActivityType = activityTypeService.create(userId, activityTypeDTO);
@@ -75,6 +79,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
     })
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<ActivityTypeDTO> update(Authentication authentication,@PathVariable Integer id, @RequestBody @Valid SaveActivityTypeDTO activityTypeDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityTypeDTO updated = activityTypeService.update(userId, id, activityTypeDTO);
@@ -88,6 +93,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
     })
     @DeleteMapping("/{activityTypeId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Integer activityTypeId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         activityTypeService.delete(userId, activityTypeId);

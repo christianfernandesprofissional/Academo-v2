@@ -10,6 +10,7 @@ import com.academo.service.period.IPeriodService;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,18 +29,21 @@ public class PeriodController {
 
 
     @GetMapping("/all/{subjectId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<List<PeriodDTO>> findAll(Authentication auth, @PathVariable Integer subjectId){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.findAll(userId, subjectId));
     }
 
     @GetMapping("/{subjectId}/{periodId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<PeriodDTO> findById(Authentication auth, @PathVariable Integer subjectId, @PathVariable Integer periodId){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.findById(userId, periodId));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<PeriodDTO> create(Authentication auth, @RequestBody SavePeriodDTO periodDTO){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
         PeriodDTO saved = service.create(userId, periodDTO);
@@ -48,6 +52,7 @@ public class PeriodController {
     }
 
     @PutMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<PeriodDTO> update(Authentication auth, @RequestBody UpdatePeriodDTO periodDTO){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
         PeriodDTO updated = service.update(userId, periodDTO);
@@ -55,6 +60,7 @@ public class PeriodController {
     }
 
     @DeleteMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<PeriodDTO> delete(Authentication auth, @PathVariable Integer subjectId, @PathVariable Integer periodId){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
         service.delete(userId, subjectId, periodId);

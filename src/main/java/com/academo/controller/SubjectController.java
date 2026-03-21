@@ -14,6 +14,7 @@ import com.academo.service.subject.ISubjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar matéria")
     })
     @PostMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<SubjectDTO> create(Authentication authentication, @Valid @RequestBody CreateSubjectDTO createSubjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         SubjectDTO createdSubject = service.create(userId, createSubjectDTO);
@@ -55,6 +57,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada para este grupo")
     })
     @GetMapping("/in-group/{groupId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<List<SubjectDTO>> findByGroupId(Authentication authentication, @PathVariable Integer groupId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         List<SubjectDTO> subjects = service.findByGroup(groupId);
@@ -68,6 +71,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada")
     })
     @GetMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<List<SubjectDTO>> findAll(Authentication authentication) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         List<SubjectDTO> subjects = service.findAll(userId);
@@ -81,6 +85,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada com este ID")
     })
     @GetMapping("/{subjectId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<SubjectDTO> findById(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         SubjectDTO subjectDTO = service.findById(subjectId, userId);
@@ -94,6 +99,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada com este ID")
     })
     @PutMapping("/{subjectId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<SubjectDTO> update(Authentication authentication, @PathVariable Integer subjectId, @Valid @RequestBody UpdateSubjectDTO updateSubjectDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.update(userId, subjectId, updateSubjectDTO));
@@ -106,6 +112,7 @@ public class SubjectController {
         @ApiResponse(responseCode = "404", description = "Nenhuma matéria encontrada com este ID")
     })
     @DeleteMapping("/{subjectId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<Activity> delete(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         service.delete(userId, subjectId);

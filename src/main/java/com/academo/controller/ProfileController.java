@@ -12,6 +12,7 @@ import com.academo.security.authuser.AuthUser;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ public class ProfileController {
         @ApiResponse(responseCode = "404", description = "Perfil não encontrado")
     })
     @GetMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<ProfileDTO> findById(Authentication authentication) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.status(HttpStatus.OK).body(service.findById(userId));
@@ -45,6 +47,7 @@ public class ProfileController {
         @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar perfil")
     })
     @PutMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<ProfileDTO> update(Authentication authentication, @RequestBody @Valid UpdateProfileDTO profileDto) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.status(HttpStatus.OK).body(service.update(userId, profileDto));

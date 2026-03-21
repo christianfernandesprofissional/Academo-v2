@@ -14,6 +14,7 @@ import com.academo.security.authuser.AuthUser;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado")
     })
     @GetMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<List<GroupDTO>> findAll(Authentication authentication){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.findAll(userId));
@@ -50,6 +52,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado com este ID")
     })
     @GetMapping("/{groupId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<GroupDTO> findById(Authentication authentication, @PathVariable Integer groupId){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.findById(userId, groupId));
@@ -61,6 +64,7 @@ public class GroupController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar grupo")
     })
     @PostMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<GroupDTO> create(Authentication authentication, @RequestBody @Valid CreateGroupDTO groupDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         GroupDTO createdGroup = groupService.create(userId,groupDTO);
@@ -75,6 +79,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado com este ID")
     })
     @PutMapping("/{groupId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<GroupDTO> update(Authentication authentication ,@PathVariable Integer groupId, @RequestBody @Valid UpdateGroupDTO updateGroupDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.update(userId, groupId, updateGroupDTO));
@@ -87,6 +92,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Nenhum grupo encontrado com este ID")
     })
     @DeleteMapping("/{groupId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<Group> delete(Authentication authentication, @PathVariable Integer groupId){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         groupService.delete(userId,groupId);
@@ -100,6 +106,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Grupo ou matéria não encontrado")
     })
     @PostMapping("/add-subject/{groupId}/{subjectId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<GroupDTO> addSubject(Authentication authentication, @PathVariable Integer groupId, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.addSubject(userId, groupId, subjectId));
@@ -112,6 +119,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Grupo ou matéria não encontrado")
     })
     @DeleteMapping("/delete-subject/{groupId}/{subjectId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<GroupDTO> deleteSubject(Authentication authentication, @PathVariable Integer groupId, @PathVariable Integer subjectId){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.deleteSubject(userId, groupId, subjectId));
@@ -125,6 +133,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "Grupo não encontrado")
     })
     @PutMapping("associate-subjects/{groupId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<GroupDTO> associateSubjects(Authentication authentication, @PathVariable Integer groupId, @RequestBody @Valid AssociateSubjectsDTO associateSubjectsDTO){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.associateSubjects(userId, groupId, associateSubjectsDTO));

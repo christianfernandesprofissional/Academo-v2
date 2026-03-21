@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +42,7 @@ public class FileController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar realizar upload")
     })
     @PostMapping("/upload-file/{subjectId}")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<FileDTO> upload(@RequestParam("file") MultipartFile file, @PathVariable("subjectId") Integer subjectId, Authentication authentication){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         FileDTO uploadedFile = fileService.upload(file, userId, subjectId);
@@ -55,6 +57,7 @@ public class FileController {
             @ApiResponse(responseCode = "404", description = "Nenhum arquivo encontrado com este ID")
     })
     @GetMapping("/download/{fileUUID}")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<InputStreamResource> download(@PathVariable String fileUUID) {
 
         DownloadS3FileDTO fileDTO = fileService.downloadStream(fileUUID);
@@ -76,6 +79,7 @@ public class FileController {
             @ApiResponse(responseCode = "404", description = "Nenhuma arquivo encontrado com este ID")
     })
     @DeleteMapping("/delete/{uuid}")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<String> delete(@PathVariable String uuid, Authentication authentication) {
             Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
             fileService.delete(uuid, userId);
@@ -90,6 +94,7 @@ public class FileController {
             @ApiResponse(responseCode = "404", description = "Nenhum arquivo encontrado")
     })
     @GetMapping("/{subjectId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<List<FileDTO>> findAll(Authentication authentication, @PathVariable Integer subjectId){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(fileService.findAllBySubject(userId, subjectId));
