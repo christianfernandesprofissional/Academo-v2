@@ -20,7 +20,7 @@ public class PaymentHistory {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "payment_id", nullable = false, length = 255)
+    @Column(name = "payment_id", nullable = false, length = 255, unique = true)
     private String paymentId;
 
     @Enumerated(EnumType.STRING)
