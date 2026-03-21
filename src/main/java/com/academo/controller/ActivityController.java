@@ -42,6 +42,12 @@ public class ActivityController {
        return ResponseEntity.ok(activityService.findAll(userId));
     }
 
+    @GetMapping("/by-subject/{subjectId}")
+    public ResponseEntity<List<ActivityDTO>> findAllBySubject(Authentication authentication, @PathVariable Integer subjectId) {
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        return ResponseEntity.ok(activityService.findAllBySubjectId(userId, subjectId));
+    }
+
     @Operation(summary = "Recupera uma atividade", method = "GET")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atividade recuperada com sucesso"),
@@ -54,11 +60,6 @@ public class ActivityController {
         return ResponseEntity.ok(activityService.findById(userId, activityId));
     }
 
-    @GetMapping("/by-subject/{subjectId}")
-    public ResponseEntity<List<ActivityDTO>> findAllBySubject(Authentication authentication, @PathVariable Integer subjectId) {
-        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(activityService.findAllBySubjectId(userId, subjectId));
-    }
 
     @Operation(summary = "Cadastra uma nova atividade", method = "POST")
     @ApiResponses(value = {
@@ -69,7 +70,7 @@ public class ActivityController {
     public ResponseEntity<ActivityDTO> create(Authentication authentication, @RequestBody @Valid SaveActivityDTO activityDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityDTO created = activityService.create(userId, activityDTO);
-        URI location = URI.create("/activities?activityId=" + created.id());
+        URI location = URI.create("/activities/" + created.id());
         return ResponseEntity.created(location).body(created);
     }
 

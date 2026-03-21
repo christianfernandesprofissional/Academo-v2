@@ -13,6 +13,9 @@ import com.academo.util.exceptions.activityType.ActivityTypeNotFoundException;
 import com.academo.controller.dtos.exception.ExceptionDTO;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import com.academo.util.exceptions.mail.MailException;
+import com.academo.util.exceptions.period.PeriodAlreadyExistsException;
+import com.academo.util.exceptions.period.PeriodLimitException;
+import com.academo.util.exceptions.period.PeriodNotFoundException;
 import com.academo.util.exceptions.profile.ProfileNotFoundException;
 import com.academo.util.exceptions.subject.SubjectNotFoundException;
 import com.academo.util.exceptions.user.*;
@@ -181,6 +184,22 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(MailException.class)
     private ResponseEntity<ExceptionDTO> mailException(MailException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    //Period
+    @ExceptionHandler(PeriodNotFoundException.class)
+    private ResponseEntity<ExceptionDTO> periodException(PeriodNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(PeriodLimitException.class)
+    private ResponseEntity<ExceptionDTO> periodException(PeriodLimitException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(PeriodAlreadyExistsException.class)
+    private ResponseEntity<ExceptionDTO> periodException(PeriodAlreadyExistsException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
     }
 

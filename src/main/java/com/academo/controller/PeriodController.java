@@ -54,7 +54,7 @@ public class PeriodController {
         return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{subjectId}/{periodId}")
     public ResponseEntity<PeriodDTO> delete(Authentication auth, @PathVariable Integer subjectId, @PathVariable Integer periodId){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
         service.delete(userId, subjectId, periodId);

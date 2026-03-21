@@ -3,6 +3,7 @@ package com.academo.controller;
 import com.academo.controller.dtos.activity.SaveActivityDTO;
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
 import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
+import com.academo.controller.dtos.activityType.UpdateActivityTypeDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.activityType.IActivityTypeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,10 +36,10 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar tipos de atividade"),
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrada")
     })
-    @GetMapping
-    public ResponseEntity<List<ActivityTypeDTO>> findAll(Authentication authentication) {
+    @GetMapping("/all/{periodId}")
+    public ResponseEntity<List<ActivityTypeDTO>> findAll(Authentication authentication, @PathVariable Integer periodId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        List<ActivityTypeDTO> types  = activityTypeService.findAll(userId);
+        List<ActivityTypeDTO> types  = activityTypeService.findAll(userId, periodId);
         return ResponseEntity.ok(types);
     }
 
@@ -75,7 +76,7 @@ public class ActivityTypeController {
             @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ActivityTypeDTO> update(Authentication authentication,@PathVariable Integer id, @RequestBody @Valid SaveActivityTypeDTO activityTypeDTO) {
+    public ResponseEntity<ActivityTypeDTO> update(Authentication authentication,@PathVariable Integer id, @RequestBody @Valid UpdateActivityTypeDTO activityTypeDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityTypeDTO updated = activityTypeService.update(userId, id, activityTypeDTO);
         return ResponseEntity.ok(updated);

@@ -16,5 +16,6 @@ public interface IPeriodService {
     PeriodDTO update(Integer userId, UpdatePeriodDTO periodDTO);
     PeriodDTO addActivityType(Integer userId, SaveActivityTypeDTO activityTypeDTO);
     void delete(Integer userId,Integer subjectId, Integer periodId);
+    boolean existsById(Integer periodId);
 
 }
