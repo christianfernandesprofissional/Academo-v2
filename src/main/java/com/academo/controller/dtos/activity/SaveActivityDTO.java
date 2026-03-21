@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record SaveActivityDTO(
@@ -17,7 +18,7 @@ public record SaveActivityDTO(
         String name,
         String description,
         @PositiveOrZero(message = "É obrigatório que a nota da atividade seja maior ou igual a zero")
-        Double grade,
+        BigDecimal grade,
         @NotNull(message = "É necessário que a atividade pertença a uma matéria existente")
         Integer subjectId,
         @NotNull(message = "É obrigatório escolher um tipo de atividade")
