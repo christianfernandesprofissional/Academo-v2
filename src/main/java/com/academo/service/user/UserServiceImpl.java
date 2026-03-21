@@ -1,6 +1,7 @@
 package com.academo.service.user;
 
 import com.academo.controller.dtos.mail.ActivateAccountMailDTO;
+import com.academo.controller.dtos.mail.ResetPasswordMailDTO;
 import com.academo.controller.dtos.mail.WelcomeMailDTO;
 import com.academo.controller.dtos.security.ForgotPasswordDTO;
 import com.academo.controller.dtos.security.ResetPasswordDTO;
@@ -89,10 +90,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public TokenPasswordDTO forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
+    public void forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
         User user = userRepository.findByEmail(forgotPasswordDTO.email()).orElseThrow(UserNotFoundException::new);
         var token = tokenService.generateForgotPasswordToken(user.getId());
-        return new TokenPasswordDTO(token);
+        mailService.sendResetPasswordMail(new ResetPasswordMailDTO(user.getName(), user.getEmail(), token));
     }
 
     @Override

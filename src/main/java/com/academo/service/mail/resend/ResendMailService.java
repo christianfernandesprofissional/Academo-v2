@@ -1,6 +1,7 @@
 package com.academo.service.mail.resend;
 
 import com.academo.controller.dtos.mail.ActivateAccountMailDTO;
+import com.academo.controller.dtos.mail.ResetPasswordMailDTO;
 import com.academo.controller.dtos.mail.WelcomeMailDTO;
 import com.academo.controller.dtos.notification.NotificationDTO;
 import com.academo.service.mail.IMailService;
@@ -43,7 +44,7 @@ public class ResendMailService implements IMailService {
             CreateEmailOptions params = CreateEmailOptions.builder()
                     .to(welcomeMailDTO.email())
                     .template(Template.builder()
-                            .id("boas-vindas")
+                            .id("welcome")
                             .variables(variables)
                             .build())
                     .build();
@@ -60,12 +61,12 @@ public class ResendMailService implements IMailService {
         Map<String, Object> variables = new HashMap<>();
         variables.put("user_email", activateAccountMailDTO.email());
         variables.put("name", activateAccountMailDTO.name());
-        variables.put("activationToken", activateAccountMailDTO.activationToken());
+        variables.put("activation_token_link", activateAccountMailDTO.activationToken());
 
         CreateEmailOptions params = CreateEmailOptions.builder()
                 .to(activateAccountMailDTO.email())
                 .template(Template.builder()
-                        .id("ativar-conta")
+                        .id("activate-account")
                         .variables(variables)
                         .build())
                 .build();
@@ -73,6 +74,28 @@ public class ResendMailService implements IMailService {
             resend.emails().send(params);
         } catch (ResendException e) {
             throw new RuntimeException("Erro ao enviar email de Ativação de Conta");
+        }
+    }
+
+    @Override
+    public void sendResetPasswordMail(ResetPasswordMailDTO resetPasswordMailDTO) {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("user_email", resetPasswordMailDTO.email());
+        variables.put("name", resetPasswordMailDTO.name());
+        variables.put("reset_token_link", resetPasswordMailDTO.resetPasswordToken());
+
+        CreateEmailOptions params = CreateEmailOptions.builder()
+                .to(resetPasswordMailDTO.email())
+                .template(Template.builder()
+                        .id("reset-password")
+                        .variables(variables)
+                        .build())
+                .build();
+
+        try {
+            resend.emails().send(params);
+        } catch (ResendException e) {
+            throw new MailException("Erro ao enviar email de Reset-Password");
         }
     }
 
