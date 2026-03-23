@@ -18,7 +18,6 @@ import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import com.academo.util.exceptions.subject.SubjectNotFoundException;
-import com.academo.util.exceptions.user.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +43,7 @@ public class SubjectServiceImpl implements ISubjectService {
 
     @Override
     public List<SubjectDTO> findAll(Integer userId) {
-        return subjectRepository.findByUserId(userId).stream().map(SubjectDTO::fromSubject).toList();
+        return subjectRepository.findAllByUserId(userId).stream().map(SubjectDTO::fromSubject).toList();
     }
 
     @Override

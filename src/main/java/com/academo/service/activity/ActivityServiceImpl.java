@@ -9,6 +9,8 @@ import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.repository.ActivityRepository;
 import com.academo.service.activityType.IActivityTypeService;
+import com.academo.service.calculation.CalculationService;
+import com.academo.service.calculation.ICalculationService;
 import com.academo.service.subject.ISubjectService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
@@ -24,12 +26,14 @@ public class ActivityServiceImpl implements IActivityService{
     private final IUserService userService;
     private final ISubjectService subjectService;
     private final IActivityTypeService activityTypeService;
+    private final ICalculationService calculationService;
 
-    public ActivityServiceImpl(ActivityRepository activityRepository, IUserService userService, ISubjectService subjectService, IActivityTypeService activityTypeService) {
+    public ActivityServiceImpl(ActivityRepository activityRepository, IUserService userService, ISubjectService subjectService, IActivityTypeService activityTypeService, ICalculationService calculationService) {
         this.activityRepository = activityRepository;
         this.userService = userService;
         this.subjectService = subjectService;
         this.activityTypeService = activityTypeService;
+        this.calculationService = calculationService;
     }
 
     @Override

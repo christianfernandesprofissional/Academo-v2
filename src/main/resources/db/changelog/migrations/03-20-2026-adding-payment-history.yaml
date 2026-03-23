@@ -1,0 +1,77 @@
+databaseChangeLog:
+- changeSet:
+    id: 1771623768047-29
+    author: fabio-britto
+    changes:
+      - sql:
+          sql: CREATE TYPE plan_type AS ENUM ('FREE', 'YEARLY_IN_CASH', 'MONTHLY_RECURRENT', 'YEARLY_RECURRENT', 'IN_INSTALLMENTS');
+               CREATE TYPE payment_status AS ENUM ('SUCCESS', 'FAILED');
+               CREATE TYPE user_role AS ENUM ('ROLE_FREE', 'ROLE_PREMIUM');
+- changeSet:
+    id: 1771623768047-30
+    author: fabio-britto
+    changes:
+      - createTable:
+          columns:
+          - column:
+              autoIncrement: true
+              constraints:
+                nullable: false
+                primaryKey: true
+                primaryKeyName: payment_history_pkey
+              name: id
+              type: INTEGER
+          - column:
+              constraints:
+                nullable: false
+              name: user_id
+              type: INTEGER
+          - column:
+              constraints:
+                nullable: false
+                unique: true
+              name: payment_id
+              type: VARCHAR(255)
+          - column:
+              constraints:
+                nullable: false
+              name: status
+              type: payment_status
+          - column:
+              constraints:
+                nullable: false
+              name: value
+              type: NUMERIC
+          tableName: payment_history
+- changeSet:
+    id: 1771623768047-31
+    author: fabio-britto
+    changes:
+      - addColumn:
+          tableName: tb_users
+          columns:
+            - column:
+                constraints:
+                  nullable: false
+                name: plan_type
+                type: plan_type
+            - column:
+                constraints:
+                  nullable: false
+                name: user_role
+                type: user_role
+- changeSet:
+    id: 1771623768047-32
+    author: fabio-britto
+    changes:
+      - addForeignKeyConstraint:
+          baseColumnNames: user_id
+          baseTableName: payment_history
+          constraintName: payment_history_user_id_fkey
+          deferrable: false
+          initiallyDeferred: false
+          onDelete: CASCADE
+          onUpdate: CASCADE
+          referencedColumnNames: id
+          referencedTableName: tb_users
+          validate: true

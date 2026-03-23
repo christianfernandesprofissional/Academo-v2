@@ -1,6 +1,7 @@
 package com.academo.security.authuser;
 
 import com.academo.model.User;
+import com.academo.model.enums.UserRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,7 +24,7 @@ public class AuthUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority(user.getRole().name()));
     }
 
     @Override
@@ -38,4 +39,6 @@ public class AuthUser implements UserDetails {
     }
 
     public User getUser() {return user;}
+
+    public UserRole getUserRole() { return user.getRole(); }
 }

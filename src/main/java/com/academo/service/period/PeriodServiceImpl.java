@@ -10,6 +10,7 @@ import com.academo.model.User;
 import com.academo.model.enums.PeriodName;
 import com.academo.repository.PeriodRepository;
 import com.academo.repository.SubjectRepository;
+import com.academo.service.calculation.ICalculationService;
 import com.academo.util.exceptions.period.PeriodAlreadyExistsException;
 import com.academo.util.exceptions.period.PeriodLimitException;
 import com.academo.util.exceptions.period.PeriodNotFoundException;
@@ -25,10 +26,12 @@ public class PeriodServiceImpl implements IPeriodService{
 
     private final PeriodRepository repository;
     private final SubjectRepository subjectRepository;
+    private final ICalculationService calculationService;
 
-    public PeriodServiceImpl(PeriodRepository repository, SubjectRepository subjectRepository){
+    public PeriodServiceImpl(PeriodRepository repository, SubjectRepository subjectRepository, ICalculationService calculationService){
         this.repository = repository;
         this.subjectRepository = subjectRepository;
+        this.calculationService = calculationService;
     }
 
     @Override

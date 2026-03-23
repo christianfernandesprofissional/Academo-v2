@@ -6,6 +6,7 @@ import com.academo.controller.dtos.activityType.UpdateActivityTypeDTO;
 import com.academo.model.ActivityType;
 import com.academo.model.Period;
 import com.academo.repository.ActivityTypeRepository;
+import com.academo.service.calculation.ICalculationService;
 import com.academo.service.period.IPeriodService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
@@ -27,11 +28,13 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
     private final ActivityTypeRepository repository;
     private final IUserService userService;
     private final IPeriodService periodService;
+    private final ICalculationService calculationService;
 
-    public ActivityTypeServiceImpl(IUserService userService, ActivityTypeRepository repository, IPeriodService periodService) {
+    public ActivityTypeServiceImpl(IUserService userService, ActivityTypeRepository repository, IPeriodService periodService, ICalculationService calculationService) {
         this.userService = userService;
         this.repository = repository;
         this.periodService = periodService;
+        this.calculationService = calculationService;
     }
 
     @Override

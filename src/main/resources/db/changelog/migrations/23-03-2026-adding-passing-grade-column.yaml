@@ -1,0 +1,13 @@
+- changeSet:
+    id: 1771623768047-36
+    author: christian-fernandes
+    changes:
+      - addColumn:
+          tableName: subjects
+          columns:
+            - column:
+                constraints:
+                  nullable: false
+                defaultValueNumeric: !!float "0"
+                name: passing_grade
+                type: NUMERIC

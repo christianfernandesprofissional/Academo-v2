@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771623768047-34
+      author: fabio-britto
+      changes:
+        - sql:
+            splitStatements: true
+            sql:
+              ALTER TYPE payment_status RENAME TO payment_status_old;
+              CREATE TYPE payment_status AS ENUM ('PAID', 'WAITING_PAYMENT', 'EXPIRED', 'CANCELED');
+              ALTER TABLE payment_history 
+                ALTER COLUMN status TYPE payment_status 
+                USING status::text::payment_status;
+              DROP TYPE payment_status_old;

@@ -5,6 +5,7 @@ import com.academo.model.ActivityType;
 import com.academo.model.Period;
 import com.academo.model.Subject;
 import com.academo.model.enums.CalculationType;
+import com.academo.model.enums.PeriodName;
 import com.academo.repository.PeriodRepository;
 import com.academo.repository.SubjectRepository;
 import com.academo.util.calculo.Calc;
@@ -13,13 +14,15 @@ import com.academo.util.exceptions.subject.SubjectNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.math.RoundingMode;
+import java.util.*;
 
 @Service
 public class CalculationService implements ICalculationService{
 
     private final SubjectRepository subjectRepository;
     private final PeriodRepository periodRepository;
+    private boolean subjectHasExam;
 
     public CalculationService(SubjectRepository subjectRepository, PeriodRepository periodRepository){
         this.subjectRepository = subjectRepository;
@@ -29,6 +32,7 @@ public class CalculationService implements ICalculationService{
     @Override
     public void updateSubjectAverage(Integer subjectId){
         Subject subject = subjectRepository.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
+        subjectHasExam = subject.getPeriods().stream().anyMatch(p -> PeriodName.valueOf(p.getName()).equals(PeriodName.EXAME));
 
         switch (subject.getCalculationType()){
             case CalculationType.MEDIA_ARITMETICA -> averageFromSubject(subject);
@@ -56,19 +60,38 @@ public class CalculationService implements ICalculationService{
 
     private void weightedAverageFromSubject(Subject subject) {
 
-        List<Period> periods = subject.getPeriods().stream().toList();
-        BigDecimal[][] notasEPesos = new BigDecimal[periods.size()][periods.size()];
+        List<Period> periods = new ArrayList<>(subject.getPeriods());
+
+        Optional<Period> exam = periods.stream()
+                .filter(p -> PeriodName.valueOf(p.getName()).equals(PeriodName.EXAME))
+                .findFirst();
+
+        exam.ifPresent(periods::remove);
+
+        BigDecimal[][] notasEPesos = new BigDecimal[periods.size()][2];
+
         int i = 0;
         for(Period p: periods){
-            notasEPesos[i][0] = p.getGrade();
-            notasEPesos[i][i] = p.getWeight();
+               notasEPesos[i][0] = p.getGrade();
+               notasEPesos[i][1] = p.getWeight();
+               i++;
         }
-        subject.setFinalGrade(Calc.mediaPonderada(notasEPesos));
+        BigDecimal mediaFinal = Calc.mediaPonderada(notasEPesos);
+        if(subjectHasExam && exam.isPresent()){
+               mediaFinal = mediaFinal.add(exam.get().getGrade()).divide(new BigDecimal("2"), 2, RoundingMode.HALF_UP);
+        }
+
+        subject.setFinalGrade(mediaFinal);
 
     }
 
     private void averageFromSubject(Subject subject) {
-        subject.setFinalGrade(Calc.mediaAritmetica(subject.getPeriods().stream().map(Period::getGrade).toList()));
+        Set<Period> periods = new HashSet<>(subject.getPeriods());
+        if(subjectHasExam){
+            periods.stream().min(Comparator.comparing(Period::getGrade)).ifPresent(periods::remove);
+        }
+
+        subject.setFinalGrade(Calc.mediaAritmetica(periods.stream().map(Period::getGrade).toList()));
     }
 
 }

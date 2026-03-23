@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771623768047-33
+      author: fabio-britto
+      changes:
+        - addColumn:
+            tableName: payment_history
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: timestamp
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: timestamp

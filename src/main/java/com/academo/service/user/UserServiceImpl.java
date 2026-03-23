@@ -9,6 +9,8 @@ import com.academo.controller.dtos.security.TokenPasswordDTO;
 import com.academo.controller.dtos.user.UserDTO;
 import com.academo.model.Profile;
 import com.academo.model.User;
+import com.academo.model.enums.PlanType;
+import com.academo.model.enums.UserRole;
 import com.academo.repository.UserRepository;
 import com.academo.controller.dtos.security.RegisterDTO;
 import com.academo.security.service.TokenService;
@@ -30,7 +32,6 @@ public class UserServiceImpl implements IUserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private static final LocalDateTime EXPIRATION_ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
-    //private static final LocalDateTime EXPIRATION_RESET_PASSWORD_TOKEN = LocalDateTime.now().plusMinutes(15).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
 
     private final UserRepository userRepository;
     private final IMailService mailService;
@@ -50,6 +51,8 @@ public class UserServiceImpl implements IUserService {
         user.setEmail(registerDTO.email());
         user.setPassword(encryptedPassword);
         user.setName(registerDTO.name());
+        user.setPlanType(PlanType.FREE);
+        user.setRole(UserRole.ROLE_FREE);
         user.setActivationAccountTokenExpiration(EXPIRATION_ACTIVATION_TOKEN);
         Profile profile = new Profile();
         profile.setUser(user);
