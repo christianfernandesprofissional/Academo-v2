@@ -1,3 +1,4 @@
+databaseChangeLog:
 - changeSet:
     id: 1771623768047-36
     author: christian-fernandes
