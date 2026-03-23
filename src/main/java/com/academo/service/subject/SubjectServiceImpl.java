@@ -12,6 +12,7 @@ import com.academo.model.enums.PeriodName;
 import com.academo.repository.GroupRepository;
 import com.academo.repository.SubjectRepository;
 import com.academo.repository.UserRepository;
+import com.academo.service.calculation.ICalculationService;
 import com.academo.service.period.IPeriodService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
@@ -21,6 +22,7 @@ import com.academo.util.exceptions.user.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -30,12 +32,14 @@ public class SubjectServiceImpl implements ISubjectService {
     private final GroupRepository groupRepository;
     private final IUserService userService;
     private final IPeriodService periodService;
+    private final ICalculationService calculationService;
 
-    public SubjectServiceImpl(SubjectRepository subjectRepository, GroupRepository groupRepository, IUserService userService, IPeriodService periodService) {
+    public SubjectServiceImpl(SubjectRepository subjectRepository, GroupRepository groupRepository, IUserService userService, IPeriodService periodService, ICalculationService calculationService) {
         this.subjectRepository = subjectRepository;
         this.groupRepository = groupRepository;
         this.userService = userService;
         this.periodService = periodService;
+        this.calculationService = calculationService;
     }
 
     @Override
@@ -80,6 +84,7 @@ public class SubjectServiceImpl implements ISubjectService {
         Subject updated = inDb;
         updated.setName(subjectDTO.name());
         updated.setDescription(subjectDTO.description());
+        updated.setPassingGrade(new BigDecimal(subjectDTO.passingGrade()));
         updated.setCalculationType(CalculationType.valueOf(subjectDTO.calculationType()));
         updated.setIsActive(subjectDTO.isActive());
         updated = subjectRepository.save(updated);
