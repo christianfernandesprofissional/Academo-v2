@@ -4,12 +4,13 @@ import com.academo.controller.dtos.payment.enums.BillingType;
 import com.academo.controller.dtos.payment.enums.ChargeType;
 import com.academo.controller.dtos.payment.enums.SubscriptionCycle;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record PaymentLinkDTO(
         String id,
         String name,
-        Double value,
+        BigDecimal value,
         boolean active,
         ChargeType chargeType,
         String url,

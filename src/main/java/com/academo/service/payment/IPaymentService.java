@@ -5,5 +5,5 @@ import com.academo.controller.dtos.payment.PaymentOptionsDTO;
 
 public interface IPaymentService {
 
-    PaymentLinkDTO createPaymentLink(PaymentOptionsDTO paymentOptionsDTO);
+    PaymentLinkDTO createPaymentLink(Integer userId, PaymentOptionsDTO paymentOptionsDTO);
 }

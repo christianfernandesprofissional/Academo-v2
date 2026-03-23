@@ -1,6 +1,8 @@
 package com.academo.model.enums;
 
 public enum PaymentStatus {
-    SUCCESS,
-    FAILED,
+    PAID,
+    WAITING_PAYMENT,
+    EXPIRED,
+    CANCELED,
 }

@@ -16,6 +16,7 @@ import com.academo.util.exceptions.group.GroupNotFoundException;
 import com.academo.util.exceptions.mail.MailException;
 import com.academo.util.exceptions.payment.PaymentLinkException;
 import com.academo.util.exceptions.payment.PremiumPlanException;
+import com.academo.util.exceptions.payment.history.PaymentHistoryNotFoundException;
 import com.academo.util.exceptions.profile.ProfileNotFoundException;
 import com.academo.util.exceptions.subject.SubjectNotFoundException;
 import com.academo.util.exceptions.user.*;
@@ -195,6 +196,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(PremiumPlanException.class)
     private ResponseEntity<ExceptionDTO>  premiumPlanException(PremiumPlanException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(PaymentHistoryNotFoundException.class)
+    private ResponseEntity<ExceptionDTO> paymentHistoryNotFoundException(PaymentHistoryNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
     }
 
 }
