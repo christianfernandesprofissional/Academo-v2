@@ -22,7 +22,6 @@ public class CalculationService implements ICalculationService{
 
     private final SubjectRepository subjectRepository;
     private final PeriodRepository periodRepository;
-    private boolean subjectHasExam;
 
     public CalculationService(SubjectRepository subjectRepository, PeriodRepository periodRepository){
         this.subjectRepository = subjectRepository;
@@ -32,7 +31,7 @@ public class CalculationService implements ICalculationService{
     @Override
     public void updateSubjectAverage(Integer subjectId){
         Subject subject = subjectRepository.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
-        subjectHasExam = subject.getPeriods().stream().anyMatch(p -> PeriodName.valueOf(p.getName()).equals(PeriodName.EXAME));
+        boolean subjectHasExam = subject.getPeriods().stream().anyMatch(p -> PeriodName.valueOf(p.getName()).equals(PeriodName.EXAME));
 
         switch (subject.getCalculationType()){
             case CalculationType.MEDIA_ARITMETICA -> averageFromSubject(subject);
@@ -45,21 +44,22 @@ public class CalculationService implements ICalculationService{
     @Override
     public void updatePeriodAverage(Integer periodId) {
         Period period = periodRepository.findById(periodId).orElseThrow(PeriodNotFoundException::new);
-        BigDecimal[][] notasEPesos = new BigDecimal[period.getActivityTypeList().size()][period.getActivityTypeList().size()];
-        List<ActivityType> activityTypes = period.getActivityTypeList().stream().toList();
-        for(int i = 0; i<activityTypes.size();i++){
-            BigDecimal nota = Calc.mediaAritmetica(activityTypes.get(i).getActivities().stream().map(Activity::getGrade).toList());
-            notasEPesos[i][0] = nota;
-            notasEPesos[i][1] = activityTypes.get(i).getWeight();
-        }
-        period.setGrade(Calc.mediaPonderada(notasEPesos));
-        periodRepository.save(period);
-
+       if(!PeriodName.valueOf(period.getName()).equals(PeriodName.EXAME)){
+           BigDecimal[][] notasEPesos = new BigDecimal[period.getActivityTypeList().size()][2];
+           List<ActivityType> activityTypes = period.getActivityTypeList().stream().toList();
+           for(int i = 0; i<activityTypes.size();i++){
+               BigDecimal nota = Calc.mediaAritmetica(activityTypes.get(i).getActivities().stream().map(Activity::getGrade).toList());
+               notasEPesos[i][0] = nota;
+               notasEPesos[i][1] = activityTypes.get(i).getWeight();
+           }
+           period.setGrade(Calc.mediaPonderada(notasEPesos));
+           periodRepository.save(period);
+       }
     }
 
 
     private void weightedAverageFromSubject(Subject subject) {
-
+        boolean subjectHasExam = subject.getPeriods().stream().anyMatch(p -> PeriodName.valueOf(p.getName()).equals(PeriodName.EXAME));
         List<Period> periods = new ArrayList<>(subject.getPeriods());
 
         Optional<Period> exam = periods.stream()
@@ -87,11 +87,19 @@ public class CalculationService implements ICalculationService{
 
     private void averageFromSubject(Subject subject) {
         Set<Period> periods = new HashSet<>(subject.getPeriods());
+        boolean subjectHasExam = subject.getPeriods().stream().anyMatch(p -> PeriodName.valueOf(p.getName()).equals(PeriodName.EXAME));
         if(subjectHasExam){
             periods.stream().min(Comparator.comparing(Period::getGrade)).ifPresent(periods::remove);
         }
 
         subject.setFinalGrade(Calc.mediaAritmetica(periods.stream().map(Period::getGrade).toList()));
+    }
+
+    @Override
+    public BigDecimal sumWeights(Collection<BigDecimal> pesos) {
+        return pesos.stream()
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
 }

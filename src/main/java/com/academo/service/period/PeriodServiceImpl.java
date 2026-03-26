@@ -20,6 +20,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -61,17 +62,18 @@ public class PeriodServiceImpl implements IPeriodService{
                 .orElseThrow(SubjectNotFoundException::new);
 
         verifyCreatedPeriodsFromSubject(subject, periodName);
-
+        BigDecimal normalizedWeight = BigDecimal.valueOf(periodDTO.weight()).movePointLeft(2);
         Period newPeriod = new Period();
         newPeriod.setName(periodName.name());
-        newPeriod.setGrade(new BigDecimal(periodDTO.grade()));
-        newPeriod.setWeight(new BigDecimal(periodDTO.weight()));
+        newPeriod.setGrade(periodDTO.grade());
+        newPeriod.setWeight(normalizedWeight);
         newPeriod.setSubject(subject);
         User user = new User();
         user.setId(userId);
         newPeriod.setUser(user);
-
-        return PeriodDTO.fromPeriod(repository.save(newPeriod));
+        PeriodDTO dto = PeriodDTO.fromPeriod(repository.save(newPeriod));
+        calculationService.updateSubjectAverage(dto.subjectId());
+        return dto;
     }
 
     private void verifyCreatedPeriodsFromSubject(Subject subject, PeriodName periodName) {
@@ -98,12 +100,42 @@ public class PeriodServiceImpl implements IPeriodService{
     }
 
     @Override
-    public PeriodDTO update(Integer userId, UpdatePeriodDTO periodDTO) {
-        Period inDB = repository.findByIdAndUserId(periodDTO.id(),userId).orElseThrow(PeriodNotFoundException::new);
-        inDB.setWeight(new BigDecimal(periodDTO.weight()));
-        inDB.setGrade(new BigDecimal(periodDTO.grade()));
+    @Transactional
+    public PeriodDTO update(Integer userId, Integer periodId, UpdatePeriodDTO periodDTO) {
+        Period inDB = repository.findByIdAndUserId(periodId,userId).orElseThrow(PeriodNotFoundException::new);
+         if (!(inDB.getSubject().getId() == periodDTO.subjectId())) {
+            throw new NotAllowedInsertionException("Período não pertence à matéria informada");
+
+        }
+        if (!subjectRepository.existsById(periodDTO.subjectId())) {
+            throw new SubjectNotFoundException();
+        }
+        BigDecimal normalizedWeight = BigDecimal.valueOf(periodDTO.weight()).movePointLeft(2);
+        //Verificação se os pesos dos periodos P1 e P2 não ultrapassam 1
+        List<BigDecimal> weights = new ArrayList<>();
+        List<PeriodDTO> periods = findAll(userId, periodDTO.subjectId());
+        for(PeriodDTO p : periods){
+            PeriodName current = PeriodName.valueOf(p.name());
+            PeriodName updating = PeriodName.valueOf(inDB.getName());
+
+            if(current != PeriodName.EXAME && current != updating){
+                weights.add(p.weight());
+            }
+        }
+        weights.add(normalizedWeight);
+        BigDecimal weightsSum = calculationService.sumWeights(weights);
+        if(weightsSum.compareTo(BigDecimal.ONE) > 0){
+            throw new NotAllowedInsertionException("Os pesos do período ultrapassam 1");
+        }
+        // -----------------------------------------------------------------
+        inDB.setWeight(normalizedWeight);
+        if(PeriodName.valueOf(inDB.getName()) == PeriodName.EXAME){
+            inDB.setGrade(periodDTO.grade());
+        }
         repository.save(inDB);
-        return PeriodDTO.fromPeriod(inDB);
+        calculationService.updatePeriodAverage(periodId);
+        calculationService.updateSubjectAverage(periodDTO.subjectId());
+        return PeriodDTO.fromPeriod(repository.findById(inDB.getId()).get());
     }
 
     @Override
@@ -112,6 +144,7 @@ public class PeriodServiceImpl implements IPeriodService{
         PeriodDTO periodDTO = findById(userId, periodId);
         if(!PeriodName.valueOf(periodDTO.name()).equals(PeriodName.EXAME)) throw new NotAllowedInsertionException("Só é permitido a deleção de EXAME!");
         repository.deleteByIdAndSubjectIdAndUserId(periodId, subjectId, userId);
+        calculationService.updateSubjectAverage(periodDTO.subjectId());
     }
 
     @Override

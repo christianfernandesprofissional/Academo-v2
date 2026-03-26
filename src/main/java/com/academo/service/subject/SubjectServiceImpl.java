@@ -67,8 +67,8 @@ public class SubjectServiceImpl implements ISubjectService {
         subject.setUser(user);
         subject = subjectRepository.save(subject);
 
-        SavePeriodDTO p1 = new SavePeriodDTO(subject.getId(), PeriodName.P1.name(), "0", "1");
-        SavePeriodDTO p2 = new SavePeriodDTO(subject.getId(), PeriodName.P2.name(), "0", "1");
+        SavePeriodDTO p1 = new SavePeriodDTO(subject.getId(), PeriodName.P1.name(), new BigDecimal("0"),  50);
+        SavePeriodDTO p2 = new SavePeriodDTO(subject.getId(), PeriodName.P2.name(),  new BigDecimal("0"), 50);
         periodService.create(userId, p1);
         periodService.create(userId, p2);
 
@@ -76,6 +76,7 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
+    @Transactional
     public SubjectDTO update(Integer userId, Integer subjectId, UpdateSubjectDTO subjectDTO) {
         Subject inDb = subjectRepository.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
         if(!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
@@ -83,10 +84,11 @@ public class SubjectServiceImpl implements ISubjectService {
         Subject updated = inDb;
         updated.setName(subjectDTO.name());
         updated.setDescription(subjectDTO.description());
-        updated.setPassingGrade(new BigDecimal(subjectDTO.passingGrade()));
+        updated.setPassingGrade(subjectDTO.passingGrade());
         updated.setCalculationType(CalculationType.valueOf(subjectDTO.calculationType()));
         updated.setIsActive(subjectDTO.isActive());
         updated = subjectRepository.save(updated);
+        calculationService.updateSubjectAverage(subjectId);
         return SubjectDTO.fromSubject(updated);
     }
 

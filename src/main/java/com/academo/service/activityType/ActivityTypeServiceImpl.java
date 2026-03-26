@@ -3,8 +3,10 @@ package com.academo.service.activityType;
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
 import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.controller.dtos.activityType.UpdateActivityTypeDTO;
+import com.academo.controller.dtos.period.PeriodDTO;
 import com.academo.model.ActivityType;
 import com.academo.model.Period;
+import com.academo.model.enums.PeriodName;
 import com.academo.repository.ActivityTypeRepository;
 import com.academo.service.calculation.ICalculationService;
 import com.academo.service.period.IPeriodService;
@@ -18,7 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ActivityTypeServiceImpl implements IActivityTypeService {
@@ -76,9 +81,26 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
         ActivityType inDb = repository.findByIdAndUserId(id, userId).orElseThrow(ActivityTypeNotFoundException::new);
         if (!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
 
+
+        BigDecimal normalizedWeight = BigDecimal.valueOf(activityTypeDTO.weight()).movePointLeft(2);
+        //Verificação se os pesos dos tipos de atividade não ultrapassam 1
+        List<BigDecimal> weights = new ArrayList<>();
+        List<ActivityTypeDTO> periods = findAll(userId, activityTypeDTO.periodId());
+        for(ActivityTypeDTO atDTO : periods){
+            if(!Objects.equals(atDTO.id(), id)){
+                weights.add(new BigDecimal(atDTO.weight()));
+            }
+        }
+        weights.add(normalizedWeight);
+        BigDecimal weightsSum = calculationService.sumWeights(weights);
+        if(weightsSum.compareTo(BigDecimal.ONE) > 0){
+            throw new NotAllowedInsertionException("Os pesos dos tipos de atividade ultrapassam 1");
+        }
+        // -----------------------------------------------------------------
+
         inDb.setName(activityTypeDTO.name());
         inDb.setDescription(activityTypeDTO.description());
-        inDb.setWeight(new BigDecimal(activityTypeDTO.weight()));
+        inDb.setWeight(normalizedWeight);
         ActivityType updated = repository.save(inDb);
         logger.info("[DEBUG] ActivityType updated - createdAt: {}", updated.getCreatedAt());
 

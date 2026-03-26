@@ -7,6 +7,7 @@ import com.academo.model.Period;
 import com.academo.model.User;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.period.IPeriodService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,18 +45,18 @@ public class PeriodController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<PeriodDTO> create(Authentication auth, @RequestBody SavePeriodDTO periodDTO){
+    public ResponseEntity<PeriodDTO> create(Authentication auth, @RequestBody @Valid SavePeriodDTO periodDTO){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
         PeriodDTO saved = service.create(userId, periodDTO);
         URI uri = URI.create("/periods/"+saved.id());
         return ResponseEntity.created(uri).body(saved);
     }
 
-    @PutMapping
+    @PutMapping("/{periodId}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<PeriodDTO> update(Authentication auth, @RequestBody UpdatePeriodDTO periodDTO){
+    public ResponseEntity<PeriodDTO> update(Authentication auth,@PathVariable Integer periodId, @RequestBody @Valid UpdatePeriodDTO periodDTO){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
-        PeriodDTO updated = service.update(userId, periodDTO);
+        PeriodDTO updated = service.update(userId, periodId, periodDTO);
         return ResponseEntity.ok(updated);
     }
 

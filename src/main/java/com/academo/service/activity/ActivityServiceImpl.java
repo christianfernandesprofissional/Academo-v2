@@ -18,6 +18,7 @@ import com.academo.util.exceptions.activity.ActivityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ActivityServiceImpl implements IActivityService{
@@ -48,7 +49,10 @@ public class ActivityServiceImpl implements IActivityService{
 
     @Override
     public ActivityDTO create(Integer userId, SaveActivityDTO activityDTO) {
-        return ActivityDTO.fromActivity(activityRepository.save(fillActivity(userId, activityDTO)));
+        ActivityDTO dto =  ActivityDTO.fromActivity(activityRepository.save(fillActivity(userId, activityDTO)));
+        calculationService.updatePeriodAverage(activityTypeService.findById(activityDTO.activityTypeId(), userId).getPeriod().getId());
+        calculationService.updateSubjectAverage(activityDTO.subjectId());
+        return dto;
     }
 
     @Override
@@ -59,12 +63,17 @@ public class ActivityServiceImpl implements IActivityService{
         existingActivity.setName(activityDTO.name());
         existingActivity.setDescription(activityDTO.description());
         existingActivity.setGrade(activityDTO.grade());
-        return ActivityDTO.fromActivity(activityRepository.save(existingActivity));
+        ActivityDTO dto =  ActivityDTO.fromActivity(activityRepository.save(existingActivity));
+        calculationService.updatePeriodAverage(activityTypeService.findById(activityDTO.activityTypeId(), userId).getPeriod().getId());
+        calculationService.updateSubjectAverage(activityDTO.subjectId());
+        return dto;
     }
 
     @Override
     public void delete(Integer userId,Integer activityId) {
-        if(activityRepository.findByIdAndUserId(activityId, userId).isEmpty()) throw new NotAllowedInsertionException("Deleção inválida");
+        Activity activity = activityRepository.findByIdAndUserId(activityId,userId).orElseThrow(ActivityNotFoundException::new);
+        calculationService.updatePeriodAverage(activity.getActivityType().getPeriod().getId());
+        calculationService.updateSubjectAverage(activity.getSubject().getId());
         activityRepository.deleteById(activityId);
     }
 
