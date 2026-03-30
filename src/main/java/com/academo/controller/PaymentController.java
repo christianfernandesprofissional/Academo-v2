@@ -6,6 +6,7 @@ import com.academo.security.authuser.AuthUser;
 import com.academo.service.payment.IPaymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/payment")
@@ -33,7 +36,11 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.createPaymentLink(userId, paymentOptionsDTO));
     }
 
-
+    @PostMapping(value = "/receive-payment", consumes = "application/json")
+    public ResponseEntity<Void> receivePayment(@RequestBody Map<String, Object> body) {
+        paymentService.receivePayment(body);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 
 
 

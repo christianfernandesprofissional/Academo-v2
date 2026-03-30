@@ -9,7 +9,6 @@ import com.academo.controller.dtos.payment.enums.BillingType;
 import com.academo.controller.dtos.payment.enums.ChargeType;
 import com.academo.controller.dtos.payment.enums.SubscriptionCycle;
 import com.academo.controller.dtos.paymentHistory.CreatePaymentHistoryDTO;
-import com.academo.controller.dtos.paymentHistory.PaymentHistoryDTO;
 import com.academo.model.enums.PaymentStatus;
 import com.academo.service.payment.IPaymentService;
 import com.academo.service.payment.history.IPaymentHistoryService;
@@ -24,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 @Component
 public class AsaasPaymentService implements IPaymentService {
@@ -49,7 +49,6 @@ public class AsaasPaymentService implements IPaymentService {
         this.paymentHistoryService = paymentHistoryService;
     }
 
-
     @Override
     @Transactional
     public PaymentLinkDTO createPaymentLink(Integer userId, PaymentOptionsDTO paymentOptionsDTO) {
@@ -65,6 +64,15 @@ public class AsaasPaymentService implements IPaymentService {
         paymentHistoryService.create(userId, createPaymentHistoryDTO);
         return response;
     }
+
+    @Override
+    public void receivePayment(Map<String, Object> body) {
+        String event = (String) body.get("event");
+        Map<String, Object> payment = (Map<String, Object>) body.get("payment");
+        System.out.println(payment);
+
+    }
+
 
     private Double getPlanPrice(PaymentOptionsDTO paymentOptionsDTO) {
         if(paymentOptionsDTO.billingType() == BillingType.BOLETO || paymentOptionsDTO.billingType() == BillingType.PIX) {
