@@ -36,7 +36,7 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.createPaymentLink(userId, paymentOptionsDTO));
     }
 
-    @PostMapping(value = "/receive-payment", consumes = "application/json")
+    @PostMapping(value = "/receive", consumes = "application/json")
     public ResponseEntity<Void> receivePayment(@RequestBody Map<String, Object> body) {
         paymentService.receivePayment(body);
         return ResponseEntity.status(HttpStatus.OK).build();

@@ -1,17 +1,20 @@
 package com.academo.service.payment.asaas;
 
 import com.academo.controller.PaymentController;
-import com.academo.controller.dtos.payment.CallbackPaymentDTO;
-import com.academo.controller.dtos.payment.GetPaymentLinkDTO;
-import com.academo.controller.dtos.payment.PaymentLinkDTO;
-import com.academo.controller.dtos.payment.PaymentOptionsDTO;
+import com.academo.controller.dtos.payment.*;
 import com.academo.controller.dtos.payment.enums.BillingType;
 import com.academo.controller.dtos.payment.enums.ChargeType;
 import com.academo.controller.dtos.payment.enums.SubscriptionCycle;
 import com.academo.controller.dtos.paymentHistory.CreatePaymentHistoryDTO;
+import com.academo.controller.dtos.paymentHistory.UpdatePaymentHistoryDTO;
+import com.academo.model.PaymentHistory;
+import com.academo.model.User;
 import com.academo.model.enums.PaymentStatus;
+import com.academo.model.enums.PlanType;
+import com.academo.model.enums.UserRole;
 import com.academo.service.payment.IPaymentService;
 import com.academo.service.payment.history.IPaymentHistoryService;
+import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.payment.PaymentLinkException;
 import com.academo.util.exceptions.payment.PremiumPlanException;
 import jakarta.transaction.Transactional;
@@ -28,14 +31,15 @@ import java.util.Map;
 @Component
 public class AsaasPaymentService implements IPaymentService {
 
-    private static final Double YEARLY_IN_CASH = 179.9;
-    private static final Double MONTHLY_RECURRENT = 15.9;
-    private static final Double YEARLY_RECURRENT = 149.9;
-    private static final Double IN_INSTALLMENTS = 179.9;
+    private static final BigDecimal YEARLY_IN_CASH = BigDecimal.valueOf(179.9);
+    private static final BigDecimal MONTHLY_RECURRENT = BigDecimal.valueOf(15.9);
+    private static final BigDecimal YEARLY_RECURRENT = BigDecimal.valueOf(149.9);
+    private static final BigDecimal IN_INSTALLMENTS = BigDecimal.valueOf(179.9);
 
     private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
     private final IPaymentHistoryService paymentHistoryService;
+    private final IUserService userService;
 
     private String asaasUrl;
     private String apiKey;
@@ -43,61 +47,62 @@ public class AsaasPaymentService implements IPaymentService {
     private String successUrl = "https://pt.wikipedia.org/wiki/John_von_Neumann"; //Muito provavelmente esta variável estará no meu config.env
 
 
-    public AsaasPaymentService(@Value("${payment.gateway.url}") String asaasUrl, @Value("${payment.gateway.api-key}") String apiKey, IPaymentHistoryService paymentHistoryService) {
+    public AsaasPaymentService(@Value("${payment.gateway.url}") String asaasUrl, @Value("${payment.gateway.api-key}") String apiKey, IPaymentHistoryService paymentHistoryService, IUserService userService) {
         this.asaasUrl = asaasUrl;
         this.apiKey = apiKey;
         this.paymentHistoryService = paymentHistoryService;
+        this.userService = userService;
     }
 
     @Override
     @Transactional
     public PaymentLinkDTO createPaymentLink(Integer userId, PaymentOptionsDTO paymentOptionsDTO) {
-        log.debug("PaymentOptionsDTO: " + paymentOptionsDTO);
-        BigDecimal price = BigDecimal.valueOf(getPlanPrice(paymentOptionsDTO));
-        log.debug("Price: " + price);
+        PlanTypeDataDTO planTypeData = getPlanTypeData(paymentOptionsDTO);
         CallbackPaymentDTO callbackPaymentDTO = new CallbackPaymentDTO(successUrl, false);
-        log.debug("CallbackPaymentDTO: " + callbackPaymentDTO);
-        GetPaymentLinkDTO getPaymentLinkDTO = GetPaymentLinkDTO.fromPaymentOptions(paymentOptionsDTO, price, callbackPaymentDTO);
-        log.debug("GetPaymentLinkDTO: " + getPaymentLinkDTO);
+        GetPaymentLinkDTO getPaymentLinkDTO = GetPaymentLinkDTO.fromPaymentOptions(paymentOptionsDTO, planTypeData.value(), callbackPaymentDTO);
         PaymentLinkDTO response = requestPaymentLink(getPaymentLinkDTO);
-        CreatePaymentHistoryDTO createPaymentHistoryDTO = new CreatePaymentHistoryDTO(response.id(), response.url(), PaymentStatus.WAITING_PAYMENT, response.value());
+        CreatePaymentHistoryDTO createPaymentHistoryDTO = new CreatePaymentHistoryDTO(response.id(), response.url(), PaymentStatus.WAITING_PAYMENT, response.value(), planTypeData.planType());
         paymentHistoryService.create(userId, createPaymentHistoryDTO);
         return response;
     }
 
     @Override
     public void receivePayment(Map<String, Object> body) {
-        String event = (String) body.get("event");
         Map<String, Object> payment = (Map<String, Object>) body.get("payment");
-        System.out.println(payment);
+        String paymentId = (String) payment.get("paymentLink");
 
+        PaymentHistory paymentHistory = paymentHistoryService.findByPaymentId(paymentId);
+        paymentHistory.setPaymentId(paymentId);
+        paymentHistoryService.update(paymentHistory.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.PAID));
+        User user = userService.findById(paymentHistory.getUser().getId());
+        user.setRole(UserRole.ROLE_PREMIUM);
+        user.setPlanType(paymentHistory.getPlanType());
+        userService.update(user);
     }
 
 
-    private Double getPlanPrice(PaymentOptionsDTO paymentOptionsDTO) {
+    private PlanTypeDataDTO getPlanTypeData(PaymentOptionsDTO paymentOptionsDTO) {
         if(paymentOptionsDTO.billingType() == BillingType.BOLETO || paymentOptionsDTO.billingType() == BillingType.PIX) {
-            return YEARLY_IN_CASH;
+            return new PlanTypeDataDTO(PlanType.YEARLY_IN_CASH, YEARLY_IN_CASH);
         }
         if(paymentOptionsDTO.chargeType() == ChargeType.INSTALLMENT) {
-            return IN_INSTALLMENTS;
+            return new PlanTypeDataDTO(PlanType.IN_INSTALLMENTS, IN_INSTALLMENTS);
         }
         if(paymentOptionsDTO.subscriptionCycle() == SubscriptionCycle.MONTHLY) {
-            return MONTHLY_RECURRENT;
+            return new PlanTypeDataDTO(PlanType.MONTHLY_RECURRENT, MONTHLY_RECURRENT);
         }
         if(paymentOptionsDTO.subscriptionCycle() == SubscriptionCycle.YEARLY) {
-            return YEARLY_RECURRENT;
+            return new PlanTypeDataDTO(PlanType.YEARLY_RECURRENT, YEARLY_RECURRENT);
         }
         throw new PremiumPlanException("Erro ao defenir plano Premium");
     }
 
     private PaymentLinkDTO requestPaymentLink(GetPaymentLinkDTO getPaymentLinkDTO) {
         RestClient restClient = RestClient.create();
-        log.debug("Rest Client: " + restClient);
         PaymentLinkDTO paymentLinkDTO;
         try {
             paymentLinkDTO = restClient.post().uri(asaasUrl).header("access_token", apiKey)
                     .contentType(MediaType.APPLICATION_JSON).body(getPaymentLinkDTO).retrieve().body(PaymentLinkDTO.class);
-            log.debug("PaymentLinkDTO: " + paymentLinkDTO);
         } catch (Exception e) {
             e.printStackTrace();
             throw new PaymentLinkException("Erro ao gerar link de pagamento: " + e.getMessage());
@@ -107,4 +112,6 @@ public class AsaasPaymentService implements IPaymentService {
         }
         return paymentLinkDTO;
     }
+
+
 }

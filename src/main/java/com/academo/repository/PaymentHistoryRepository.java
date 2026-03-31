@@ -12,4 +12,5 @@ public interface PaymentHistoryRepository extends JpaRepository<PaymentHistory, 
 
     List<PaymentHistory> findAllByUserId(Integer userId);
     Optional<PaymentHistory> findByIdAndUserId(Integer paymentHistoryId, Integer userId);
+    Optional<PaymentHistory> findByPaymentId(String paymentId);
 }

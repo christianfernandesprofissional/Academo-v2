@@ -35,6 +35,11 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     }
 
     @Override
+    public PaymentHistory findByPaymentId(String paymentId) {
+        return paymentHistoryRepository.findByPaymentId(paymentId).orElseThrow(PaymentHistoryNotFoundException::new);
+    }
+
+    @Override
     public void create(Integer userId, CreatePaymentHistoryDTO createPaymentHistoryDTO) {
         User user = userService.findById(userId);
         PaymentHistory paymentHistory = new PaymentHistory();
@@ -42,6 +47,8 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
         paymentHistory.setPaymentId(createPaymentHistoryDTO.paymentId());
         paymentHistory.setStatus(createPaymentHistoryDTO.paymentStatus());
         paymentHistory.setValue(createPaymentHistoryDTO.value());
+        paymentHistory.setUrl(createPaymentHistoryDTO.url());
+        paymentHistory.setPlanType(createPaymentHistoryDTO.planType());
         paymentHistoryRepository.save(paymentHistory);
     }
 
@@ -49,7 +56,6 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     public void update(Integer paymentHistoryId, UpdatePaymentHistoryDTO updatePaymentHistoryDTO) {
         PaymentHistory paymentHistory = paymentHistoryRepository.findById(paymentHistoryId).orElseThrow(PaymentHistoryNotFoundException::new);
         paymentHistory.setStatus(updatePaymentHistoryDTO.paymentStatus());
-        paymentHistory.setValue(updatePaymentHistoryDTO.value());
         paymentHistoryRepository.save(paymentHistory);
     }
 }

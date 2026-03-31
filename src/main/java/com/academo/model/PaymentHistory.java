@@ -1,6 +1,7 @@
 package com.academo.model;
 
 import com.academo.model.enums.PaymentStatus;
+import com.academo.model.enums.PlanType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
@@ -36,6 +37,11 @@ public class PaymentHistory {
 
     @Column(name = "value", nullable = false)
     private BigDecimal value;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "plan_type", columnDefinition = "plan_type", nullable = false)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private PlanType planType;
 
     @Column(name="created_at", updatable = false)
     @CreationTimestamp
@@ -107,5 +113,13 @@ public class PaymentHistory {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public PlanType getPlanType() {
+        return planType;
+    }
+
+    public void setPlanType(PlanType planType) {
+        this.planType = planType;
     }
 }
