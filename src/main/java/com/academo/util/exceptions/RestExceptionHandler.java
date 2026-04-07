@@ -12,6 +12,7 @@ import com.academo.util.exceptions.activity.ActivityNotFoundException;
 import com.academo.util.exceptions.activityType.ActivityTypeExistsException;
 import com.academo.util.exceptions.activityType.ActivityTypeNotFoundException;
 import com.academo.controller.dtos.exception.ExceptionDTO;
+import com.academo.util.exceptions.flashcard.FlashcardNotFoundException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import com.academo.util.exceptions.mail.MailException;
 import com.academo.util.exceptions.period.PeriodAlreadyExistsException;
@@ -220,6 +221,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(PaymentHistoryNotFoundException.class)
     private ResponseEntity<ExceptionDTO> paymentHistoryNotFoundException(PaymentHistoryNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    //Flashcard
+    @ExceptionHandler(FlashcardNotFoundException.class)
+    private ResponseEntity<ExceptionDTO> paymentHistoryNotFoundException(FlashcardNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
     }
 

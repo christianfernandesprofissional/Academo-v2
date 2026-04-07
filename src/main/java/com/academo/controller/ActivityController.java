@@ -80,7 +80,7 @@ public class ActivityController {
         return ResponseEntity.created(location).body(created);
     }
 
-    @Operation(summary = "Recupera a lista de todas as atividades de um usuário", method = "GET")
+    @Operation(summary = "Atualiza uma atividade do usuário", method = "GET")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atividade atualizada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar atividade"),
