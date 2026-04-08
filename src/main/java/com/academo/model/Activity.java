@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -30,7 +31,7 @@ public class Activity {
     private String description;
 
     @Column(name = "grade")
-    private Double grade;
+    private BigDecimal grade = new BigDecimal("0");
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -124,11 +125,11 @@ public class Activity {
         this.updatedAt = updatedAt;
     }
 
-    public double getGrade() {
+    public BigDecimal getGrade() {
         return grade;
     }
 
-    public void setGrade(double grade) {
+    public void setGrade(BigDecimal grade) {
         this.grade = grade;
     }
 

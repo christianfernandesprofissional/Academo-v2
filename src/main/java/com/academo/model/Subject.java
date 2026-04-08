@@ -42,6 +42,9 @@ public class Subject {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column(name = "passing_grade")
+    private BigDecimal passingGrade = new BigDecimal("0");
+
     @Column(name = "final_grade")
     private BigDecimal finalGrade = new BigDecimal("0");
 
@@ -186,6 +189,14 @@ public class Subject {
 
     public void setPeriods(Set<Period> periods) {
         this.periods = periods;
+    }
+
+    public BigDecimal getPassingGrade() {
+        return passingGrade;
+    }
+
+    public void setPassingGrade(BigDecimal passingGrade) {
+        this.passingGrade = passingGrade;
     }
 
     @Override

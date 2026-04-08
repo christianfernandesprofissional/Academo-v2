@@ -9,6 +9,8 @@ import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.repository.ActivityRepository;
 import com.academo.service.activityType.IActivityTypeService;
+import com.academo.service.calculation.CalculationService;
+import com.academo.service.calculation.ICalculationService;
 import com.academo.service.subject.ISubjectService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
@@ -16,6 +18,7 @@ import com.academo.util.exceptions.activity.ActivityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ActivityServiceImpl implements IActivityService{
@@ -24,12 +27,14 @@ public class ActivityServiceImpl implements IActivityService{
     private final IUserService userService;
     private final ISubjectService subjectService;
     private final IActivityTypeService activityTypeService;
+    private final ICalculationService calculationService;
 
-    public ActivityServiceImpl(ActivityRepository activityRepository, IUserService userService, ISubjectService subjectService, IActivityTypeService activityTypeService) {
+    public ActivityServiceImpl(ActivityRepository activityRepository, IUserService userService, ISubjectService subjectService, IActivityTypeService activityTypeService, ICalculationService calculationService) {
         this.activityRepository = activityRepository;
         this.userService = userService;
         this.subjectService = subjectService;
         this.activityTypeService = activityTypeService;
+        this.calculationService = calculationService;
     }
 
     @Override
@@ -44,7 +49,10 @@ public class ActivityServiceImpl implements IActivityService{
 
     @Override
     public ActivityDTO create(Integer userId, SaveActivityDTO activityDTO) {
-        return ActivityDTO.fromActivity(activityRepository.save(fillActivity(userId, activityDTO)));
+        ActivityDTO dto =  ActivityDTO.fromActivity(activityRepository.save(fillActivity(userId, activityDTO)));
+        calculationService.updatePeriodAverage(activityTypeService.findById(activityDTO.activityTypeId(), userId).getPeriod().getId());
+        calculationService.updateSubjectAverage(activityDTO.subjectId());
+        return dto;
     }
 
     @Override
@@ -55,12 +63,17 @@ public class ActivityServiceImpl implements IActivityService{
         existingActivity.setName(activityDTO.name());
         existingActivity.setDescription(activityDTO.description());
         existingActivity.setGrade(activityDTO.grade());
-        return ActivityDTO.fromActivity(activityRepository.save(existingActivity));
+        ActivityDTO dto =  ActivityDTO.fromActivity(activityRepository.save(existingActivity));
+        calculationService.updatePeriodAverage(activityTypeService.findById(activityDTO.activityTypeId(), userId).getPeriod().getId());
+        calculationService.updateSubjectAverage(activityDTO.subjectId());
+        return dto;
     }
 
     @Override
     public void delete(Integer userId,Integer activityId) {
-        if(activityRepository.findByIdAndUserId(activityId, userId).isEmpty()) throw new NotAllowedInsertionException("Deleção inválida");
+        Activity activity = activityRepository.findByIdAndUserId(activityId,userId).orElseThrow(ActivityNotFoundException::new);
+        calculationService.updatePeriodAverage(activity.getActivityType().getPeriod().getId());
+        calculationService.updateSubjectAverage(activity.getSubject().getId());
         activityRepository.deleteById(activityId);
     }
 

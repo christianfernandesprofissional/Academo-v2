@@ -44,6 +44,7 @@ public class ActivityController {
        return ResponseEntity.ok(activityService.findAll(userId));
     }
 
+
     @Operation(summary = "Recupera uma atividade", method = "GET")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atividade recuperada com sucesso"),
@@ -56,6 +57,7 @@ public class ActivityController {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(activityService.findById(userId, activityId));
     }
+
 
     @GetMapping("/by-subject/{subjectId}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
@@ -74,11 +76,11 @@ public class ActivityController {
     public ResponseEntity<ActivityDTO> create(Authentication authentication, @RequestBody @Valid SaveActivityDTO activityDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         ActivityDTO created = activityService.create(userId, activityDTO);
-        URI location = URI.create("/activities?activityId=" + created.id());
+        URI location = URI.create("/activities/" + created.id());
         return ResponseEntity.created(location).body(created);
     }
 
-    @Operation(summary = "Recupera a lista de todas as atividades de um usuário", method = "GET")
+    @Operation(summary = "Atualiza uma atividade do usuário", method = "GET")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atividade atualizada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar atividade"),

@@ -12,8 +12,12 @@ import com.academo.util.exceptions.activity.ActivityNotFoundException;
 import com.academo.util.exceptions.activityType.ActivityTypeExistsException;
 import com.academo.util.exceptions.activityType.ActivityTypeNotFoundException;
 import com.academo.controller.dtos.exception.ExceptionDTO;
+import com.academo.util.exceptions.flashcard.FlashcardNotFoundException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import com.academo.util.exceptions.mail.MailException;
+import com.academo.util.exceptions.period.PeriodAlreadyExistsException;
+import com.academo.util.exceptions.period.PeriodLimitException;
+import com.academo.util.exceptions.period.PeriodNotFoundException;
 import com.academo.util.exceptions.payment.PaymentLinkException;
 import com.academo.util.exceptions.payment.PremiumPlanException;
 import com.academo.util.exceptions.payment.history.PaymentHistoryNotFoundException;
@@ -187,7 +191,24 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<ExceptionDTO> mailException(MailException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
     }
+    
+    //Period
+    @ExceptionHandler(PeriodNotFoundException.class)
+    private ResponseEntity<ExceptionDTO> periodException(PeriodNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
+    }
 
+    @ExceptionHandler(PeriodLimitException.class)
+    private ResponseEntity<ExceptionDTO> periodException(PeriodLimitException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(PeriodAlreadyExistsException.class)
+    private ResponseEntity<ExceptionDTO> periodException(PeriodAlreadyExistsException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    //Payment
     @ExceptionHandler(PaymentLinkException.class)
     private ResponseEntity<ExceptionDTO> paymentLinkException(PaymentLinkException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(exception.getMessage()));
@@ -200,6 +221,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(PaymentHistoryNotFoundException.class)
     private ResponseEntity<ExceptionDTO> paymentHistoryNotFoundException(PaymentHistoryNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
+    }
+
+    //Flashcard
+    @ExceptionHandler(FlashcardNotFoundException.class)
+    private ResponseEntity<ExceptionDTO> paymentHistoryNotFoundException(FlashcardNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
     }
 

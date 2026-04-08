@@ -1,6 +1,5 @@
 package com.academo.model;
 
-import com.academo.model.enums.PeriodName;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -16,7 +15,7 @@ public class Period {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer periodId;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
@@ -33,7 +32,7 @@ public class Period {
     private BigDecimal grade = new BigDecimal("0");
 
     @Column(name = "weight")
-    private BigDecimal weight = new BigDecimal("1");
+    private BigDecimal weight = new BigDecimal("0.5");
 
     @OneToMany(mappedBy = "period",
                 cascade = CascadeType.REMOVE)
@@ -42,7 +41,7 @@ public class Period {
     public Period(){}
 
     public Period(Integer id, Subject subject, User user, String name, BigDecimal grade, BigDecimal weight) {
-        this.periodId = id;
+        this.id = id;
         this.subject = subject;
         this.user = user;
         this.name = name;
@@ -50,12 +49,12 @@ public class Period {
         this.weight = weight;
     }
 
-    public Integer getPeriodId() {
-        return periodId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setPeriodId(Integer periodId) {
-        this.periodId = periodId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Subject getSubject() {

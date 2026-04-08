@@ -12,6 +12,7 @@ public record SubjectDTO(
         String description,
         Boolean isActive,
         String calculationType,
+        String passingGrade,
         String finalGrade,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
@@ -24,6 +25,7 @@ public record SubjectDTO(
                 subject.getDescription(),
                 subject.getIsActive(),
                 subject.getCalculationType().name(),
+                subject.getPassingGrade().toString(),
                 subject.getFinalGrade().toString(),
                 subject.getCreatedAt(),
                 subject.getUpdatedAt()
@@ -36,6 +38,7 @@ public record SubjectDTO(
         subject.setName(subjectDTO.name());
         subject.setDescription(subjectDTO.description());
         subject.setCalculationType(CalculationType.valueOf(subjectDTO.calculationType));
+        subject.setPassingGrade(new BigDecimal(subjectDTO.passingGrade));
         subject.setFinalGrade(new BigDecimal(subjectDTO.finalGrade));
         subject.setIsActive(subjectDTO.isActive());
         subject.setCreatedAt(subjectDTO.createdAt());

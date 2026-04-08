@@ -1,7 +1,6 @@
 package com.academo.controller.dtos.activityType;
 
 import com.academo.controller.dtos.activity.ActivityDTO;
-import com.academo.model.Activity;
 import com.academo.model.ActivityType;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -16,6 +15,7 @@ public record ActivityTypeDTO (
         String description,
         String weight,
         List<ActivityDTO> activities,
+        Integer periodId,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ){
@@ -26,6 +26,7 @@ public record ActivityTypeDTO (
                 activityType.getDescription(),
                 activityType.getWeight().toString(),
                 activityType.getActivities().stream().map(ActivityDTO::fromActivity).toList(),
+                activityType.getPeriod().getId(),
                 activityType.getCreatedAt(),
                 activityType.getUpdatedAt()
         );
