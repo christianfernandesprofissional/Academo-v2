@@ -95,21 +95,13 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User login(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-        if(user.getRole() == UserRole.ROLE_PREMIUM) {
-            PaymentHistoryDTO paymentHistoryDTO = paymentHistoryService.findLastPayment(user.getId());
-            /*
-            Aqui, é feita a verificação se a data de vencimento já passou.
-            Isso aconteceu, pois, o usuário pode ter escolhido o cancelar o plano, mas o vencimento do plano ainda não chegou
-             */
-            if(paymentHistoryDTO.planDueDate().isBefore(LocalDate.now()) &&
-                    paymentHistoryDTO.paymentStatus() == PaymentStatus.EXPIRED || paymentHistoryDTO.paymentStatus() == PaymentStatus.CANCELED) {
-                user.setRole(UserRole.ROLE_FREE);
-                user.setPlanType(PlanType.FREE);
-                update(user);
-            }
-        }
+        paymentHistoryService.verifyExpiredPayments(user.getId());
+        User updatedUser = verifyPlan(user);
+        if(updatedUser != null) return updatedUser;
         return user;
     }
+
+
 
     @Override
     public UserDTO update(User user) {
@@ -130,6 +122,23 @@ public class UserServiceImpl implements IUserService {
 
         user.setPassword(new BCryptPasswordEncoder().encode(resetPasswordDTO.newPassword()));
         userRepository.save(user);
+    }
+
+    private User verifyPlan(User user) {
+        if(user.getRole() == UserRole.ROLE_PREMIUM) {
+            PaymentHistoryDTO paymentHistoryDTO = paymentHistoryService.findLastPayment(user.getId());
+            /*
+            Aqui, é feita a verificação se a data de vencimento já passou.
+            Isso aconteceu, pois, o usuário pode ter escolhido o cancelar o plano, mas o vencimento do plano ainda não chegou
+             */
+            if(paymentHistoryDTO.planDueDate().isBefore(LocalDate.now())) {
+                user.setRole(UserRole.ROLE_FREE);
+                user.setPlanType(PlanType.FREE);
+                update(user);
+                return user;
+            }
+        }
+        return null;
     }
 
 

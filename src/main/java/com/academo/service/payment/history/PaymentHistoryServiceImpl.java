@@ -14,6 +14,7 @@ import com.academo.util.exceptions.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -52,6 +53,16 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     }
 
     @Override
+    public void verifyExpiredPayments(Integer userId) {
+        List<PaymentHistory> allPayments = paymentHistoryRepository.findAllByUserId(userId);
+        for(PaymentHistory p : allPayments) {
+            if(p.getCreatedAt().plusDays(10).isBefore(LocalDateTime.now())) {
+                update(p.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.EXPIRED, p.getPlanDueDate()));
+            }
+        }
+    }
+
+    @Override
     public void cancelPlan(Integer userId) {
         PaymentHistoryDTO paymentHistoryDTO = findLastPayment(userId);
         update(paymentHistoryDTO.paymentHistoryId(), new UpdatePaymentHistoryDTO(PaymentStatus.CANCELED, paymentHistoryDTO.planDueDate()));
@@ -73,6 +84,7 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
         paymentHistory.setValue(createPaymentHistoryDTO.value());
         paymentHistory.setUrl(createPaymentHistoryDTO.url());
         paymentHistory.setPlanType(createPaymentHistoryDTO.planType());
+        paymentHistory.setPlanDueDate(LocalDate.now().plusDays(30));
         paymentHistoryRepository.save(paymentHistory);
     }
 

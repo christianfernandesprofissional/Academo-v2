@@ -15,6 +15,7 @@ public interface IPaymentHistoryService {
     List<PaymentHistoryDTO> findAll(Integer userId);
     PaymentHistoryDTO findLastPayment(Integer userId);
     void updateDueDate(String paymentId, LocalDate dueDate);
+    void verifyExpiredPayments(Integer userId);
     void cancelPlan(Integer userId);
     void create(Integer userId, CreatePaymentHistoryDTO createPaymentHistoryDTO);
     void update(Integer paymentHistoryId, UpdatePaymentHistoryDTO updatePaymentHistoryDTO);
