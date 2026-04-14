@@ -64,6 +64,7 @@ public class UserServiceImpl implements IUserService {
         user.setProfile(profile);
         User createdUser = userRepository.save(user);
         var token = tokenService.generateActivationToken(createdUser.getId());
+        System.out.println("TOKEN PARA ATIVAÇÃO DA CONTA: " + token);
         mailService.sendActivationMail(new ActivateAccountMailDTO(createdUser.getName(), createdUser.getEmail(), token));
     }
 
@@ -112,6 +113,7 @@ public class UserServiceImpl implements IUserService {
     public void forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
         User user = userRepository.findByEmail(forgotPasswordDTO.email()).orElseThrow(UserNotFoundException::new);
         var token = tokenService.generateForgotPasswordToken(user.getId());
+        System.out.println("TOKEN PARA REDEFINIÇÃO DE SENHA:" + token);
         mailService.sendResetPasswordMail(new ResetPasswordMailDTO(user.getName(), user.getEmail(), token));
     }
 
@@ -131,7 +133,7 @@ public class UserServiceImpl implements IUserService {
             Aqui, é feita a verificação se a data de vencimento já passou.
             Isso aconteceu, pois, o usuário pode ter escolhido o cancelar o plano, mas o vencimento do plano ainda não chegou
              */
-            if(paymentHistoryDTO.planDueDate().isBefore(LocalDate.now())) {
+            if(paymentHistoryDTO != null && paymentHistoryDTO.planDueDate().isBefore(LocalDate.now())) {
                 user.setRole(UserRole.ROLE_FREE);
                 user.setPlanType(PlanType.FREE);
                 update(user);

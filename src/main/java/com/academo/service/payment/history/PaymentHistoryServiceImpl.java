@@ -42,7 +42,9 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
 
     @Override
     public PaymentHistoryDTO findLastPayment(Integer userId) {
-        return findAll(userId).stream().sorted(Comparator.comparing(PaymentHistoryDTO::createdAt).thenComparing(PaymentHistoryDTO::createdAt)).toList().reversed().getFirst();
+        List<PaymentHistoryDTO> paymentHistoryDTOS = findAll(userId).stream().sorted(Comparator.comparing(PaymentHistoryDTO::createdAt).thenComparing(PaymentHistoryDTO::createdAt)).toList().reversed();
+        if(!paymentHistoryDTOS.isEmpty()) return paymentHistoryDTOS.getFirst();
+        return null;
     }
 
     @Override
@@ -55,9 +57,11 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     @Override
     public void verifyExpiredPayments(Integer userId) {
         List<PaymentHistory> allPayments = paymentHistoryRepository.findAllByUserId(userId);
-        for(PaymentHistory p : allPayments) {
-            if(p.getCreatedAt().plusDays(10).isBefore(LocalDateTime.now())) {
-                update(p.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.EXPIRED, p.getPlanDueDate()));
+        if(allPayments != null) {
+            for(PaymentHistory p : allPayments) {
+                if(p.getCreatedAt().plusDays(10).isBefore(LocalDateTime.now()) && p.getStatus() == PaymentStatus.WAITING_PAYMENT) {
+                    update(p.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.EXPIRED, p.getPlanDueDate()));
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package com.academo.controller;
 
 import com.academo.controller.dtos.payment.PaymentLinkDTO;
 import com.academo.controller.dtos.payment.PaymentOptionsDTO;
+import com.academo.controller.dtos.paymentHistory.PaymentHistoryDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.payment.IPaymentService;
 import com.academo.service.payment.history.IPaymentHistoryService;
@@ -14,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -43,6 +45,13 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @GetMapping
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    public ResponseEntity<List<PaymentHistoryDTO>> findAll(Authentication authentication) {
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        return ResponseEntity.ok(paymentHistoryService.findAll(userId));
+    }
+
     @PostMapping(value = "/cancel")
     @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<Void> cancelPlan(Authentication authentication) {
@@ -50,6 +59,8 @@ public class PaymentController {
         paymentHistoryService.cancelPlan(userId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+
 
 
 

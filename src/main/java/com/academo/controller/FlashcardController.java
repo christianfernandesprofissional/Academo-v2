@@ -41,7 +41,7 @@ public class FlashcardController {
             @ApiResponse(responseCode = "404", description = "Nenhum Flashcard encontrado")
     })
     @GetMapping
-    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<List<FlashcardDTO>> findAll(Authentication authentication) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.findAllByUserId(userId));
@@ -55,7 +55,7 @@ public class FlashcardController {
             @ApiResponse(responseCode = "404", description = "Nenhum Flashcard encontrado")
     })
     @GetMapping("/all/{subjectId}")
-    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<List<FlashcardDTO>> findAllBySubjectId(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.findAllBySubjectId(userId, subjectId));
@@ -68,7 +68,7 @@ public class FlashcardController {
             @ApiResponse(responseCode = "404", description = "Nenhum Flashcard encontrado")
     })
     @GetMapping("/all/{subjectId}/{level}")
-    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<List<FlashcardDTO>> findAllByLevel(Authentication authentication, @PathVariable Integer subjectId, @PathVariable String level) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.findAllByLevel(userId, subjectId, level));
@@ -81,7 +81,7 @@ public class FlashcardController {
             @ApiResponse(responseCode = "404", description = "Flashcard não encontrado")
     })
     @GetMapping("/{flashcardId}")
-    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<FlashcardDTO> findById(Authentication authentication, @PathVariable Integer flashcardId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.findById(userId, flashcardId));
@@ -94,7 +94,7 @@ public class FlashcardController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar flashcard")
     })
     @PostMapping
-    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<FlashcardDTO> create(Authentication authentication, @RequestBody @Valid CreateFlashcardDTO flashcardDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         FlashcardDTO created = service.create(userId, flashcardDTO);
@@ -109,7 +109,7 @@ public class FlashcardController {
             @ApiResponse(responseCode = "404", description = "Nenhum Flashcard encontrado com este ID")
     })
     @PutMapping
-    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<FlashcardDTO> update(Authentication authentication, @RequestBody @Valid UpdateFlashcardDTO flashcardDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.update(userId, flashcardDTO));
@@ -122,7 +122,7 @@ public class FlashcardController {
             @ApiResponse(responseCode = "404", description = "Nenhum flashcard encontrado com este ID")
     })
     @PatchMapping
-    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<FlashcardDTO> updateLeveL(Authentication authentication, @RequestBody @Valid UpdateLevelDTO levelDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.updateLevel(userId, levelDTO));
@@ -135,7 +135,7 @@ public class FlashcardController {
             @ApiResponse(responseCode = "404", description = "Nenhum flashcard encontrado com este ID")
     })
     @DeleteMapping("/{flashcardId}")
-    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Integer flashcardId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         service.delete(userId,flashcardId);
