@@ -75,8 +75,8 @@ public class FlashcardServiceImpl implements IFlashcardService{
     }
 
     @Override
-    public FlashcardDTO update(Integer userId, UpdateFlashcardDTO dto) {
-        Flashcard flashcard = repository.findByIdAndUserId(dto.id(), userId).orElseThrow(FlashcardNotFoundException::new);
+    public FlashcardDTO update(Integer userId, Integer id, UpdateFlashcardDTO dto) {
+        Flashcard flashcard = repository.findByIdAndUserId(id, userId).orElseThrow(FlashcardNotFoundException::new);
 
         CardLevel cardLevel;
 
@@ -94,8 +94,8 @@ public class FlashcardServiceImpl implements IFlashcardService{
     }
 
     @Override
-    public FlashcardDTO updateLevel(Integer userId, UpdateLevelDTO dto) {
-        Flashcard flashcard = repository.findByIdAndUserId(dto.flashcardId(), userId).orElseThrow(FlashcardNotFoundException::new);
+    public FlashcardDTO updateLevel(Integer userId, Integer id, UpdateLevelDTO dto) {
+        Flashcard flashcard = repository.findByIdAndUserId(id, userId).orElseThrow(FlashcardNotFoundException::new);
         CardLevel cardLevel;
         try{
             cardLevel = CardLevel.valueOf(dto.level());

@@ -108,11 +108,11 @@ public class FlashcardController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar Flashcard"),
             @ApiResponse(responseCode = "404", description = "Nenhum Flashcard encontrado com este ID")
     })
-    @PutMapping
+    @PutMapping("/{flashcardId}")
     @PreAuthorize("hasRole('PREMIUM')")
-    public ResponseEntity<FlashcardDTO> update(Authentication authentication, @RequestBody @Valid UpdateFlashcardDTO flashcardDTO) {
+    public ResponseEntity<FlashcardDTO> update(Authentication authentication,@PathVariable Integer flashcardId, @RequestBody @Valid UpdateFlashcardDTO flashcardDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(service.update(userId, flashcardDTO));
+        return ResponseEntity.ok(service.update(userId, flashcardId, flashcardDTO));
     }
 
     @Operation(summary = "Atualiza somente o nível do flashcard", method = "PATCH")
@@ -121,11 +121,11 @@ public class FlashcardController {
             @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar flashcard"),
             @ApiResponse(responseCode = "404", description = "Nenhum flashcard encontrado com este ID")
     })
-    @PatchMapping
+    @PatchMapping("/{flashcardId}")
     @PreAuthorize("hasRole('PREMIUM')")
-    public ResponseEntity<FlashcardDTO> updateLeveL(Authentication authentication, @RequestBody @Valid UpdateLevelDTO levelDTO) {
+    public ResponseEntity<FlashcardDTO> updateLeveL(Authentication authentication, @PathVariable Integer flashcardId, @RequestBody @Valid UpdateLevelDTO levelDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(service.updateLevel(userId, levelDTO));
+        return ResponseEntity.ok(service.updateLevel(userId, flashcardId, levelDTO));
     }
 
     @Operation(summary = "Remove um flashcard", method = "DELETE")
