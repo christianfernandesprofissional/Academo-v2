@@ -5,6 +5,7 @@ import com.academo.controller.dtos.paymentHistory.PaymentHistoryDTO;
 import com.academo.controller.dtos.paymentHistory.UpdatePaymentHistoryDTO;
 import com.academo.model.PaymentHistory;
 import com.academo.model.User;
+import com.academo.model.enums.payment.PaymentStatus;
 import com.academo.repository.PaymentHistoryRepository;
 import com.academo.repository.UserRepository;
 import com.academo.service.user.IUserService;
@@ -48,6 +49,13 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
         PaymentHistory paymentHistory = findByPaymentId(paymentId);
         paymentHistory.setPlanDueDate(dueDate);
         paymentHistoryRepository.save(paymentHistory);
+    }
+
+    @Override
+    public void cancelPlan(Integer userId) {
+        PaymentHistoryDTO paymentHistoryDTO = findLastPayment(userId);
+        update(paymentHistoryDTO.paymentHistoryId(), new UpdatePaymentHistoryDTO(PaymentStatus.CANCELED, paymentHistoryDTO.planDueDate()));
+
     }
 
     @Override

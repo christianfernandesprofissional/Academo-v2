@@ -97,7 +97,12 @@ public class UserServiceImpl implements IUserService {
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         if(user.getRole() == UserRole.ROLE_PREMIUM) {
             PaymentHistoryDTO paymentHistoryDTO = paymentHistoryService.findLastPayment(user.getId());
-            if(paymentHistoryDTO.planDueDate().isBefore(LocalDate.now()) || paymentHistoryDTO.paymentStatus() == PaymentStatus.EXPIRED || paymentHistoryDTO.paymentStatus() == PaymentStatus.CANCELED) {
+            /*
+            Aqui, é feita a verificação se a data de vencimento já passou.
+            Isso aconteceu, pois, o usuário pode ter escolhido o cancelar o plano, mas o vencimento do plano ainda não chegou
+             */
+            if(paymentHistoryDTO.planDueDate().isBefore(LocalDate.now()) &&
+                    paymentHistoryDTO.paymentStatus() == PaymentStatus.EXPIRED || paymentHistoryDTO.paymentStatus() == PaymentStatus.CANCELED) {
                 user.setRole(UserRole.ROLE_FREE);
                 user.setPlanType(PlanType.FREE);
                 update(user);

@@ -4,6 +4,7 @@ import com.academo.controller.dtos.payment.PaymentLinkDTO;
 import com.academo.controller.dtos.payment.PaymentOptionsDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.payment.IPaymentService;
+import com.academo.service.payment.history.IPaymentHistoryService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -23,11 +21,13 @@ import java.util.Map;
 public class PaymentController {
 
     private final IPaymentService paymentService;
+    private final IPaymentHistoryService paymentHistoryService;
 
     private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
-    public PaymentController(IPaymentService paymentService) {
+    public PaymentController(IPaymentService paymentService, IPaymentHistoryService paymentHistoryService) {
         this.paymentService = paymentService;
+        this.paymentHistoryService = paymentHistoryService;
     }
 
     @PostMapping
@@ -40,6 +40,14 @@ public class PaymentController {
     @PostMapping(value = "/receive", consumes = "application/json")
     public ResponseEntity<Void> receivePayment(@RequestBody Map<String, Object> body) {
         paymentService.receivePayment(body);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping(value = "/cancel")
+    @PreAuthorize("hasRole('PREMIUM')")
+    public ResponseEntity<Void> cancelPlan(Authentication authentication) {
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        paymentHistoryService.cancelPlan(userId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

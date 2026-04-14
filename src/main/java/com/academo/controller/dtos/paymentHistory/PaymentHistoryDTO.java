@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record PaymentHistoryDTO(
+        Integer paymentHistoryId,
         String paymentId,
         PaymentStatus paymentStatus,
         BigDecimal value,
@@ -18,6 +19,7 @@ public record PaymentHistoryDTO(
 
     public static PaymentHistoryDTO fromPaymentHistory(PaymentHistory paymentHistory) {
         return new PaymentHistoryDTO(
+                paymentHistory.getId(),
                 paymentHistory.getPaymentId(),
                 paymentHistory.getStatus(),
                 paymentHistory.getValue(),
