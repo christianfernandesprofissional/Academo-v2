@@ -32,7 +32,7 @@ public class Period {
     private BigDecimal grade = new BigDecimal("0");
 
     @Column(name = "weight")
-    private BigDecimal weight = new BigDecimal("1");
+    private BigDecimal weight = new BigDecimal("0.5");
 
     @OneToMany(mappedBy = "period",
                 cascade = CascadeType.REMOVE)

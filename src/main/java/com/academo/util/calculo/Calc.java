@@ -9,9 +9,16 @@ import java.util.Map;
 public class Calc {
 
     public static BigDecimal mediaAritmetica(List<BigDecimal> notas){
-        BigDecimal soma = new BigDecimal("0");
-        for(BigDecimal nota : notas) soma = soma.add(nota);
-        return soma.divide(new BigDecimal(notas.size()), 2, RoundingMode.HALF_UP);
+        if (notas == null || notas.isEmpty()) {
+            return BigDecimal.ZERO; // ou null, dependendo da regra
+        }
+
+        BigDecimal soma = BigDecimal.ZERO;
+        for(BigDecimal nota : notas) {
+            soma = soma.add(nota);
+        }
+
+        return soma.divide(BigDecimal.valueOf(notas.size()), 2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -21,20 +28,25 @@ public class Calc {
      */
     public static BigDecimal mediaPonderada(BigDecimal[][] notasEPesos){
 
+        BigDecimal notasSomadas = BigDecimal.ZERO;
+        BigDecimal pesosSomados = BigDecimal.ZERO;
 
-        BigDecimal notasSomadas = new BigDecimal("0");
-        BigDecimal pesosSomados = new BigDecimal("0");
-        BigDecimal media = new BigDecimal("0");
-
-        //  (n1*peso)+ (nota2*peso) / somaDosPesos
         for (int i = 0; i < notasEPesos.length; i++) {
-            notasSomadas = notasSomadas.add( (notasEPesos[i][0]).multiply(notasEPesos[i][1]) );
-            pesosSomados = pesosSomados.add(notasEPesos[i][1]);
+            BigDecimal nota = notasEPesos[i][0];
+            BigDecimal peso = notasEPesos[i][1];
+
+            if (nota == null || peso == null) continue;
+
+            notasSomadas = notasSomadas.add(nota.multiply(peso));
+            pesosSomados = pesosSomados.add(peso);
         }
 
-        media = media.add(notasSomadas.divide(pesosSomados, 2, RoundingMode.HALF_UP));
+        // PROTEÇÃO CONTRA DIVISÃO POR ZERO
+        if (pesosSomados.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
 
-        return media;
+        return notasSomadas.divide(pesosSomados, 2, RoundingMode.HALF_UP);
     }
 
 

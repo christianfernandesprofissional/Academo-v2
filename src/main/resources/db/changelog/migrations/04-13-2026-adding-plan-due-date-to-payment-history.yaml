@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771623768047-38
+      author: fabio-britto
+      changes:
+        - addColumn:
+            tableName: payment_history
+            columns:
+              - column:
+                  constraints:
+                    nullable: true
+                  name: plan_due_date
+                  type: date

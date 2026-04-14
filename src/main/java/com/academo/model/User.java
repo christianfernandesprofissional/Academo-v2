@@ -1,8 +1,12 @@
 package com.academo.model;
 
+import com.academo.model.enums.user.PlanType;
+import com.academo.model.enums.user.UserRole;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.LocalDateTime;
 
@@ -43,6 +47,16 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "plan_type", columnDefinition = "plan_type", nullable = false)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private PlanType planType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role", columnDefinition = "user_role", nullable = false)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private UserRole role;
 
     public Integer getId() {
         return id;
@@ -128,6 +142,22 @@ public class User {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+    }
+
+    public PlanType getPlanType() {
+        return planType;
+    }
+
+    public void setPlanType(PlanType planType) {
+        this.planType = planType;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     @Override

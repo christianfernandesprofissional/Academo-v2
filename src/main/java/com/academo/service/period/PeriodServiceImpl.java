@@ -7,9 +7,11 @@ import com.academo.controller.dtos.period.UpdatePeriodDTO;
 import com.academo.model.Period;
 import com.academo.model.Subject;
 import com.academo.model.User;
-import com.academo.model.enums.PeriodName;
+import com.academo.model.enums.period.PeriodName;
 import com.academo.repository.PeriodRepository;
 import com.academo.repository.SubjectRepository;
+import com.academo.service.calculation.ICalculationService;
+import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.period.PeriodAlreadyExistsException;
 import com.academo.util.exceptions.period.PeriodLimitException;
 import com.academo.util.exceptions.period.PeriodNotFoundException;
@@ -18,17 +20,21 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PeriodServiceImpl implements IPeriodService{
 
     private final PeriodRepository repository;
     private final SubjectRepository subjectRepository;
+    private final ICalculationService calculationService;
 
-    public PeriodServiceImpl(PeriodRepository repository, SubjectRepository subjectRepository){
+    public PeriodServiceImpl(PeriodRepository repository, SubjectRepository subjectRepository, ICalculationService calculationService){
         this.repository = repository;
         this.subjectRepository = subjectRepository;
+        this.calculationService = calculationService;
     }
 
     @Override
@@ -38,50 +44,106 @@ public class PeriodServiceImpl implements IPeriodService{
 
     @Override
     public PeriodDTO findById(Integer userId, Integer periodId) {
-        return PeriodDTO.fromPeriod(repository.findByIdAndUserId(userId,periodId).orElseThrow(PeriodNotFoundException::new));
+        return PeriodDTO.fromPeriod(repository.findByIdAndUserId(periodId, userId).orElseThrow(PeriodNotFoundException::new));
     }
 
     @Override
     public PeriodDTO create(Integer userId, SavePeriodDTO periodDTO) {
-        if(!subjectRepository.existsById(periodDTO.subjectId())) throw new SubjectNotFoundException();
+        PeriodName periodName;
+        try{
+            periodName = PeriodName.valueOf(periodDTO.name());
+        }catch (IllegalArgumentException e){
+            throw new NotAllowedInsertionException("Período inválido: " + periodDTO.name());
+        }
 
-        List<PeriodDTO> periods = findAll(userId, periodDTO.subjectId());
-        if(periods.size() == 3) throw new PeriodLimitException();
-        periods.forEach(p -> {
-            if(p.name().equals(periodDTO.name())) throw new PeriodAlreadyExistsException();
-        });
 
-        verifyCreatedPeriodsFromSubject(periodDTO.subjectId(), userId);
+        Subject subject = subjectRepository.findById(periodDTO.subjectId())
+                .orElseThrow(SubjectNotFoundException::new);
 
+        verifyCreatedPeriodsFromSubject(subject, periodName);
+        BigDecimal normalizedWeight = BigDecimal.valueOf(periodDTO.weight()).movePointLeft(2);
         Period newPeriod = new Period();
-        newPeriod.setName(PeriodName.valueOf(periodDTO.name()).name());
-        newPeriod.setGrade(new BigDecimal(periodDTO.grade()));
-        newPeriod.setWeight(new BigDecimal(periodDTO.weight()));
-        newPeriod.setSubject(new Subject());
-        newPeriod.getSubject().setId(periodDTO.subjectId());
-        newPeriod.setUser(new User());
-        newPeriod.getUser().setId(userId);
-         return PeriodDTO.fromPeriod(repository.save(newPeriod));
+        newPeriod.setName(periodName.name());
+        newPeriod.setGrade(periodDTO.grade());
+        newPeriod.setWeight(normalizedWeight);
+        newPeriod.setSubject(subject);
+        User user = new User();
+        user.setId(userId);
+        newPeriod.setUser(user);
+        PeriodDTO dto = PeriodDTO.fromPeriod(repository.save(newPeriod));
+        calculationService.updateSubjectAverage(dto.subjectId());
+        return dto;
     }
 
-    private void verifyCreatedPeriodsFromSubject(Integer subjectId, Integer userId) {
+    private void verifyCreatedPeriodsFromSubject(Subject subject, PeriodName periodName) {
 
+        Set<Period> periods = subject.getPeriods();
+
+        boolean hasPeriods = !periods.isEmpty();
+        boolean isExam = periodName == PeriodName.EXAME;
+
+        if (hasPeriods && !isExam) {
+            throw new NotAllowedInsertionException("Só é permitido o cadastro de EXAME!");
+        }
+
+        if (periods.size() >= 3) {
+            throw new PeriodLimitException();
+        }
+
+        boolean alreadyExists = periods.stream()
+                .anyMatch(p -> PeriodName.valueOf(p.getName()) == periodName);
+
+        if (alreadyExists) {
+            throw new PeriodAlreadyExistsException();
+        }
     }
 
     @Override
-    public PeriodDTO update(Integer userId, UpdatePeriodDTO periodDTO) {
-        Period inDB = repository.findByIdAndUserId(periodDTO.id(),userId).orElseThrow(PeriodNotFoundException::new);
-        inDB.setName(PeriodName.valueOf(periodDTO.name()).name());
-        inDB.setWeight(new BigDecimal(periodDTO.weight()));
-        inDB.setGrade(new BigDecimal(periodDTO.grade()));
+    @Transactional
+    public PeriodDTO update(Integer userId, Integer periodId, UpdatePeriodDTO periodDTO) {
+        Period inDB = repository.findByIdAndUserId(periodId,userId).orElseThrow(PeriodNotFoundException::new);
+         if (!(inDB.getSubject().getId() == periodDTO.subjectId())) {
+            throw new NotAllowedInsertionException("Período não pertence à matéria informada");
+
+        }
+        if (!subjectRepository.existsById(periodDTO.subjectId())) {
+            throw new SubjectNotFoundException();
+        }
+        BigDecimal normalizedWeight = BigDecimal.valueOf(periodDTO.weight()).movePointLeft(2);
+        //Verificação se os pesos dos periodos P1 e P2 não ultrapassam 1
+        List<BigDecimal> weights = new ArrayList<>();
+        List<PeriodDTO> periods = findAll(userId, periodDTO.subjectId());
+        for(PeriodDTO p : periods){
+            PeriodName current = PeriodName.valueOf(p.name());
+            PeriodName updating = PeriodName.valueOf(inDB.getName());
+
+            if(current != PeriodName.EXAME && current != updating){
+                weights.add(p.weight());
+            }
+        }
+        weights.add(normalizedWeight);
+        BigDecimal weightsSum = calculationService.sumWeights(weights);
+        if(weightsSum.compareTo(BigDecimal.ONE) > 0){
+            throw new NotAllowedInsertionException("Os pesos do período ultrapassam 1");
+        }
+        // -----------------------------------------------------------------
+        inDB.setWeight(normalizedWeight);
+        if(PeriodName.valueOf(inDB.getName()) == PeriodName.EXAME){
+            inDB.setGrade(periodDTO.grade());
+        }
         repository.save(inDB);
-        return PeriodDTO.fromPeriod(inDB);
+        calculationService.updatePeriodAverage(periodId);
+        calculationService.updateSubjectAverage(periodDTO.subjectId());
+        return PeriodDTO.fromPeriod(repository.findById(inDB.getId()).get());
     }
 
     @Override
     @Transactional //Anotação necessária porque para queries customizadas de Delete não abrem transação automaticamente, então o JPA bloqueia sem para garantir consistência
     public void delete(Integer userId,Integer subjectId, Integer periodId){
+        PeriodDTO periodDTO = findById(userId, periodId);
+        if(!PeriodName.valueOf(periodDTO.name()).equals(PeriodName.EXAME)) throw new NotAllowedInsertionException("Só é permitido a deleção de EXAME!");
         repository.deleteByIdAndSubjectIdAndUserId(periodId, subjectId, userId);
+        calculationService.updateSubjectAverage(periodDTO.subjectId());
     }
 
     @Override

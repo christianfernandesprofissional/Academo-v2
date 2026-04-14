@@ -13,6 +13,7 @@ public interface IUserService {
     UserDTO activateUser(String token);
     User findById(Integer id);
     User findByEmail(String email);
+    User login(String email);
     UserDTO update(User user);
     void forgotPassword(ForgotPasswordDTO forgotPasswordDTO);
     void resetPassword(String token, ResetPasswordDTO resetPasswordDTO);

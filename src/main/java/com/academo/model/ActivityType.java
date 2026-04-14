@@ -35,7 +35,7 @@ public class ActivityType {
     private Period period;
 
     @Column(name = "weight")
-    private BigDecimal weight = new BigDecimal("1");
+    private BigDecimal weight = new BigDecimal("0");
 
     @OneToMany(mappedBy = "activityType",
             cascade = CascadeType.REMOVE)

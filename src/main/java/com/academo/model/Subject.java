@@ -1,6 +1,6 @@
 package com.academo.model;
 
-import com.academo.model.enums.CalculationType;
+import com.academo.model.enums.period.CalculationType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -41,6 +41,9 @@ public class Subject {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Column(name = "passing_grade")
+    private BigDecimal passingGrade = new BigDecimal("0");
 
     @Column(name = "final_grade")
     private BigDecimal finalGrade = new BigDecimal("0");
@@ -186,6 +189,14 @@ public class Subject {
 
     public void setPeriods(Set<Period> periods) {
         this.periods = periods;
+    }
+
+    public BigDecimal getPassingGrade() {
+        return passingGrade;
+    }
+
+    public void setPassingGrade(BigDecimal passingGrade) {
+        this.passingGrade = passingGrade;
     }
 
     @Override

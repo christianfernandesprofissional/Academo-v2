@@ -58,6 +58,8 @@
             <version>LATEST</version>
         </dependency>
 
+
+
         <dependency>
             <groupId>io.hypersistence</groupId>
             <artifactId>hypersistence-utils-hibernate-63</artifactId>

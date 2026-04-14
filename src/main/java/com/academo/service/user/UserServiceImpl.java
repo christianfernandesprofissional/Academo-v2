@@ -3,15 +3,19 @@ package com.academo.service.user;
 import com.academo.controller.dtos.mail.ActivateAccountMailDTO;
 import com.academo.controller.dtos.mail.ResetPasswordMailDTO;
 import com.academo.controller.dtos.mail.WelcomeMailDTO;
+import com.academo.controller.dtos.paymentHistory.PaymentHistoryDTO;
 import com.academo.controller.dtos.security.ForgotPasswordDTO;
 import com.academo.controller.dtos.security.ResetPasswordDTO;
-import com.academo.controller.dtos.security.TokenPasswordDTO;
 import com.academo.controller.dtos.user.UserDTO;
 import com.academo.model.Profile;
 import com.academo.model.User;
+import com.academo.model.enums.payment.PaymentStatus;
+import com.academo.model.enums.user.PlanType;
+import com.academo.model.enums.user.UserRole;
 import com.academo.repository.UserRepository;
 import com.academo.controller.dtos.security.RegisterDTO;
 import com.academo.security.service.TokenService;
+import com.academo.service.payment.history.IPaymentHistoryService;
 import com.academo.util.exceptions.user.AlreadyActivatedUserException;
 import com.academo.util.exceptions.user.ExistingUserException;
 import com.academo.util.exceptions.user.UserNotFoundException;
@@ -21,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -30,16 +35,17 @@ public class UserServiceImpl implements IUserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private static final LocalDateTime EXPIRATION_ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
-    //private static final LocalDateTime EXPIRATION_RESET_PASSWORD_TOKEN = LocalDateTime.now().plusMinutes(15).atOffset(ZoneOffset.of("-03:00")).toLocalDateTime();
 
     private final UserRepository userRepository;
     private final IMailService mailService;
     private final TokenService tokenService;
+    private final IPaymentHistoryService paymentHistoryService;
 
-    public UserServiceImpl(UserRepository userRepository, IMailService mailService, TokenService tokenService) {
+    public UserServiceImpl(UserRepository userRepository, IMailService mailService, TokenService tokenService, IPaymentHistoryService paymentHistoryService) {
         this.userRepository = userRepository;
         this.mailService = mailService;
         this.tokenService = tokenService;
+        this.paymentHistoryService = paymentHistoryService;
     }
 
     @Override
@@ -50,12 +56,15 @@ public class UserServiceImpl implements IUserService {
         user.setEmail(registerDTO.email());
         user.setPassword(encryptedPassword);
         user.setName(registerDTO.name());
+        user.setPlanType(PlanType.FREE);
+        user.setRole(UserRole.ROLE_FREE);
         user.setActivationAccountTokenExpiration(EXPIRATION_ACTIVATION_TOKEN);
         Profile profile = new Profile();
         profile.setUser(user);
         user.setProfile(profile);
         User createdUser = userRepository.save(user);
         var token = tokenService.generateActivationToken(createdUser.getId());
+        System.out.println("TOKEN PARA ATIVAÇÃO DA CONTA: " + token);
         mailService.sendActivationMail(new ActivateAccountMailDTO(createdUser.getName(), createdUser.getEmail(), token));
     }
 
@@ -85,6 +94,17 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public User login(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        paymentHistoryService.verifyExpiredPayments(user.getId());
+        User updatedUser = verifyPlan(user);
+        if(updatedUser != null) return updatedUser;
+        return user;
+    }
+
+
+
+    @Override
     public UserDTO update(User user) {
         return UserDTO.fromUser(userRepository.save(user));
     }
@@ -93,6 +113,7 @@ public class UserServiceImpl implements IUserService {
     public void forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
         User user = userRepository.findByEmail(forgotPasswordDTO.email()).orElseThrow(UserNotFoundException::new);
         var token = tokenService.generateForgotPasswordToken(user.getId());
+        System.out.println("TOKEN PARA REDEFINIÇÃO DE SENHA:" + token);
         mailService.sendResetPasswordMail(new ResetPasswordMailDTO(user.getName(), user.getEmail(), token));
     }
 
@@ -104,6 +125,25 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(new BCryptPasswordEncoder().encode(resetPasswordDTO.newPassword()));
         userRepository.save(user);
     }
+
+    private User verifyPlan(User user) {
+        if(user.getRole() == UserRole.ROLE_PREMIUM) {
+            PaymentHistoryDTO paymentHistoryDTO = paymentHistoryService.findLastPayment(user.getId());
+            /*
+            Aqui, é feita a verificação se a data de vencimento já passou.
+            Isso aconteceu, pois, o usuário pode ter escolhido o cancelar o plano, mas o vencimento do plano ainda não chegou
+             */
+            if(paymentHistoryDTO != null && paymentHistoryDTO.planDueDate().isBefore(LocalDate.now())) {
+                user.setRole(UserRole.ROLE_FREE);
+                user.setPlanType(PlanType.FREE);
+                update(user);
+                return user;
+            }
+        }
+        return null;
+    }
+
+
 
 
 }

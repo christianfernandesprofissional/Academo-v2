@@ -13,7 +13,7 @@ public interface IPeriodService {
     List<PeriodDTO> findAll(Integer userId, Integer subjectId);
     PeriodDTO findById(Integer userId, Integer periodId);
     PeriodDTO create(Integer userId, SavePeriodDTO periodDTO);
-    PeriodDTO update(Integer userId, UpdatePeriodDTO periodDTO);
+    PeriodDTO update(Integer userId,Integer periodId, UpdatePeriodDTO periodDTO);
     PeriodDTO addActivityType(Integer userId, SaveActivityTypeDTO activityTypeDTO);
     void delete(Integer userId,Integer subjectId, Integer periodId);
     boolean existsById(Integer periodId);

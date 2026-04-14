@@ -2,5 +2,5 @@ databaseChangeLog:
   - include:
       file: db/changelog/baseline/baseline.yaml
 
-  - include:
-      file: db/changelog/migrations/03-06-2026-adding-period-table.yaml
+  - includeAll:
+      path: db/changelog/migrations/

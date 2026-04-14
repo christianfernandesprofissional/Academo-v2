@@ -7,20 +7,20 @@ import com.academo.controller.dtos.subject.UpdateSubjectDTO;
 import com.academo.model.Group;
 import com.academo.model.Subject;
 import com.academo.model.User;
-import com.academo.model.enums.CalculationType;
-import com.academo.model.enums.PeriodName;
+import com.academo.model.enums.period.CalculationType;
+import com.academo.model.enums.period.PeriodName;
 import com.academo.repository.GroupRepository;
 import com.academo.repository.SubjectRepository;
-import com.academo.repository.UserRepository;
+import com.academo.service.calculation.ICalculationService;
 import com.academo.service.period.IPeriodService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import com.academo.util.exceptions.subject.SubjectNotFoundException;
-import com.academo.util.exceptions.user.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -30,17 +30,19 @@ public class SubjectServiceImpl implements ISubjectService {
     private final GroupRepository groupRepository;
     private final IUserService userService;
     private final IPeriodService periodService;
+    private final ICalculationService calculationService;
 
-    public SubjectServiceImpl(SubjectRepository subjectRepository, GroupRepository groupRepository, IUserService userService, IPeriodService periodService) {
+    public SubjectServiceImpl(SubjectRepository subjectRepository, GroupRepository groupRepository, IUserService userService, IPeriodService periodService, ICalculationService calculationService) {
         this.subjectRepository = subjectRepository;
         this.groupRepository = groupRepository;
         this.userService = userService;
         this.periodService = periodService;
+        this.calculationService = calculationService;
     }
 
     @Override
     public List<SubjectDTO> findAll(Integer userId) {
-        return subjectRepository.findByUserId(userId).stream().map(SubjectDTO::fromSubject).toList();
+        return subjectRepository.findAllByUserId(userId).stream().map(SubjectDTO::fromSubject).toList();
     }
 
     @Override
@@ -64,8 +66,8 @@ public class SubjectServiceImpl implements ISubjectService {
         subject.setUser(user);
         subject = subjectRepository.save(subject);
 
-        SavePeriodDTO p1 = new SavePeriodDTO(subject.getId(), PeriodName.P1.name(), "0", "1");
-        SavePeriodDTO p2 = new SavePeriodDTO(subject.getId(), PeriodName.P2.name(), "0", "1");
+        SavePeriodDTO p1 = new SavePeriodDTO(subject.getId(), PeriodName.P1.name(), new BigDecimal("0"),  50);
+        SavePeriodDTO p2 = new SavePeriodDTO(subject.getId(), PeriodName.P2.name(),  new BigDecimal("0"), 50);
         periodService.create(userId, p1);
         periodService.create(userId, p2);
 
@@ -73,6 +75,7 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
+    @Transactional
     public SubjectDTO update(Integer userId, Integer subjectId, UpdateSubjectDTO subjectDTO) {
         Subject inDb = subjectRepository.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
         if(!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
@@ -80,9 +83,11 @@ public class SubjectServiceImpl implements ISubjectService {
         Subject updated = inDb;
         updated.setName(subjectDTO.name());
         updated.setDescription(subjectDTO.description());
+        updated.setPassingGrade(subjectDTO.passingGrade());
         updated.setCalculationType(CalculationType.valueOf(subjectDTO.calculationType()));
         updated.setIsActive(subjectDTO.isActive());
         updated = subjectRepository.save(updated);
+        calculationService.updateSubjectAverage(subjectId);
         return SubjectDTO.fromSubject(updated);
     }
 

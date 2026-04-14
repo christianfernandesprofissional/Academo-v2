@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
-    List<Subject> findByUserId(Integer userId);
+    List<Subject> findAllByUserId(Integer userId);
     Optional<Subject> findByIdAndUserId(Integer subjectId, Integer userId);
 
 }
