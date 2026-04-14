@@ -14,7 +14,7 @@ public interface IFlashcardService {
     List<FlashcardDTO> findAllByLevel(Integer userId, Integer subjectId, String level);
     FlashcardDTO findById(Integer userId, Integer flashcardId);
     FlashcardDTO create(Integer userId, CreateFlashcardDTO dto);
-    FlashcardDTO update(Integer userId, UpdateFlashcardDTO dto);
-    FlashcardDTO updateLevel(Integer userId, UpdateLevelDTO dto);
+    FlashcardDTO update(Integer userId, Integer flashcardId, UpdateFlashcardDTO dto);
+    FlashcardDTO updateLevel(Integer userId, Integer flashcardId, UpdateLevelDTO dto);
     void delete(Integer userId, Integer flashcardId);
 }

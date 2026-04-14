@@ -46,7 +46,6 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
     @PostMapping("/login")
-    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid UserAuthDTO user) {
         UsernamePasswordAuthenticationToken userPass = new UsernamePasswordAuthenticationToken(user.email(), user.password());
         Authentication auth = authenticationManager.authenticate(userPass);
