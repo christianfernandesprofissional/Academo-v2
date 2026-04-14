@@ -6,7 +6,7 @@ import com.academo.controller.dtos.period.UpdatePeriodDTO;
 import com.academo.model.Period;
 import com.academo.model.Subject;
 import com.academo.model.User;
-import com.academo.model.enums.PeriodName;
+import com.academo.model.enums.period.PeriodName;
 import com.academo.repository.PeriodRepository;
 import com.academo.repository.SubjectRepository;
 import com.academo.service.calculation.ICalculationService;

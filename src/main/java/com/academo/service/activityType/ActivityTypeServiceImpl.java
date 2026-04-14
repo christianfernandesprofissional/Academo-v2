@@ -3,10 +3,8 @@ package com.academo.service.activityType;
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
 import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.controller.dtos.activityType.UpdateActivityTypeDTO;
-import com.academo.controller.dtos.period.PeriodDTO;
 import com.academo.model.ActivityType;
 import com.academo.model.Period;
-import com.academo.model.enums.PeriodName;
 import com.academo.repository.ActivityTypeRepository;
 import com.academo.service.calculation.ICalculationService;
 import com.academo.service.period.IPeriodService;
@@ -20,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

@@ -7,7 +7,7 @@ import com.academo.controller.dtos.flashcard.UpdateLevelDTO;
 import com.academo.model.Flashcard;
 import com.academo.model.Subject;
 import com.academo.model.User;
-import com.academo.model.enums.CardLevel;
+import com.academo.model.enums.flashcard.CardLevel;
 import com.academo.repository.FlashcardRepository;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.flashcard.FlashcardNotFoundException;

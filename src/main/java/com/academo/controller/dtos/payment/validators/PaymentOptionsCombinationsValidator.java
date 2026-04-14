@@ -1,13 +1,37 @@
 package com.academo.controller.dtos.payment.validators;
 
 import com.academo.controller.dtos.payment.GetPaymentLinkDTO;
+import com.academo.controller.dtos.payment.PaymentOptionsDTO;
 import com.academo.controller.dtos.payment.annotations.ValidaPaymentOptionsCombination;
-import com.academo.controller.dtos.payment.enums.BillingType;
-import com.academo.controller.dtos.payment.enums.ChargeType;
+import com.academo.model.enums.payment.BillingType;
+import com.academo.model.enums.payment.ChargeType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PaymentOptionsCombinationsValidator implements ConstraintValidator<ValidaPaymentOptionsCombination, GetPaymentLinkDTO> {
+public class PaymentOptionsCombinationsValidator implements ConstraintValidator<ValidaPaymentOptionsCombination, PaymentOptionsDTO> {
+
+
+    @Override
+    public boolean isValid(PaymentOptionsDTO value, ConstraintValidatorContext context) {
+        if(value == null ||
+                value.chargeType() == null ||
+                value.billingType() == null) return true;
+
+        boolean isValid = value.billingType() == BillingType.CREDIT_CARD && value.chargeType() == ChargeType.RECURRENT;
+
+        if(!isValid) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+                    .addConstraintViolation();
+
+        }
+
+        return isValid;
+    }
+
+
+        /*
+    Lógica antiga:
 
     public boolean isValid(GetPaymentLinkDTO getPaymentLinkDTO, ConstraintValidatorContext constraintValidatorContext) {
         if(getPaymentLinkDTO == null ||
@@ -30,4 +54,7 @@ public class PaymentOptionsCombinationsValidator implements ConstraintValidator<
         }
         return true;
     }
+
+     */
+
 }

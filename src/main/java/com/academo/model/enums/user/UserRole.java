@@ -1,4 +1,4 @@
-package com.academo.model.enums;
+package com.academo.model.enums.user;
 
 public enum UserRole {
     ROLE_FREE,

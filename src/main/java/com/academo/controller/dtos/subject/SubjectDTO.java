@@ -1,7 +1,7 @@
 package com.academo.controller.dtos.subject;
 
 import com.academo.model.Subject;
-import com.academo.model.enums.CalculationType;
+import com.academo.model.enums.period.CalculationType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

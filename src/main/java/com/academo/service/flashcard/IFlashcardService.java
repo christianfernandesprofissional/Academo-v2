@@ -4,7 +4,6 @@ import com.academo.controller.dtos.flashcard.CreateFlashcardDTO;
 import com.academo.controller.dtos.flashcard.FlashcardDTO;
 import com.academo.controller.dtos.flashcard.UpdateFlashcardDTO;
 import com.academo.controller.dtos.flashcard.UpdateLevelDTO;
-import com.academo.model.enums.CardLevel;
 
 import java.util.List;
 

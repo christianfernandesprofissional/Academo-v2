@@ -1,4 +1,4 @@
-package com.academo.model.enums;
+package com.academo.model.enums.flashcard;
 
 public enum CardLevel {
     FACIL,

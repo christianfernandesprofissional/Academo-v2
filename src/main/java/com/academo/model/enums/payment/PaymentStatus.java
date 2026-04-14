@@ -1,4 +1,4 @@
-package com.academo.model.enums;
+package com.academo.model.enums.payment;
 
 public enum PaymentStatus {
     PAID,

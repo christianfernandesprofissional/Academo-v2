@@ -4,6 +4,7 @@ import com.academo.controller.dtos.payment.PaymentLinkDTO;
 import com.academo.controller.dtos.payment.PaymentOptionsDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.payment.IPaymentService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class PaymentController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<PaymentLinkDTO> createPaymentLink(Authentication authentication, @RequestBody PaymentOptionsDTO paymentOptionsDTO) {
+    public ResponseEntity<PaymentLinkDTO> createPaymentLink(Authentication authentication, @RequestBody @Valid PaymentOptionsDTO paymentOptionsDTO) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(paymentService.createPaymentLink(userId, paymentOptionsDTO));
     }

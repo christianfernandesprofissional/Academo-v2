@@ -2,16 +2,16 @@ package com.academo.service.payment.asaas;
 
 import com.academo.controller.PaymentController;
 import com.academo.controller.dtos.payment.*;
-import com.academo.controller.dtos.payment.enums.BillingType;
-import com.academo.controller.dtos.payment.enums.ChargeType;
-import com.academo.controller.dtos.payment.enums.SubscriptionCycle;
+import com.academo.model.enums.payment.BillingType;
+import com.academo.model.enums.payment.ChargeType;
+import com.academo.model.enums.payment.SubscriptionCycle;
 import com.academo.controller.dtos.paymentHistory.CreatePaymentHistoryDTO;
 import com.academo.controller.dtos.paymentHistory.UpdatePaymentHistoryDTO;
 import com.academo.model.PaymentHistory;
 import com.academo.model.User;
-import com.academo.model.enums.PaymentStatus;
-import com.academo.model.enums.PlanType;
-import com.academo.model.enums.UserRole;
+import com.academo.model.enums.payment.PaymentStatus;
+import com.academo.model.enums.user.PlanType;
+import com.academo.model.enums.user.UserRole;
 import com.academo.service.payment.IPaymentService;
 import com.academo.service.payment.history.IPaymentHistoryService;
 import com.academo.service.user.IUserService;
@@ -26,13 +26,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Component
 public class AsaasPaymentService implements IPaymentService {
 
     private static final BigDecimal YEARLY_IN_CASH = BigDecimal.valueOf(179.9);
-    private static final BigDecimal MONTHLY_RECURRENT = BigDecimal.valueOf(15.9);
+    private static final BigDecimal MONTHLY_RECURRENT = BigDecimal.valueOf(17.9);
     private static final BigDecimal YEARLY_RECURRENT = BigDecimal.valueOf(149.9);
     private static final BigDecimal IN_INSTALLMENTS = BigDecimal.valueOf(179.9);
 
@@ -44,7 +45,7 @@ public class AsaasPaymentService implements IPaymentService {
     private String asaasUrl;
     private String apiKey;
 
-    private String successUrl = "https://pt.wikipedia.org/wiki/John_von_Neumann"; //Muito provavelmente esta variável estará no meu config.env
+    private String successUrl = "www.pt.wikipedia.org/wiki/John_von_Neumann"; //Muito provavelmente esta variável estará no meu config.env
 
 
     public AsaasPaymentService(@Value("${payment.gateway.url}") String asaasUrl, @Value("${payment.gateway.api-key}") String apiKey, IPaymentHistoryService paymentHistoryService, IUserService userService) {
@@ -73,7 +74,8 @@ public class AsaasPaymentService implements IPaymentService {
 
         PaymentHistory paymentHistory = paymentHistoryService.findByPaymentId(paymentId);
         paymentHistory.setPaymentId(paymentId);
-        paymentHistoryService.update(paymentHistory.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.PAID));
+        LocalDate planDueDate = LocalDate.now().plusDays(30);
+        paymentHistoryService.update(paymentHistory.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.PAID, planDueDate));
         User user = userService.findById(paymentHistory.getUser().getId());
         user.setRole(UserRole.ROLE_PREMIUM);
         user.setPlanType(paymentHistory.getPlanType());
@@ -82,12 +84,12 @@ public class AsaasPaymentService implements IPaymentService {
 
 
     private PlanTypeDataDTO getPlanTypeData(PaymentOptionsDTO paymentOptionsDTO) {
-        if(paymentOptionsDTO.billingType() == BillingType.BOLETO || paymentOptionsDTO.billingType() == BillingType.PIX) {
-            return new PlanTypeDataDTO(PlanType.YEARLY_IN_CASH, YEARLY_IN_CASH);
-        }
-        if(paymentOptionsDTO.chargeType() == ChargeType.INSTALLMENT) {
-            return new PlanTypeDataDTO(PlanType.IN_INSTALLMENTS, IN_INSTALLMENTS);
-        }
+//        if(paymentOptionsDTO.billingType() == BillingType.BOLETO || paymentOptionsDTO.billingType() == BillingType.PIX) {
+//            return new PlanTypeDataDTO(PlanType.YEARLY_IN_CASH, YEARLY_IN_CASH);
+//        }
+//        if(paymentOptionsDTO.chargeType() == ChargeType.INSTALLMENT) {
+//            return new PlanTypeDataDTO(PlanType.IN_INSTALLMENTS, IN_INSTALLMENTS);
+//        }
         if(paymentOptionsDTO.subscriptionCycle() == SubscriptionCycle.MONTHLY) {
             return new PlanTypeDataDTO(PlanType.MONTHLY_RECURRENT, MONTHLY_RECURRENT);
         }

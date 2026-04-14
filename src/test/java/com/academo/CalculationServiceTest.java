@@ -1,8 +1,7 @@
 package com.academo;
 
 import com.academo.model.*;
-import com.academo.model.enums.CalculationType;
-import com.academo.model.enums.PeriodName;
+import com.academo.model.enums.period.CalculationType;
 import com.academo.repository.PeriodRepository;
 import com.academo.repository.SubjectRepository;
 import com.academo.service.calculation.CalculationService;

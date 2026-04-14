@@ -1,4 +1,4 @@
-package com.academo.controller.dtos.payment.enums;
+package com.academo.model.enums.payment;
 
 public enum BillingType {
     BOLETO,

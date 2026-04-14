@@ -1,7 +1,7 @@
 package com.academo.security.authuser;
 
 import com.academo.model.User;
-import com.academo.model.enums.UserRole;
+import com.academo.model.enums.user.UserRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;

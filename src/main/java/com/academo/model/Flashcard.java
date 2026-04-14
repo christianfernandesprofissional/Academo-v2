@@ -1,12 +1,11 @@
 package com.academo.model;
 
-import com.academo.model.enums.CardLevel;
+import com.academo.model.enums.flashcard.CardLevel;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 

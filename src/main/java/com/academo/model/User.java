@@ -1,7 +1,7 @@
 package com.academo.model;
 
-import com.academo.model.enums.PlanType;
-import com.academo.model.enums.UserRole;
+import com.academo.model.enums.user.PlanType;
+import com.academo.model.enums.user.UserRole;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;

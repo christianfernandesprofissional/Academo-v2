@@ -1,11 +1,11 @@
 package com.academo.controller.dtos.paymentHistory;
 
-import com.academo.model.PaymentHistory;
-import com.academo.model.enums.PaymentStatus;
+import com.academo.model.enums.payment.PaymentStatus;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public record UpdatePaymentHistoryDTO(
-        PaymentStatus paymentStatus
+        PaymentStatus paymentStatus,
+        LocalDate planDueDate
 ) {
 }

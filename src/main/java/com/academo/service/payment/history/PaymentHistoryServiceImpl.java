@@ -6,20 +6,24 @@ import com.academo.controller.dtos.paymentHistory.UpdatePaymentHistoryDTO;
 import com.academo.model.PaymentHistory;
 import com.academo.model.User;
 import com.academo.repository.PaymentHistoryRepository;
+import com.academo.repository.UserRepository;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.payment.history.PaymentHistoryNotFoundException;
+import com.academo.util.exceptions.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
 
-    private final IUserService userService;
+    private final UserRepository userRepository;
     private final PaymentHistoryRepository paymentHistoryRepository;
 
-    public PaymentHistoryServiceImpl(IUserService userService, PaymentHistoryRepository paymentHistoryRepository) {
-        this.userService = userService;
+    public PaymentHistoryServiceImpl(UserRepository userRepository, PaymentHistoryRepository paymentHistoryRepository) {
+        this.userRepository = userRepository;
         this.paymentHistoryRepository = paymentHistoryRepository;
     }
 
@@ -35,13 +39,25 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     }
 
     @Override
+    public PaymentHistoryDTO findLastPayment(Integer userId) {
+        return findAll(userId).stream().sorted(Comparator.comparing(PaymentHistoryDTO::createdAt).thenComparing(PaymentHistoryDTO::createdAt)).toList().reversed().getFirst();
+    }
+
+    @Override
+    public void updateDueDate(String paymentId, LocalDate dueDate) {
+        PaymentHistory paymentHistory = findByPaymentId(paymentId);
+        paymentHistory.setPlanDueDate(dueDate);
+        paymentHistoryRepository.save(paymentHistory);
+    }
+
+    @Override
     public PaymentHistory findByPaymentId(String paymentId) {
         return paymentHistoryRepository.findByPaymentId(paymentId).orElseThrow(PaymentHistoryNotFoundException::new);
     }
 
     @Override
     public void create(Integer userId, CreatePaymentHistoryDTO createPaymentHistoryDTO) {
-        User user = userService.findById(userId);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         PaymentHistory paymentHistory = new PaymentHistory();
         paymentHistory.setUser(user);
         paymentHistory.setPaymentId(createPaymentHistoryDTO.paymentId());
@@ -56,6 +72,7 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     public void update(Integer paymentHistoryId, UpdatePaymentHistoryDTO updatePaymentHistoryDTO) {
         PaymentHistory paymentHistory = paymentHistoryRepository.findById(paymentHistoryId).orElseThrow(PaymentHistoryNotFoundException::new);
         paymentHistory.setStatus(updatePaymentHistoryDTO.paymentStatus());
+        paymentHistory.setPlanDueDate(updatePaymentHistoryDTO.planDueDate());
         paymentHistoryRepository.save(paymentHistory);
     }
 }

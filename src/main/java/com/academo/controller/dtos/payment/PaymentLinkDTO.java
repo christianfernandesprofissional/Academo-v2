@@ -1,8 +1,8 @@
 package com.academo.controller.dtos.payment;
 
-import com.academo.controller.dtos.payment.enums.BillingType;
-import com.academo.controller.dtos.payment.enums.ChargeType;
-import com.academo.controller.dtos.payment.enums.SubscriptionCycle;
+import com.academo.model.enums.payment.BillingType;
+import com.academo.model.enums.payment.ChargeType;
+import com.academo.model.enums.payment.SubscriptionCycle;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

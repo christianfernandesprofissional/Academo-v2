@@ -1,7 +1,7 @@
 package com.academo.controller.dtos.paymentHistory;
 
-import com.academo.model.enums.PaymentStatus;
-import com.academo.model.enums.PlanType;
+import com.academo.model.enums.payment.PaymentStatus;
+import com.academo.model.enums.user.PlanType;
 
 import java.math.BigDecimal;
 

@@ -51,8 +51,7 @@ public class UserController {
         UsernamePasswordAuthenticationToken userPass = new UsernamePasswordAuthenticationToken(user.email(), user.password());
         Authentication auth = authenticationManager.authenticate(userPass);
         var token = tokenService.generateLoginToken((AuthUser) auth.getPrincipal());
-        logger.info("[DEBUG] Token: {}", token);
-        User u = userService.findByEmail(user.email());
+        User u = userService.login(user.email());
         return ResponseEntity.ok(new LoginResponseDTO(token, u.getId(), u.getName()));
     }
 
