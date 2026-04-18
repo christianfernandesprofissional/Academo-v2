@@ -15,6 +15,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -74,13 +77,15 @@ class ActivityServiceImplTest {
 
     @Test
     void shouldFindAll() {
-        when(activityRepository.findAllByUserId(1))
-                .thenReturn(List.of(activity));
+        PageRequest pageable = PageRequest.of(0, 10);
 
-        List<ActivityDTO> result = service.findAll(1);
+        when(activityRepository.findAllByUserId(1, pageable))
+                .thenReturn(new PageImpl<>(List.of(activity), pageable, 1));
 
-        assertEquals(1, result.size());
-        verify(activityRepository).findAllByUserId(1);
+        Page<ActivityDTO> result = service.findAll(1, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(activityRepository).findAllByUserId(1, pageable);
     }
 
     @Test
@@ -114,7 +119,6 @@ class ActivityServiceImplTest {
                 1
         );
 
-        // ✅ SubjectDTO real com todos os campos necessários
         SubjectDTO subjectDTO = new SubjectDTO(
                 1,
                 "Math",
@@ -230,18 +234,21 @@ class ActivityServiceImplTest {
         boolean result = service.existsById(10);
 
         assertTrue(result);
+        verify(activityRepository).existsById(10);
     }
 
     @Test
     void shouldFindAllBySubjectId() {
+        PageRequest pageable = PageRequest.of(0, 10);
+
         when(subjectService.findById(1, 1))
                 .thenReturn(mock(SubjectDTO.class));
+        when(activityRepository.findAllBySubjectId(1, pageable))
+                .thenReturn(new PageImpl<>(List.of(activity), pageable, 1));
 
-        when(activityRepository.findAllBySubjectId(1))
-                .thenReturn(List.of(activity));
+        Page<ActivityDTO> result = service.findAllBySubjectId(1, 1, pageable);
 
-        List<ActivityDTO> result = service.findAllBySubjectId(1, 1);
-
-        assertEquals(1, result.size());
+        assertEquals(1, result.getTotalElements());
+        verify(activityRepository).findAllBySubjectId(1, pageable);
     }
 }
