@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import com.academo.model.Group;
 import com.academo.security.authuser.AuthUser;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,9 +42,9 @@ public class GroupController {
     })
     @GetMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<List<GroupDTO>> findAll(Authentication authentication){
+    public ResponseEntity<Page<GroupDTO>> findAll(Authentication authentication, Pageable pageable){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(groupService.findAll(userId));
+        return ResponseEntity.ok(groupService.findAll(userId, pageable));
     }
 
     @Operation(summary = "Recupera um grupo", method = "GET")

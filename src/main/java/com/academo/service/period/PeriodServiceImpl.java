@@ -17,6 +17,8 @@ import com.academo.util.exceptions.period.PeriodLimitException;
 import com.academo.util.exceptions.period.PeriodNotFoundException;
 import com.academo.util.exceptions.subject.SubjectNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -38,8 +40,8 @@ public class PeriodServiceImpl implements IPeriodService{
     }
 
     @Override
-    public List<PeriodDTO> findAll(Integer userId, Integer subjectId) {
-        return repository.findAllByUserIdAndSubjectId(userId, subjectId).stream().map(PeriodDTO::fromPeriod).toList();
+    public Page<PeriodDTO> findAll(Integer userId, Integer subjectId, Pageable pageable) {
+        return repository.findAllByUserIdAndSubjectId(userId, subjectId, pageable).map(PeriodDTO::fromPeriod);
     }
 
     @Override
@@ -112,7 +114,7 @@ public class PeriodServiceImpl implements IPeriodService{
         BigDecimal normalizedWeight = BigDecimal.valueOf(periodDTO.weight()).movePointLeft(2);
         //Verificação se os pesos dos periodos P1 e P2 não ultrapassam 1
         List<BigDecimal> weights = new ArrayList<>();
-        List<PeriodDTO> periods = findAll(userId, periodDTO.subjectId());
+        List<PeriodDTO> periods = repository.findAllByUserIdAndSubjectId(userId, periodDTO.subjectId()).stream().map(PeriodDTO::fromPeriod).toList();
         for(PeriodDTO p : periods){
             PeriodName current = PeriodName.valueOf(p.name());
             PeriodName updating = PeriodName.valueOf(inDB.getName());

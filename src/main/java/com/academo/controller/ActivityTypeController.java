@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,10 +41,9 @@ public class ActivityTypeController {
     })
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     @GetMapping("/all/{periodId}")
-    public ResponseEntity<List<ActivityTypeDTO>> findAll(Authentication authentication, @PathVariable Integer periodId) {
+    public ResponseEntity<Page<ActivityTypeDTO>> findAll(Authentication authentication, @PathVariable Integer periodId, Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        List<ActivityTypeDTO> types  = activityTypeService.findAll(userId, periodId);
-        return ResponseEntity.ok(types);
+        return ResponseEntity.ok(activityTypeService.findAll(userId, periodId, pageable));
     }
 
     @Operation(summary = "Recupera um tipo de atividade de um usuário", method = "GET")

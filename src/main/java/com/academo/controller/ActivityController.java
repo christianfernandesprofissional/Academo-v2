@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,9 +41,9 @@ public class ActivityController {
     })
     @GetMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<List<ActivityDTO>> findAll(Authentication authentication) {
+    public ResponseEntity<Page<ActivityDTO>> findAll(Authentication authentication, Pageable pageable) {
        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-       return ResponseEntity.ok(activityService.findAll(userId));
+       return ResponseEntity.ok(activityService.findAll(userId, pageable));
     }
 
 
@@ -61,9 +63,9 @@ public class ActivityController {
 
     @GetMapping("/by-subject/{subjectId}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<List<ActivityDTO>> findAllBySubject(Authentication authentication, @PathVariable Integer subjectId) {
+    public ResponseEntity<Page<ActivityDTO>> findAllBySubject(Authentication authentication, @PathVariable Integer subjectId, Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(activityService.findAllBySubjectId(userId, subjectId));
+        return ResponseEntity.ok(activityService.findAllBySubjectId(userId, subjectId, pageable));
     }
 
     @Operation(summary = "Cadastra uma nova atividade", method = "POST")

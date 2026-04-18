@@ -11,6 +11,8 @@ import com.academo.repository.UserRepository;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.payment.history.PaymentHistoryNotFoundException;
 import com.academo.util.exceptions.user.UserNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -36,15 +38,15 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     }
 
     @Override
-    public List<PaymentHistoryDTO> findAll(Integer userId) {
-        return paymentHistoryRepository.findAllByUserId(userId).stream().map(PaymentHistoryDTO::fromPaymentHistory).toList();
+    public Page<PaymentHistoryDTO> findAll(Integer userId, Pageable pageable) {
+        return paymentHistoryRepository.findAllByUserId(userId, pageable).map(PaymentHistoryDTO::fromPaymentHistory);
     }
 
     @Override
     public PaymentHistoryDTO findLastPayment(Integer userId) {
-        List<PaymentHistoryDTO> paymentHistoryDTOS = findAll(userId).stream().sorted(Comparator.comparing(PaymentHistoryDTO::createdAt).thenComparing(PaymentHistoryDTO::createdAt)).toList().reversed();
-        if(!paymentHistoryDTOS.isEmpty()) return paymentHistoryDTOS.getFirst();
-        return null;
+        return paymentHistoryRepository.findFirstByUserIdOrderByCreatedAtDesc(userId)
+                .map(PaymentHistoryDTO::fromPaymentHistory)
+                .orElse(null);
     }
 
     @Override
@@ -57,11 +59,9 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     @Override
     public void verifyExpiredPayments(Integer userId) {
         List<PaymentHistory> allPayments = paymentHistoryRepository.findAllByUserId(userId);
-        if(allPayments != null) {
-            for(PaymentHistory p : allPayments) {
-                if(p.getCreatedAt().plusDays(10).isBefore(LocalDateTime.now()) && p.getStatus() == PaymentStatus.WAITING_PAYMENT) {
-                    update(p.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.EXPIRED, p.getPlanDueDate()));
-                }
+        for(PaymentHistory p : allPayments) {
+            if(p.getCreatedAt().plusDays(10).isBefore(LocalDateTime.now()) && p.getStatus() == PaymentStatus.WAITING_PAYMENT) {
+                update(p.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.EXPIRED, p.getPlanDueDate()));
             }
         }
     }

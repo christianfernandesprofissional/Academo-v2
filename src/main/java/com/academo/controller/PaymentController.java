@@ -9,6 +9,8 @@ import com.academo.service.payment.history.IPaymentHistoryService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,9 +49,9 @@ public class PaymentController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<List<PaymentHistoryDTO>> findAll(Authentication authentication) {
+    public ResponseEntity<Page<PaymentHistoryDTO>> findAll(Authentication authentication, Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(paymentHistoryService.findAll(userId));
+        return ResponseEntity.ok(paymentHistoryService.findAll(userId, pageable));
     }
 
     @PostMapping(value = "/cancel")

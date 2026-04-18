@@ -15,6 +15,8 @@ import com.academo.util.exceptions.activityType.ActivityTypeNotFoundException;
 import com.academo.util.exceptions.period.PeriodNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -40,8 +42,8 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
     }
 
     @Override
-    public List<ActivityTypeDTO> findAll(Integer userId, Integer periodId) {
-        return repository.findAllByPeriodIdAndUserId(periodId, userId).stream().map(ActivityTypeDTO::fromActivityType).toList();
+    public Page<ActivityTypeDTO> findAll(Integer userId, Integer periodId, Pageable pageable) {
+        return repository.findAllByPeriodIdAndUserId(periodId, userId, pageable).map(ActivityTypeDTO::fromActivityType);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
         BigDecimal normalizedWeight = BigDecimal.valueOf(activityTypeDTO.weight()).movePointLeft(2);
         //Verificação se os pesos dos tipos de atividade não ultrapassam 1
         List<BigDecimal> weights = new ArrayList<>();
-        List<ActivityTypeDTO> periods = findAll(userId, activityTypeDTO.periodId());
+        List<ActivityTypeDTO> periods = repository.findAllByPeriodIdAndUserId(activityTypeDTO.periodId(), userId).stream().map(ActivityTypeDTO::fromActivityType).toList();
         for(ActivityTypeDTO atDTO : periods){
             if(!Objects.equals(atDTO.id(), id)){
                 weights.add(new BigDecimal(atDTO.weight()));

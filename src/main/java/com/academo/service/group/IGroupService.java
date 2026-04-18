@@ -5,11 +5,14 @@ import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.GroupDTO;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 public interface IGroupService{
 
-    List<GroupDTO> findAll(Integer userId);
+    Page<GroupDTO> findAll(Integer userId, Pageable pageable);
     GroupDTO findById(Integer userId, Integer id);
     GroupDTO create(Integer userId, CreateGroupDTO createGroupDTO);
     GroupDTO update(Integer userId, Integer groupId, UpdateGroupDTO updateGroupDTO);

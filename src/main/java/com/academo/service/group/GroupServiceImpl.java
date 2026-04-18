@@ -14,6 +14,8 @@ import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,8 +36,8 @@ public class GroupServiceImpl implements IGroupService {
     }
 
     @Override
-    public List<GroupDTO> findAll(Integer userId){
-        return groupRepository.findAllByUserId(userId).stream().map(GroupDTO::fromGroup).toList();
+    public Page<GroupDTO> findAll(Integer userId, Pageable pageable){
+        return groupRepository.findAllByUserId(userId, pageable).map(GroupDTO::fromGroup);
     }
 
     @Override

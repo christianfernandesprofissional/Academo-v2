@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,9 +44,9 @@ public class FlashcardController {
     })
     @GetMapping
     @PreAuthorize("hasRole('PREMIUM')")
-    public ResponseEntity<List<FlashcardDTO>> findAll(Authentication authentication) {
+    public ResponseEntity<Page<FlashcardDTO>> findAll(Authentication authentication, Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(service.findAllByUserId(userId));
+        return ResponseEntity.ok(service.findAllByUserId(userId, pageable));
     }
 
 

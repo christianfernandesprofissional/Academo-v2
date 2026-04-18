@@ -15,6 +15,8 @@ import com.academo.util.config.storage.FileValidation;
 import com.academo.util.exceptions.fileTransfer.*;
 import com.google.api.client.http.InputStreamContent;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import com.google.api.services.drive.Drive;
 
@@ -85,8 +87,8 @@ public class GoogleDriveServiceImpl implements IFileService {
     }
 
     @Override
-    public List<FileDTO> findAllBySubject(Integer userId, Integer subjectId) {
-        return fileRepository.findAllBySubjectIdAndUserId(subjectId, userId).stream().map(FileDTO::fromFile).toList();
+    public Page<FileDTO> findAllBySubject(Integer userId, Integer subjectId, Pageable pageable) {
+        return fileRepository.findAllBySubjectIdAndUserId(subjectId, userId, pageable).map(FileDTO::fromFile);
     }
 
     @Transactional

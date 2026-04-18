@@ -12,6 +12,8 @@ import com.academo.model.Activity;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.subject.ISubjectService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,10 +60,9 @@ public class SubjectController {
     })
     @GetMapping("/in-group/{groupId}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<List<SubjectDTO>> findByGroupId(Authentication authentication, @PathVariable Integer groupId) {
+    public ResponseEntity<Page<SubjectDTO>> findByGroupId(Authentication authentication, @PathVariable Integer groupId, Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        List<SubjectDTO> subjects = service.findByGroup(groupId);
-        return ResponseEntity.ok(subjects);
+        return ResponseEntity.ok(service.findByGroup(groupId, pageable));
     }
 
     @Operation(summary = "Recupera a lista de todas as matérias de um usuário", method = "GET")
@@ -72,10 +73,9 @@ public class SubjectController {
     })
     @GetMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<List<SubjectDTO>> findAll(Authentication authentication) {
+    public ResponseEntity<Page<SubjectDTO>> findAll(Authentication authentication, Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        List<SubjectDTO> subjects = service.findAll(userId);
-        return ResponseEntity.ok(subjects);
+        return ResponseEntity.ok(service.findAll(userId, pageable));
     }
 
     @Operation(summary = "Recupera uma matéria", method = "GET")

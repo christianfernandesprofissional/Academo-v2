@@ -6,11 +6,14 @@ import com.academo.controller.dtos.period.PeriodDTO;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
 import com.academo.controller.dtos.period.UpdatePeriodDTO;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 public interface IPeriodService {
 
-    List<PeriodDTO> findAll(Integer userId, Integer subjectId);
+    Page<PeriodDTO> findAll(Integer userId, Integer subjectId, Pageable pageable);
     PeriodDTO findById(Integer userId, Integer periodId);
     PeriodDTO create(Integer userId, SavePeriodDTO periodDTO);
     PeriodDTO update(Integer userId,Integer periodId, UpdatePeriodDTO periodDTO);

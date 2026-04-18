@@ -15,6 +15,8 @@ import com.academo.service.subject.ISubjectService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.activity.ActivityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,8 +40,8 @@ public class ActivityServiceImpl implements IActivityService{
     }
 
     @Override
-    public List<ActivityDTO> findAll(Integer userId) {
-        return activityRepository.findAllByUserId(userId).stream().map(ActivityDTO::fromActivity).toList();
+    public Page<ActivityDTO> findAll(Integer userId, Pageable pageable) {
+        return activityRepository.findAllByUserId(userId, pageable).map(ActivityDTO::fromActivity);
     }
 
     @Override
@@ -88,11 +90,11 @@ public class ActivityServiceImpl implements IActivityService{
     }
 
     @Override
-    public List<ActivityDTO> findAllBySubjectId(Integer userId, Integer subjectId) {
+    public Page<ActivityDTO> findAllBySubjectId(Integer userId, Integer subjectId, Pageable pageable) {
         // Esse dto abaixo serve apenas para tentar recuperar um Subject com este ID e UserID. Caso o subject não pertença
         // ao usuário da requisição, será lançada uma exceção
         SubjectDTO dto = subjectService.findById(subjectId, userId);
-        return activityRepository.findAllBySubjectId(subjectId).stream().map(ActivityDTO::fromActivity).toList();
+        return activityRepository.findAllBySubjectId(subjectId, pageable).map(ActivityDTO::fromActivity);
     }
 
     /**

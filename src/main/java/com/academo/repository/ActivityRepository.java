@@ -3,6 +3,8 @@ package com.academo.repository;
 import com.academo.controller.dtos.notification.NotificationDTO;
 import com.academo.model.Activity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -15,9 +17,11 @@ import java.util.Optional;
 public interface ActivityRepository extends JpaRepository<Activity, Integer> {
 
     List<Activity> findAllByUserId(Integer userId);
+    Page<Activity> findAllByUserId(Integer userId, Pageable pageable);
     Optional<Activity> findByIdAndUserId(Integer activityId, Integer userId);
     Boolean existsActivityByName(String activityName);
     List<Activity> findAllBySubjectId(Integer subjectId);
+    Page<Activity> findAllBySubjectId(Integer subjectId, Pageable pageable);
 
     @Query(nativeQuery = true, value = """
             SELECT\s
