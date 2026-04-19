@@ -16,6 +16,8 @@ import com.academo.util.exceptions.fileTransfer.FileNotFoundException;
 import com.academo.util.exceptions.fileTransfer.FileStorageException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -87,8 +89,8 @@ public class SupabaseServiceImpl implements IFileService {
     }
 
     @Override
-    public List<FileDTO> findAllBySubject(Integer userId, Integer subjectId) {
-        return fileRepository.findAllBySubjectIdAndUserId(subjectId, userId).stream().map(FileDTO::fromFile).toList();
+    public Page<FileDTO> findAllBySubject(Integer userId, Integer subjectId, Pageable pageable) {
+        return fileRepository.findAllBySubjectIdAndUserId(subjectId, userId, pageable).map(FileDTO::fromFile);
     }
 
     @Transactional

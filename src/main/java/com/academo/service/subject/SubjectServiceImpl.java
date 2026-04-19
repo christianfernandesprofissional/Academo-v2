@@ -18,6 +18,9 @@ import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import com.academo.util.exceptions.subject.SubjectNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -41,8 +44,8 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
-    public List<SubjectDTO> findAll(Integer userId) {
-        return subjectRepository.findAllByUserId(userId).stream().map(SubjectDTO::fromSubject).toList();
+    public Page<SubjectDTO> findAll(Integer userId, Pageable pageable) {
+        return subjectRepository.findAllByUserId(userId, pageable).map(SubjectDTO::fromSubject);
     }
 
     @Override
@@ -51,9 +54,14 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
-    public List<SubjectDTO> findByGroup(Integer groupId) {
+    public Page<SubjectDTO> findByGroup(Integer groupId, Pageable pageable) {
         Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
-        return group.getSubjects().stream().map(SubjectDTO::fromSubject).toList();
+
+        List<SubjectDTO> subjects = group.getSubjects().stream().map(SubjectDTO::fromSubject).toList();
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), subjects.size());
+        List<SubjectDTO> pageContent = start > end ? List.of() : subjects.subList(start, end);
+        return new PageImpl<>(pageContent, pageable, subjects.size());
     }
 
     @Override

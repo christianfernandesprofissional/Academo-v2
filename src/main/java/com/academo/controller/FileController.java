@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -95,8 +97,8 @@ public class FileController {
     })
     @GetMapping("/{subjectId}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<List<FileDTO>> findAll(Authentication authentication, @PathVariable Integer subjectId){
+    public ResponseEntity<Page<FileDTO>> findAll(Authentication authentication, @PathVariable Integer subjectId, Pageable pageable){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(fileService.findAllBySubject(userId, subjectId));
+        return ResponseEntity.ok(fileService.findAllBySubject(userId, subjectId, pageable));
     }
 }
