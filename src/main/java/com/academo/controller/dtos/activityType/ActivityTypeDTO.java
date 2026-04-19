@@ -3,12 +3,13 @@ package com.academo.controller.dtos.activityType;
 import com.academo.controller.dtos.activity.ActivityDTO;
 import com.academo.model.ActivityType;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public record ActivityTypeDTO (
-        @NotEmpty(message = "O ID do tipo de atividade é obrigatório")
+        @NotNull(message = "O ID do tipo de atividade é obrigatório")
         Integer id,
         @NotEmpty(message = "O nome do tipo de ativadade é obrigatório")
         String name,

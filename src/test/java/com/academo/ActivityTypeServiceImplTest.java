@@ -19,6 +19,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -65,13 +68,15 @@ class ActivityTypeServiceImplTest {
 
     @Test
     void shouldFindAll() {
-        when(repository.findAllByPeriodIdAndUserId(1, 1))
-                .thenReturn(List.of(activityType));
+        PageRequest pageable = PageRequest.of(0, 10);
 
-        List<ActivityTypeDTO> result = service.findAll(1, 1);
+        when(repository.findAllByPeriodIdAndUserId(1, 1, pageable))
+                .thenReturn(new PageImpl<>(List.of(activityType), pageable, 1));
 
-        assertEquals(1, result.size());
-        verify(repository).findAllByPeriodIdAndUserId(1, 1);
+        Page<ActivityTypeDTO> result = service.findAll(1, 1, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(repository).findAllByPeriodIdAndUserId(1, 1, pageable);
     }
 
     @Test

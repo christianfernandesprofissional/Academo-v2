@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1782060000000-1
+      author: fabio-britto
+      changes:
+        - dropColumn:
+            tableName: profiles
+            columnName: institution
