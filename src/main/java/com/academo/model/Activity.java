@@ -22,7 +22,7 @@ public class Activity {
     private LocalDate activityDate;
 
     @Column(name = "notification_date")
-    private LocalDate notificationDate;
+    private LocalDate notificationDate = LocalDate.now().plusDays(10);
 
     @Column(name = "name", nullable = false)
     private String name;

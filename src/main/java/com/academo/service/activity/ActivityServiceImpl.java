@@ -61,7 +61,6 @@ public class ActivityServiceImpl implements IActivityService{
     public ActivityDTO update(Integer userId, Integer activityId, SaveActivityDTO activityDTO) {
         Activity existingActivity = activityRepository.findByIdAndUserId(activityId, userId).orElseThrow(ActivityNotFoundException::new);
         existingActivity.setActivityDate(activityDTO.activityDate());
-        existingActivity.setNotificationDate(activityDTO.notificationDate());
         existingActivity.setName(activityDTO.name());
         existingActivity.setDescription(activityDTO.description());
         existingActivity.setGrade(activityDTO.grade());
@@ -113,7 +112,6 @@ public class ActivityServiceImpl implements IActivityService{
         activity.setName(activityDTO.name());
         activity.setDescription(activityDTO.description());
         activity.setActivityDate(activityDTO.activityDate());
-        activity.setNotificationDate(activityDTO.notificationDate());
         activity.setGrade(activityDTO.grade());
         activity.setActivityType(activityType);
         activity.setSubject(subject);

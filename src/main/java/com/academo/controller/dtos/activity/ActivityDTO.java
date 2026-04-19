@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 public record ActivityDTO(
 
         Integer id,
-        LocalDate notificationDate,
         LocalDate activityDate,
         String name,
         String grade,
@@ -24,7 +23,6 @@ public record ActivityDTO(
 
     public static ActivityDTO fromActivity(Activity activity) {
         return new ActivityDTO(activity.getId(),
-                activity.getNotificationDate(),
                 activity.getActivityDate(),
                 activity.getName(),
                 activity.getGrade().toString(),
