@@ -11,6 +11,5 @@ public record UpdateProfileDTO(
         @Past(message = "A data de nascimento deve estar no passado")
         LocalDate birthDate,
         @Size(max = 1, message = "Informe apenas um caractere para o gênero")
-        String gender,
-        String institution) {
+        String gender) {
 }

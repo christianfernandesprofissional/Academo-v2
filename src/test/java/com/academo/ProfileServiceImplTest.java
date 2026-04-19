@@ -74,8 +74,7 @@ class ProfileServiceImplTest {
         UpdateProfileDTO dto = new UpdateProfileDTO(
                 "Full Name",
                 LocalDate.of(2000, 1, 1),
-                "M",
-                "UF"
+                "M"
         );
 
         when(profileRepository.findById(1)).thenReturn(Optional.of(profile));

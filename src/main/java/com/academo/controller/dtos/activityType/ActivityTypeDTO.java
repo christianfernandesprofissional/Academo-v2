@@ -3,6 +3,7 @@ package com.academo.controller.dtos.activityType;
 import com.academo.controller.dtos.activity.ActivityDTO;
 import com.academo.model.ActivityType;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;

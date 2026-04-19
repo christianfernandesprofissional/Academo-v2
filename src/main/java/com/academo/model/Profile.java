@@ -31,9 +31,6 @@ public class Profile {
     @Column(name = "gender", length = 90)
     private Character gender;
 
-    @Column(name = "institution")
-    private String institution;
-
     @Column(name="created_at", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -84,14 +81,6 @@ public class Profile {
 
     public void setGender(Character gender) {
         this.gender = gender;
-    }
-
-    public String getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(String institution) {
-        this.institution = institution;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
