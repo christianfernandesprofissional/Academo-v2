@@ -168,8 +168,8 @@ class GroupServiceImplTest {
                 "Desc",
                 true,
                 "MEDIA_ARITMETICA",
-                "6.0",
-                "0.0",
+                new BigDecimal("6.0"),
+                new BigDecimal("0.0"),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -193,8 +193,8 @@ class GroupServiceImplTest {
                 "Desc",
                 true,
                 "MEDIA_ARITMETICA",
-                "6.0",
-                "0.0",
+                new BigDecimal("6.0"),
+                new BigDecimal("0.0"),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -204,8 +204,8 @@ class GroupServiceImplTest {
                 "Desc",
                 true,
                 "MEDIA_ARITMETICA",
-                "6.0",
-                "0.0",
+                new BigDecimal("6.0"),
+                new BigDecimal("0.0"),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
