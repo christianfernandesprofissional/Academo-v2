@@ -5,6 +5,7 @@ import com.academo.model.ActivityType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public record ActivityTypeDTO (
         @NotEmpty(message = "O nome do tipo de ativadade é obrigatório")
         String name,
         String description,
-        String weight,
+        BigDecimal weight,
         List<ActivityDTO> activities,
         Integer periodId,
         LocalDateTime createdAt,
@@ -25,7 +26,7 @@ public record ActivityTypeDTO (
                 activityType.getId(),
                 activityType.getName(),
                 activityType.getDescription(),
-                activityType.getWeight().toString(),
+                activityType.getWeight(),
                 activityType.getActivities().stream().map(ActivityDTO::fromActivity).toList(),
                 activityType.getPeriod().getId(),
                 activityType.getCreatedAt(),

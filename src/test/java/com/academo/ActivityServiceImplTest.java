@@ -111,7 +111,6 @@ class ActivityServiceImplTest {
     void shouldCreateActivity() {
         SaveActivityDTO dto = new SaveActivityDTO(
                 LocalDate.now(),
-                LocalDate.now(),
                 "Atividade",
                 "Desc",
                 new BigDecimal("10.0"),
@@ -125,8 +124,8 @@ class ActivityServiceImplTest {
                 "Desc",
                 true,
                 "MEDIA_ARITMETICA",
-                "6.0",
-                "0.0",
+                new BigDecimal("6.0"),
+                new BigDecimal("0.0"),
                 null,
                 null
         );
@@ -151,7 +150,6 @@ class ActivityServiceImplTest {
     @Test
     void shouldUpdateActivity() {
         SaveActivityDTO dto = new SaveActivityDTO(
-                LocalDate.now(),
                 LocalDate.now(),
                 "Novo Nome",
                 "Nova Desc",
@@ -179,7 +177,6 @@ class ActivityServiceImplTest {
     @Test
     void shouldThrowWhenUpdatingNotFound() {
         SaveActivityDTO dto = new SaveActivityDTO(
-                LocalDate.now(),
                 LocalDate.now(),
                 "Nome",
                 "Desc",

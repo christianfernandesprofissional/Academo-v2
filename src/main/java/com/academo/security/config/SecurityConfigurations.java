@@ -28,7 +28,7 @@ import java.util.Collections;
 @EnableMethodSecurity
 public class SecurityConfigurations {
 
-    @Value("${cliente.url}")
+    @Value("${client.url}")
     private String CLIENTE_URL;
 
     private final SecurityFilter securityFilter;

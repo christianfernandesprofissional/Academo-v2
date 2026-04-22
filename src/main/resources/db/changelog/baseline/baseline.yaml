@@ -312,6 +312,9 @@ databaseChangeLog:
             name: gender
             type: VARCHAR(255)
         - column:
+            name: institution
+            type: VARCHAR(255)
+        - column:
             constraints:
               nullable: false
             name: created_at

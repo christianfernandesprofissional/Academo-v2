@@ -3,16 +3,16 @@ package com.academo.controller.dtos.activity;
 import com.academo.model.Activity;
 import jakarta.validation.constraints.Past;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record ActivityDTO(
 
         Integer id,
-        LocalDate notificationDate,
         LocalDate activityDate,
         String name,
-        String grade,
+        BigDecimal grade,
         String description,
         String subjectName,
         String activityTypeName,
@@ -24,10 +24,9 @@ public record ActivityDTO(
 
     public static ActivityDTO fromActivity(Activity activity) {
         return new ActivityDTO(activity.getId(),
-                activity.getNotificationDate(),
                 activity.getActivityDate(),
                 activity.getName(),
-                activity.getGrade().toString(),
+                activity.getGrade(),
                 activity.getDescription(),
                 activity.getSubject().getName(),
                 activity.getActivityType().getName(),

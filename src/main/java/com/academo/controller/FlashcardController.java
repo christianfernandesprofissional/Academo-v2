@@ -76,6 +76,21 @@ public class FlashcardController {
         return ResponseEntity.ok(service.findAllByLevel(userId, subjectId, level));
     }
 
+    @Operation(summary = "Recupera a lista de todas os flashcards de um usuário pelo ID do grupo", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Flashcards recuperados com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar Flashcards"),
+            @ApiResponse(responseCode = "404", description = "Nenhum Flashcard encontrado")
+    })
+    @GetMapping("/in-group/{groupId}")
+    @PreAuthorize("hasRole('PREMIUM')")
+    public ResponseEntity<List<FlashcardDTO>> findAllByGroupId(Authentication authentication,
+                                                              @PathVariable Integer groupId,
+                                                              @RequestParam(required = false) String level) {
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        return ResponseEntity.ok(service.findAllByGroupId(userId, groupId, level));
+    }
+
     @Operation(summary = "Recupera uma flashcard", method = "GET")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Flashcard recuperado com sucesso"),

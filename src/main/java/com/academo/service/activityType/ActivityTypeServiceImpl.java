@@ -87,7 +87,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
         List<ActivityTypeDTO> periods = repository.findAllByPeriodIdAndUserId(activityTypeDTO.periodId(), userId).stream().map(ActivityTypeDTO::fromActivityType).toList();
         for(ActivityTypeDTO atDTO : periods){
             if(!Objects.equals(atDTO.id(), id)){
-                weights.add(new BigDecimal(atDTO.weight()));
+                weights.add(atDTO.weight());
             }
         }
         weights.add(normalizedWeight);

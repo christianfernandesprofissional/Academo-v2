@@ -9,8 +9,6 @@ public record SaveActivityDTO(
 
         @Future(message = "É necessário que a data da atividade seja no futuro")
         LocalDate activityDate,
-        @Future(message = "É necessário que a data da notificação seja no futuro")
-        LocalDate notificationDate,
         @NotEmpty(message = "É obrigatório o nome da atividade")
         String name,
         String description,

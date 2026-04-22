@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 
 public record UserAuthDTO(
         @Email(message = "O email informado é inválido")
-        @NotEmpty(message = "O email é obrigatório para a criação da conta")
+        @NotEmpty(message = "O email é obrigatório para acessar a conta")
         String email,
         @NotEmpty(message = "A senha é obrigatória")
         String password) {

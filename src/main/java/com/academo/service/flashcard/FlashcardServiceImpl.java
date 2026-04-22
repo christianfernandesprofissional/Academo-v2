@@ -9,8 +9,10 @@ import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.model.enums.flashcard.CardLevel;
 import com.academo.repository.FlashcardRepository;
+import com.academo.repository.GroupRepository;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.flashcard.FlashcardNotFoundException;
+import com.academo.util.exceptions.group.GroupNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +24,13 @@ import java.util.Objects;
 @Service
 public class FlashcardServiceImpl implements IFlashcardService{
 
-    @Autowired
     private final FlashcardRepository repository;
 
-    public FlashcardServiceImpl(FlashcardRepository repository){
+    private final GroupRepository groupRepository;
+
+    public FlashcardServiceImpl(FlashcardRepository repository, GroupRepository groupRepository){
         this.repository = repository;
+        this.groupRepository = groupRepository;
     }
 
     @Override
@@ -52,6 +56,25 @@ public class FlashcardServiceImpl implements IFlashcardService{
         return findAllBySubjectId(userId, subjectId)
                 .stream()
                 .filter(p -> cardLevel.equals(CardLevel.valueOf(p.level())))
+                .toList();
+    }
+
+    @Override
+    public List<FlashcardDTO> findAllByGroupId(Integer userId, Integer groupId, String level) {
+        groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new);
+
+        CardLevel cardLevel = null;
+        if (level != null) {
+            try {
+                cardLevel = CardLevel.valueOf(level.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new FlashcardNotFoundException("Nivel inválido!");
+            }
+        }
+
+        return repository.findAllByUserIdAndGroupIdAndLevel(userId, groupId, cardLevel)
+                .stream()
+                .map(FlashcardDTO::fromFlashcard)
                 .toList();
     }
 
