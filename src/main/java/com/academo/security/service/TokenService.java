@@ -23,12 +23,9 @@ public class TokenService {
     @Value("${api.security.token.reset-password.secret}")
     private String resetPasswordSecret;
 
-    private static final Instant EXPIRATION_ACTIVATION_TOKEN = LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00"));
-    private static final Instant EXPIRATION_RESET_PASSWORD_TOKEN = LocalDateTime.now().plusMinutes(15).toInstant(ZoneOffset.of("-03:00"));
-    private static final Instant EXPIRATION_ACCESS_TOKEN = LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
-
     // ---------------- LOGIN TOKEN -----------------------
     public String generateLoginToken(AuthUser user) {
+        System.out.println(generateExpiration(TokenExpirationType.ACCESS_TOKEN));
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
@@ -113,13 +110,13 @@ public class TokenService {
     private Instant generateExpiration(TokenExpirationType expirationType) {
         switch (expirationType) {
             case ACCESS_TOKEN -> {
-                return EXPIRATION_ACCESS_TOKEN;
+                return LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
             }
             case ACTIVATION_TOKEN -> {
-                return EXPIRATION_ACTIVATION_TOKEN;
+                return LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00"));
             }
             case RESET_PASSWORD_TOKEN -> {
-                return EXPIRATION_RESET_PASSWORD_TOKEN;
+                return LocalDateTime.now().plusMinutes(15).toInstant(ZoneOffset.of("-03:00"));
             }
             default -> {
                 throw new RuntimeException("Erro ao gerar prazo de expiração do Token");
