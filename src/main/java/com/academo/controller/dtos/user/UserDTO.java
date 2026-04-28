@@ -1,6 +1,7 @@
 package com.academo.controller.dtos.user;
 
 import com.academo.model.User;
+import com.academo.model.enums.user.PlanType;
 
 import java.time.LocalDateTime;
 
@@ -9,6 +10,7 @@ public record UserDTO(
         String email,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
+        PlanType planType,
         Long storageUsage
 ) {
 
@@ -18,6 +20,7 @@ public record UserDTO(
                 user.getEmail(),
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
+                user.getPlanType(),
                 user.getStorageUsage()
         );
     }

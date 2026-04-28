@@ -112,10 +112,7 @@ public class TokenService {
             case ACCESS_TOKEN -> {
                 return LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
             }
-            case ACTIVATION_TOKEN -> {
-                return LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00"));
-            }
-            case RESET_PASSWORD_TOKEN -> {
+            case ACTIVATION_TOKEN, RESET_PASSWORD_TOKEN -> {
                 return LocalDateTime.now().plusMinutes(15).toInstant(ZoneOffset.of("-03:00"));
             }
             default -> {

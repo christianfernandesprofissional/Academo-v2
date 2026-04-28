@@ -73,9 +73,9 @@ public class SubjectController {
     })
     @GetMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<Page<SubjectDTO>> findAll(Authentication authentication, Pageable pageable) {
+    public ResponseEntity<Page<SubjectDTO>> findAll(Authentication authentication, @RequestParam(required = false) Boolean isActive, Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(service.findAll(userId, pageable));
+        return ResponseEntity.ok(service.findAll(userId, isActive, pageable));
     }
 
     @Operation(summary = "Recupera uma matéria", method = "GET")

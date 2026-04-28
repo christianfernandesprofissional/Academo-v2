@@ -21,7 +21,7 @@ public class ProfileServiceImpl implements IProfileService {
     public ProfileDTO findById(Integer id) {
         // Conferir se o User será carregado corretamente, e por consequência, o StorageUsage
         Profile profile = profileRepository.findById(id).orElseThrow(ProfileNotFoundException::new);
-        return new ProfileDTO(profile, profile.getUser().getStorageUsage());
+        return ProfileDTO.fromProfile(profile, profile.getUser().getStorageUsage(), profile.getUser().getPlanType());
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ProfileServiceImpl implements IProfileService {
         Profile profile = new Profile();
         profile.setId(user.getId());
         Profile createdProfile =  profileRepository.save(profile);
-        return new ProfileDTO(createdProfile, user.getStorageUsage());
+        return ProfileDTO.fromProfile(createdProfile, user.getStorageUsage(), user.getPlanType());
     }
 
     @Override
@@ -39,6 +39,6 @@ public class ProfileServiceImpl implements IProfileService {
         profile.setGender(profileDto.gender().charAt(0));
         profile.setBirthDate(profileDto.birthDate());
         Profile updatedProfile = profileRepository.save(profile);
-        return new ProfileDTO(updatedProfile, updatedProfile.getUser().getStorageUsage());
+        return ProfileDTO.fromProfile(updatedProfile, profile.getUser().getStorageUsage(), profile.getUser().getPlanType());
     }
 }

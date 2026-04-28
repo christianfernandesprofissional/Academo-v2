@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     List<Subject> findAllByUserId(Integer userId);
     Page<Subject> findAllByUserId(Integer userId, Pageable pageable);
+    Page<Subject> findAllByUserIdAndIsActive(Integer userId, Boolean isActive, Pageable pageable);
     Optional<Subject> findByIdAndUserId(Integer subjectId, Integer userId);
 
 }

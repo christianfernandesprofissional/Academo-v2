@@ -71,7 +71,7 @@ class SubjectServiceImplTest {
         when(subjectRepository.findAllByUserId(1, pageable))
                 .thenReturn(new PageImpl<>(List.of(subject), pageable, 1));
 
-        Page<SubjectDTO> result = subjectService.findAll(1, pageable);
+        Page<SubjectDTO> result = subjectService.findAll(1, null, pageable);
 
         assertEquals(1, result.getTotalElements());
         verify(subjectRepository).findAllByUserId(1, pageable);

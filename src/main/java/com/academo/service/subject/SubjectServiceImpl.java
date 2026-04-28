@@ -44,8 +44,11 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
-    public Page<SubjectDTO> findAll(Integer userId, Pageable pageable) {
-        return subjectRepository.findAllByUserId(userId, pageable).map(SubjectDTO::fromSubject);
+    public Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable) {
+        if (isActive == null) {
+            return subjectRepository.findAllByUserId(userId, pageable).map(SubjectDTO::fromSubject);
+        }
+        return subjectRepository.findAllByUserIdAndIsActive(userId, isActive, pageable).map(SubjectDTO::fromSubject);
     }
 
     @Override

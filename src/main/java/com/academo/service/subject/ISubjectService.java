@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ISubjectService {
 
-    Page<SubjectDTO> findAll(Integer userId, Pageable pageable);
+    Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable);
     SubjectDTO findById(Integer subjectId, Integer userId);
     Page<SubjectDTO> findByGroup(Integer groupId, Pageable pageable);
     SubjectDTO create(Integer userId, CreateSubjectDTO createSubjectDTO);

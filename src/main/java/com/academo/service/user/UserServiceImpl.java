@@ -9,7 +9,6 @@ import com.academo.controller.dtos.security.ResetPasswordDTO;
 import com.academo.controller.dtos.user.UserDTO;
 import com.academo.model.Profile;
 import com.academo.model.User;
-import com.academo.model.enums.payment.PaymentStatus;
 import com.academo.model.enums.user.PlanType;
 import com.academo.model.enums.user.UserRole;
 import com.academo.repository.UserRepository;
@@ -101,8 +100,6 @@ public class UserServiceImpl implements IUserService {
         if(updatedUser != null) return updatedUser;
         return user;
     }
-
-
 
     @Override
     public UserDTO update(User user) {

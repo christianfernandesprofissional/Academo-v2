@@ -2,6 +2,7 @@ package com.academo.controller.dtos.paymentHistory;
 
 import com.academo.model.PaymentHistory;
 import com.academo.model.enums.payment.PaymentStatus;
+import com.academo.model.enums.user.PlanType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,6 +13,8 @@ public record PaymentHistoryDTO(
         String paymentId,
         PaymentStatus paymentStatus,
         BigDecimal value,
+        String url,
+        PlanType planType,
         LocalDate planDueDate,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
@@ -23,6 +26,8 @@ public record PaymentHistoryDTO(
                 paymentHistory.getPaymentId(),
                 paymentHistory.getStatus(),
                 paymentHistory.getValue(),
+                paymentHistory.getUrl(),
+                paymentHistory.getPlanType(),
                 paymentHistory.getPlanDueDate(),
                 paymentHistory.getCreatedAt(),
                 paymentHistory.getUpdatedAt());

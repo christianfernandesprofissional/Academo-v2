@@ -22,6 +22,8 @@ import java.util.Map;
 @Component
 public class ResendMailService implements IMailService {
 
+    @Value("${client.url}")
+    private String CLIENTE_URL;
     private String resendAPIKey;
     private final String academoMail;
 
@@ -35,7 +37,6 @@ public class ResendMailService implements IMailService {
     @Async
     @Override
     public void sendWelcomeMail(WelcomeMailDTO welcomeMailDTO) {
-
         Map<String, Object> variables = new HashMap<>();
         variables.put("user_email", welcomeMailDTO.email());
         variables.put("name", welcomeMailDTO.name());
@@ -58,10 +59,11 @@ public class ResendMailService implements IMailService {
     @Async
     @Override
     public void sendActivationMail(ActivateAccountMailDTO activateAccountMailDTO) {
+        String activationTokenLink = CLIENTE_URL + "/activate?token=" + activateAccountMailDTO.activationToken();
         Map<String, Object> variables = new HashMap<>();
         variables.put("user_email", activateAccountMailDTO.email());
         variables.put("name", activateAccountMailDTO.name());
-        variables.put("activation_token_link", activateAccountMailDTO.activationToken());
+        variables.put("activation_token_link", activationTokenLink);
 
         CreateEmailOptions params = CreateEmailOptions.builder()
                 .to(activateAccountMailDTO.email())
@@ -79,10 +81,11 @@ public class ResendMailService implements IMailService {
 
     @Override
     public void sendResetPasswordMail(ResetPasswordMailDTO resetPasswordMailDTO) {
+        String resetTokenLink = CLIENTE_URL + "/reset-password?token=" + resetPasswordMailDTO.resetPasswordToken();
         Map<String, Object> variables = new HashMap<>();
         variables.put("user_email", resetPasswordMailDTO.email());
         variables.put("name", resetPasswordMailDTO.name());
-        variables.put("reset_token_link", resetPasswordMailDTO.resetPasswordToken());
+        variables.put("reset_token_link", resetTokenLink);
 
         CreateEmailOptions params = CreateEmailOptions.builder()
                 .to(resetPasswordMailDTO.email())

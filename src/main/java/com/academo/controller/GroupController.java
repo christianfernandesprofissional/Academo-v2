@@ -42,9 +42,9 @@ public class GroupController {
     })
     @GetMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<Page<GroupDTO>> findAll(Authentication authentication, Pageable pageable){
+    public ResponseEntity<Page<GroupDTO>> findAll(Authentication authentication, @RequestParam(required = false) Boolean isActive, Pageable pageable){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(groupService.findAll(userId, pageable));
+        return ResponseEntity.ok(groupService.findAll(userId, isActive, pageable));
     }
 
     @Operation(summary = "Recupera um grupo", method = "GET")

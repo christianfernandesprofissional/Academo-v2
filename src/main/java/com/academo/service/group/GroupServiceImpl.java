@@ -36,8 +36,11 @@ public class GroupServiceImpl implements IGroupService {
     }
 
     @Override
-    public Page<GroupDTO> findAll(Integer userId, Pageable pageable){
-        return groupRepository.findAllByUserId(userId, pageable).map(GroupDTO::fromGroup);
+    public Page<GroupDTO> findAll(Integer userId, Boolean isActive, Pageable pageable){
+        if (isActive == null) {
+            return groupRepository.findAllByUserId(userId, pageable).map(GroupDTO::fromGroup);
+        }
+        return groupRepository.findAllByUserIdAndIsActive(userId, isActive, pageable).map(GroupDTO::fromGroup);
     }
 
     @Override

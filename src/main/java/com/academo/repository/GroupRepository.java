@@ -14,6 +14,7 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     List<Group> findAllByUserId(Integer userId);
     Page<Group> findAllByUserId(Integer userId, Pageable pageable);
+    Page<Group> findAllByUserIdAndIsActive(Integer userId, Boolean isActive, Pageable pageable);
     Optional<Group> findByIdAndUserId(Integer id, Integer userId);
 
 }
