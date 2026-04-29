@@ -4,10 +4,6 @@ import com.academo.controller.dtos.file.DownloadS3FileDTO;
 import com.academo.controller.dtos.file.FileDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.file.IFileService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
@@ -27,7 +23,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/files")
-@Tag(name = "Arquivos")
 public class FileController {
 
     private final IFileService fileService;
@@ -38,11 +33,6 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @Operation(summary = "Realiza o Upload de um arquivo", method = "POST")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Upload realizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro ao tentar realizar upload")
-    })
     @PostMapping("/upload-file/{subjectId}")
     @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<FileDTO> upload(@RequestParam("file") MultipartFile file, @PathVariable("subjectId") Integer subjectId, Authentication authentication){
@@ -52,12 +42,6 @@ public class FileController {
         return ResponseEntity.created(uri).body(uploadedFile);
     }
 
-    @Operation(summary = "Realiza o download de um arquivo", method = "GET")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Download realizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro ao tentar realizar download do arquivo"),
-            @ApiResponse(responseCode = "404", description = "Nenhum arquivo encontrado com este ID")
-    })
     @GetMapping("/download/{fileUUID}")
     @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<InputStreamResource> download(@PathVariable String fileUUID) {
@@ -73,13 +57,6 @@ public class FileController {
                 .body(resource);
     }
 
-
-    @Operation(summary = "Remove um arquivo", method = "DELETE")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Arquivo removido com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro ao tentar remover o arquivo"),
-            @ApiResponse(responseCode = "404", description = "Nenhuma arquivo encontrado com este ID")
-    })
     @DeleteMapping("/delete/{uuid}")
     @PreAuthorize("hasRole('PREMIUM')")
     public ResponseEntity<String> delete(@PathVariable String uuid, Authentication authentication) {
@@ -88,13 +65,6 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
-    @Operation(summary = "Recupera a lista de arquivos de uma atividade", method = "GET")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Arquivos recuperados com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar arquivos"),
-            @ApiResponse(responseCode = "404", description = "Nenhum arquivo encontrado")
-    })
     @GetMapping("/{subjectId}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<Page<FileDTO>> findAll(Authentication authentication, @PathVariable Integer subjectId, Pageable pageable){

@@ -6,10 +6,6 @@ import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.controller.dtos.activityType.UpdateActivityTypeDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.activityType.IActivityTypeService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +20,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/activity-types")
-@Tag(name = "Tipos de Atividade")
 public class ActivityTypeController {
 
     private final IActivityTypeService activityTypeService;
@@ -33,12 +28,6 @@ public class ActivityTypeController {
         this.activityTypeService = activityService;
     }
 
-    @Operation(summary = "Recupera a lista de todos os tipos de atividade de um usuário", method = "GET")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tipos de Atividade recuperados com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar tipos de atividade"),
-            @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrada")
-    })
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     @GetMapping("/all/{periodId}")
     public ResponseEntity<Page<ActivityTypeDTO>> findAll(Authentication authentication, @PathVariable Integer periodId, Pageable pageable) {
@@ -46,12 +35,6 @@ public class ActivityTypeController {
         return ResponseEntity.ok(activityTypeService.findAll(userId, periodId, pageable));
     }
 
-    @Operation(summary = "Recupera um tipo de atividade de um usuário", method = "GET")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tipo de Atividade recuperado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro ao tentar recuperar tipo de atividade"),
-            @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
-    })
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<ActivityTypeDTO> findById(Authentication authentication, @PathVariable Integer id) {
@@ -60,11 +43,6 @@ public class ActivityTypeController {
         return ResponseEntity.ok(activityTypeDTO);
     }
 
-    @Operation(summary = "Cadastra um tipo de atividade", method = "POST")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Tipo de atividade cadastrado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro ao tentar cadastrar tipo de atividade"),
-    })
     @PostMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<ActivityTypeDTO> create(Authentication authentication, @RequestBody @Valid SaveActivityTypeDTO activityTypeDTO) {
@@ -74,12 +52,6 @@ public class ActivityTypeController {
         return ResponseEntity.created(uri).body(createdActivityType);
     }
 
-    @Operation(summary = "Atualiza um tipo de atividade", method = "PUT")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tipo de atividade atualizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro ao tentar atualizar tipo de atividade"),
-            @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
-    })
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<ActivityTypeDTO> update(Authentication authentication,@PathVariable Integer id, @RequestBody @Valid UpdateActivityTypeDTO activityTypeDTO) {
@@ -88,12 +60,6 @@ public class ActivityTypeController {
         return ResponseEntity.ok(updated);
     }
 
-    @Operation(summary = "Remove um tipo de atividade", method = "DELETE")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tipo de atividade deletado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro ao tentar deletar tipo de atividade"),
-            @ApiResponse(responseCode = "404", description = "Nenhum tipo de atividade encontrado com este ID")
-    })
     @DeleteMapping("/{activityTypeId}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Integer activityTypeId) {
