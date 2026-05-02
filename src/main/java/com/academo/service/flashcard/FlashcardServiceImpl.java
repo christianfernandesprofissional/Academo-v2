@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,12 +37,18 @@ public class FlashcardServiceImpl implements IFlashcardService{
 
     @Override
     public List<FlashcardDTO> findAllBySubjectId(Integer userId, Integer subjectId) {
-        return repository.findAllByUserIdAndSubjectId(userId, subjectId).stream().map(FlashcardDTO::fromFlashcard).toList();
+        List<FlashcardDTO> result = new ArrayList<>(repository
+                .findAllByUserIdAndSubjectId(userId, subjectId)
+                .stream()
+                .map(FlashcardDTO::fromFlashcard)
+                .toList());
+        Collections.shuffle(result);
+        return result;
     }
 
     @Override
     public Page<FlashcardDTO> findAllByUserId(Integer userId, Pageable pageable) {
-        return repository.findAllByUserId(userId, pageable).map(FlashcardDTO::fromFlashcard);
+        return repository.findAllByUserIdAndActiveSubjects(userId, pageable).map(FlashcardDTO::fromFlashcard);
     }
 
     @Override
@@ -52,11 +60,12 @@ public class FlashcardServiceImpl implements IFlashcardService{
             throw new FlashcardNotFoundException("Nivel inválido!");
         }
 
-
-        return findAllBySubjectId(userId, subjectId)
+        List<FlashcardDTO> result = new ArrayList<>(findAllBySubjectId(userId, subjectId)
                 .stream()
                 .filter(p -> cardLevel.equals(CardLevel.valueOf(p.level())))
-                .toList();
+                .toList());
+        Collections.shuffle(result);
+        return result;
     }
 
     @Override
@@ -72,10 +81,13 @@ public class FlashcardServiceImpl implements IFlashcardService{
             }
         }
 
-        return repository.findAllByUserIdAndGroupIdAndLevel(userId, groupId, cardLevel)
+        List<FlashcardDTO> result = new ArrayList<>(repository
+                .findAllByUserIdAndGroupIdAndLevel(userId, groupId, cardLevel)
                 .stream()
                 .map(FlashcardDTO::fromFlashcard)
-                .toList();
+                .toList());
+        Collections.shuffle(result);
+        return result;
     }
 
     @Override

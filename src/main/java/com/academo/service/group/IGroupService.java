@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface IGroupService{
 
-    Page<GroupDTO> findAll(Integer userId, Boolean isActive, Pageable pageable);
+    Page<GroupDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards);
     GroupDTO findById(Integer userId, Integer id);
     GroupDTO create(Integer userId, CreateGroupDTO createGroupDTO);
     GroupDTO update(Integer userId, Integer groupId, UpdateGroupDTO updateGroupDTO);

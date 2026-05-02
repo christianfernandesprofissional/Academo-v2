@@ -51,9 +51,12 @@ public class SubjectController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<Page<SubjectDTO>> findAll(Authentication authentication, @RequestParam(required = false) Boolean isActive, Pageable pageable) {
+    public ResponseEntity<Page<SubjectDTO>> findAll(Authentication authentication,
+                                                   @RequestParam(required = false) Boolean isActive,
+                                                   @RequestParam(required = false) Boolean onlyWithFlashcards,
+                                                   Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(service.findAll(userId, isActive, pageable));
+        return ResponseEntity.ok(service.findAll(userId, isActive, pageable, onlyWithFlashcards));
     }
 
     @GetMapping("/{subjectId}")

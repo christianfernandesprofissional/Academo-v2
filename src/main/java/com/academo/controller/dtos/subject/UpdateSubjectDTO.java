@@ -12,6 +12,7 @@ public record UpdateSubjectDTO(
         @DecimalMax(value = "10" ,message = "A nota máxima para uma matéria é 10")
         @Digits(integer = 2, fraction = 2, message = "Só é permitido 2 casas decimais")
         BigDecimal passingGrade,
+        @NotEmpty(message = "O tipo de cálculo é obrigatório")
         String calculationType,
         @NotNull(message = "É obrigatório informar o status da matéria")
         Boolean isActive

@@ -113,6 +113,7 @@ public class TokenService {
                 return LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
             }
             case ACTIVATION_TOKEN, RESET_PASSWORD_TOKEN -> {
+                System.out.println("TEMPO DE EXPIRAÇÃO: " + LocalDateTime.now().plusMinutes(15).toInstant(ZoneOffset.of("-03:00")));
                 return LocalDateTime.now().plusMinutes(15).toInstant(ZoneOffset.of("-03:00"));
             }
             default -> {

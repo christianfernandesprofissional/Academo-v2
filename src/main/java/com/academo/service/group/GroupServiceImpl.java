@@ -36,7 +36,16 @@ public class GroupServiceImpl implements IGroupService {
     }
 
     @Override
-    public Page<GroupDTO> findAll(Integer userId, Boolean isActive, Pageable pageable){
+    public Page<GroupDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards){
+        boolean filterOnlyWithFlashcards = Boolean.TRUE.equals(onlyWithFlashcards);
+
+        if (filterOnlyWithFlashcards) {
+            if (isActive == null) {
+                return groupRepository.findAllByUserIdWithFlashcards(userId, pageable).map(GroupDTO::fromGroup);
+            }
+            return groupRepository.findAllByUserIdAndIsActiveWithFlashcards(userId, isActive, pageable).map(GroupDTO::fromGroup);
+        }
+
         if (isActive == null) {
             return groupRepository.findAllByUserId(userId, pageable).map(GroupDTO::fromGroup);
         }

@@ -44,7 +44,16 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
-    public Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable) {
+    public Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards) {
+        boolean filterOnlyWithFlashcards = Boolean.TRUE.equals(onlyWithFlashcards);
+
+        if (filterOnlyWithFlashcards) {
+            if (isActive == null) {
+                return subjectRepository.findAllByUserIdWithFlashcards(userId, pageable).map(SubjectDTO::fromSubject);
+            }
+            return subjectRepository.findAllByUserIdAndIsActiveWithFlashcards(userId, isActive, pageable).map(SubjectDTO::fromSubject);
+        }
+
         if (isActive == null) {
             return subjectRepository.findAllByUserId(userId, pageable).map(SubjectDTO::fromSubject);
         }

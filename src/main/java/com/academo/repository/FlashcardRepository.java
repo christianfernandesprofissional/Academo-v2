@@ -18,6 +18,15 @@ public interface FlashcardRepository extends JpaRepository<Flashcard, Integer> {
     List<Flashcard> findAllByUserIdAndSubjectId(Integer userId, Integer subjectId);
     List<Flashcard> findAllByUserId(Integer userId);
     Page<Flashcard> findAllByUserId(Integer userId, Pageable pageable);
+
+    @Query("""
+            select f
+            from Flashcard f
+            join f.subject s
+            where f.user.id = :userId
+              and s.isActive = true
+            """)
+    Page<Flashcard> findAllByUserIdAndActiveSubjects(@Param("userId") Integer userId, Pageable pageable);
     Optional<Flashcard> findByIdAndUserId(Integer id, Integer userId);
 
     @Query("""

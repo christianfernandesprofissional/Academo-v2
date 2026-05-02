@@ -31,9 +31,12 @@ public class GroupController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<Page<GroupDTO>> findAll(Authentication authentication, @RequestParam(required = false) Boolean isActive, Pageable pageable){
+    public ResponseEntity<Page<GroupDTO>> findAll(Authentication authentication,
+                                                 @RequestParam(required = false) Boolean isActive,
+                                                 @RequestParam(required = false) Boolean onlyWithFlashcards,
+                                                 Pageable pageable){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(groupService.findAll(userId, isActive, pageable));
+        return ResponseEntity.ok(groupService.findAll(userId, isActive, pageable, onlyWithFlashcards));
     }
 
     @GetMapping("/{groupId}")

@@ -40,19 +40,19 @@ public class FlashcardController {
 
     @GetMapping("/all/{subjectId}")
     @PreAuthorize("hasRole('PREMIUM')")
-    public ResponseEntity<List<FlashcardDTO>> findAllBySubjectId(Authentication authentication, @PathVariable Integer subjectId) {
+    public ResponseEntity<List<FlashcardDTO>> findAllBySubject(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.findAllBySubjectId(userId, subjectId));
     }
     @GetMapping("/all/{subjectId}/{level}")
     @PreAuthorize("hasRole('PREMIUM')")
-    public ResponseEntity<List<FlashcardDTO>> findAllByLevel(Authentication authentication, @PathVariable Integer subjectId, @PathVariable String level) {
+    public ResponseEntity<List<FlashcardDTO>> findAllBySubjectAndByLevel(Authentication authentication, @PathVariable Integer subjectId, @PathVariable String level) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.findAllByLevel(userId, subjectId, level));
     }
     @GetMapping("/in-group/{groupId}")
     @PreAuthorize("hasRole('PREMIUM')")
-    public ResponseEntity<List<FlashcardDTO>> findAllByGroupId(Authentication authentication,
+    public ResponseEntity<List<FlashcardDTO>> findAllByGroup(Authentication authentication,
                                                               @PathVariable Integer groupId,
                                                               @RequestParam(required = false) String level) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
