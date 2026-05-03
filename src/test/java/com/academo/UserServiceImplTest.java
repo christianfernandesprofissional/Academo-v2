@@ -6,6 +6,7 @@ import com.academo.controller.dtos.security.RegisterDTO;
 import com.academo.controller.dtos.security.ResetPasswordDTO;
 import com.academo.controller.dtos.user.UserDTO;
 import com.academo.model.User;
+import com.academo.model.enums.payment.PaymentStatus;
 import com.academo.model.enums.user.PlanType;
 import com.academo.model.enums.user.UserRole;
 import com.academo.repository.UserRepository;
@@ -160,7 +161,17 @@ class UserServiceImplTest {
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(paymentHistoryService.findLastPayment(1)).thenReturn(
-                new PaymentHistoryDTO(1, "pay", null, null, LocalDate.now().minusDays(1), null, null)
+                new PaymentHistoryDTO(
+                        1,
+                        "pay",
+                        PaymentStatus.PAID,
+                        null,
+                        null,
+                        PlanType.YEARLY_IN_CASH,
+                        LocalDate.now().minusDays(1),
+                        null,
+                        null
+                )
         );
         when(userRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 

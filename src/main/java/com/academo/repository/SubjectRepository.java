@@ -70,4 +70,18 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
                                                           @Param("isActive") Boolean isActive,
                                                           Pageable pageable);
 
+    @Query("""
+            select distinct s
+            from Subject s
+            where s.user.id = :userId
+              and s.isActive = true
+              and exists (
+                    select 1
+                    from Flashcard f
+                    where f.subject = s
+                      and f.user.id = :userId
+              )
+            """)
+    List<Subject> findAllActiveByUserIdWithFlashcards(@Param("userId") Integer userId);
+
 }

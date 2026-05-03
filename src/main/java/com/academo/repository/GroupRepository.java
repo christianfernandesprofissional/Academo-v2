@@ -79,4 +79,21 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
                                                         @Param("isActive") Boolean isActive,
                                                         Pageable pageable);
 
+    @Query("""
+            select distinct g
+            from Group g
+            where g.user.id = :userId
+              and g.isActive = true
+              and exists (
+                    select 1
+                    from Flashcard f
+                    join f.subject s
+                    join s.groups sg
+                    where sg = g
+                      and f.user.id = :userId
+                      and s.isActive = true
+              )
+            """)
+    List<Group> findAllActiveByUserIdWithActiveSubjectsAndFlashcards(@Param("userId") Integer userId);
+
 }

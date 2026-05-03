@@ -8,15 +8,13 @@ import com.academo.controller.dtos.flashcard.UpdateLevelDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 
 public interface IFlashcardService {
 
-    List<FlashcardDTO> findAllBySubjectId(Integer userId, Integer subjectId);
+    Page<FlashcardDTO> findAllBySubjectId(Integer userId, Integer subjectId, Pageable pageable);
     Page<FlashcardDTO> findAllByUserId(Integer userId, Pageable pageable);
-    List<FlashcardDTO> findAllByLevel(Integer userId, Integer subjectId, String level);
-    List<FlashcardDTO> findAllByGroupId(Integer userId, Integer groupId, String level);
+    Page<FlashcardDTO> findAllByLevel(Integer userId, Integer subjectId, String level, Pageable pageable);
+    Page<FlashcardDTO> findAllByGroupId(Integer userId, Integer groupId, String level, Pageable pageable);
     FlashcardDTO findById(Integer userId, Integer flashcardId);
     FlashcardDTO create(Integer userId, CreateFlashcardDTO dto);
     FlashcardDTO update(Integer userId, Integer flashcardId, UpdateFlashcardDTO dto);

@@ -2,6 +2,7 @@ package com.academo.controller;
 
 import com.academo.controller.dtos.group.AssociateSubjectsDTO;
 import com.academo.controller.dtos.group.GroupDTO;
+import com.academo.controller.dtos.group.GroupWithFlashcardDTO;
 import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
 import com.academo.service.group.IGroupService;
@@ -37,6 +38,13 @@ public class GroupController {
                                                  Pageable pageable){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(groupService.findAll(userId, isActive, pageable, onlyWithFlashcards));
+    }
+
+    @GetMapping("/with-flashcards")
+    @PreAuthorize("hasRole('PREMIUM')")
+    public ResponseEntity<List<GroupWithFlashcardDTO>> findAllActiveWithFlashcards(Authentication authentication) {
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        return ResponseEntity.ok(groupService.findAllActiveWithFlashcards(userId));
     }
 
     @GetMapping("/{groupId}")

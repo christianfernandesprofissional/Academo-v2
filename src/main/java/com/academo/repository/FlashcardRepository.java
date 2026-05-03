@@ -36,7 +36,19 @@ public interface FlashcardRepository extends JpaRepository<Flashcard, Integer> {
             join s.groups g
             where f.user.id = :userId
               and g.id = :groupId
-              and (:level is null or f.level = :level)
+            """)
+
+    List<Flashcard> findAllByUserIdAndGroupId(@Param("userId") Integer userId,
+                                              @Param("groupId") Integer groupId);
+
+    @Query("""
+            select distinct f
+            from Flashcard f
+            join f.subject s
+            join s.groups g
+            where f.user.id = :userId
+              and g.id = :groupId
+              and f.level = :level
             """)
     List<Flashcard> findAllByUserIdAndGroupIdAndLevel(@Param("userId") Integer userId,
                                                      @Param("groupId") Integer groupId,

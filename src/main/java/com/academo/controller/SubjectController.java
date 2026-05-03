@@ -3,6 +3,7 @@ package com.academo.controller;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.controller.dtos.subject.CreateSubjectDTO;
 import com.academo.controller.dtos.subject.UpdateSubjectDTO;
+import com.academo.controller.dtos.subject.SubjectWithFlashcardDTO;
 import com.academo.service.activity.IActivityService;
 import com.academo.model.Activity;
 import com.academo.security.authuser.AuthUser;
@@ -57,6 +58,13 @@ public class SubjectController {
                                                    Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         return ResponseEntity.ok(service.findAll(userId, isActive, pageable, onlyWithFlashcards));
+    }
+
+    @GetMapping("/with-flashcards")
+    @PreAuthorize("hasRole('PREMIUM')")
+    public ResponseEntity<List<SubjectWithFlashcardDTO>> findAllActiveWithFlashcards(Authentication authentication) {
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        return ResponseEntity.ok(service.findAllActiveWithFlashcards(userId));
     }
 
     @GetMapping("/{subjectId}")

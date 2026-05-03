@@ -9,6 +9,7 @@ import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.model.enums.flashcard.CardLevel;
 import com.academo.repository.FlashcardRepository;
+import com.academo.repository.GroupRepository;
 import com.academo.service.flashcard.FlashcardServiceImpl;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.flashcard.FlashcardNotFoundException;
@@ -18,6 +19,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +34,9 @@ class FlashcardServiceImplTest {
 
     @Mock
     private FlashcardRepository repository;
+
+    @Mock
+    private GroupRepository groupRepository;
 
     @InjectMocks
     private FlashcardServiceImpl service;
@@ -55,25 +62,28 @@ class FlashcardServiceImplTest {
 
     @Test
     void shouldFindAllBySubjectId() {
+        PageRequest pageable = PageRequest.of(0, 10);
         when(repository.findAllByUserIdAndSubjectId(1, 1)).thenReturn(List.of(flashcard));
 
-        List<FlashcardDTO> result = service.findAllBySubjectId(1, 1);
+        Page<FlashcardDTO> result = service.findAllBySubjectId(1, 1, pageable);
 
-        assertEquals(1, result.size());
+        assertEquals(1, result.getContent().size());
     }
 
     @Test
     void shouldFindAllByLevel() {
+        PageRequest pageable = PageRequest.of(0, 10);
         when(repository.findAllByUserIdAndSubjectId(1, 1)).thenReturn(List.of(flashcard));
 
-        List<FlashcardDTO> result = service.findAllByLevel(1, 1, "sem_nivel");
+        Page<FlashcardDTO> result = service.findAllByLevel(1, 1, "sem_nivel", pageable);
 
-        assertEquals(1, result.size());
+        assertEquals(1, result.getContent().size());
     }
 
     @Test
     void shouldThrowWhenFindAllByLevelInvalid() {
-        assertThrows(FlashcardNotFoundException.class, () -> service.findAllByLevel(1, 1, "INVALID"));
+        PageRequest pageable = PageRequest.of(0, 10);
+        assertThrows(FlashcardNotFoundException.class, () -> service.findAllByLevel(1, 1, "INVALID", pageable));
     }
 
     @Test

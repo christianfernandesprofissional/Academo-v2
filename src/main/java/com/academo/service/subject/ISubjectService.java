@@ -2,6 +2,7 @@ package com.academo.service.subject;
 
 import com.academo.controller.dtos.subject.CreateSubjectDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
+import com.academo.controller.dtos.subject.SubjectWithFlashcardDTO;
 import com.academo.controller.dtos.subject.UpdateSubjectDTO;
 
 import org.springframework.data.domain.Page;
@@ -17,4 +18,6 @@ public interface ISubjectService {
     SubjectDTO create(Integer userId, CreateSubjectDTO createSubjectDTO);
     SubjectDTO update(Integer userId, Integer subjectId, UpdateSubjectDTO updateSubjectDTO);
     void delete(Integer userId, Integer subject);
+
+    List<SubjectWithFlashcardDTO> findAllActiveWithFlashcards(Integer userId);
 }

@@ -3,6 +3,7 @@ package com.academo.service.group;
 import com.academo.controller.dtos.group.AssociateSubjectsDTO;
 import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.GroupDTO;
+import com.academo.controller.dtos.group.GroupWithFlashcardDTO;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
 
 import org.springframework.data.domain.Page;
@@ -20,4 +21,6 @@ public interface IGroupService{
     GroupDTO addSubject(Integer userId, Integer groupId, Integer SubjectId);
     GroupDTO deleteSubject(Integer userId, Integer groupId, Integer SubjectId);
     GroupDTO associateSubjects(Integer userId, Integer groupId, AssociateSubjectsDTO dto);
+
+    List<GroupWithFlashcardDTO> findAllActiveWithFlashcards(Integer userId);
 }

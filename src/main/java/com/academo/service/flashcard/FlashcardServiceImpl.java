@@ -15,6 +15,7 @@ import com.academo.util.exceptions.flashcard.FlashcardNotFoundException;
 import com.academo.util.exceptions.group.GroupNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -36,14 +37,20 @@ public class FlashcardServiceImpl implements IFlashcardService{
     }
 
     @Override
-    public List<FlashcardDTO> findAllBySubjectId(Integer userId, Integer subjectId) {
+    public Page<FlashcardDTO> findAllBySubjectId(Integer userId, Integer subjectId, Pageable pageable) {
         List<FlashcardDTO> result = new ArrayList<>(repository
                 .findAllByUserIdAndSubjectId(userId, subjectId)
                 .stream()
                 .map(FlashcardDTO::fromFlashcard)
                 .toList());
         Collections.shuffle(result);
-        return result;
+
+        int total = result.size();
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), total);
+        List<FlashcardDTO> pageContent = start > end ? List.of() : result.subList(start, end);
+
+        return new PageImpl<>(pageContent, pageable, total);
     }
 
     @Override
@@ -52,7 +59,7 @@ public class FlashcardServiceImpl implements IFlashcardService{
     }
 
     @Override
-    public List<FlashcardDTO> findAllByLevel(Integer userId, Integer subjectId, String level) {
+    public Page<FlashcardDTO> findAllByLevel(Integer userId, Integer subjectId, String level, Pageable pageable) {
         CardLevel cardLevel;
         try{
             cardLevel = CardLevel.valueOf(level.toUpperCase());
@@ -60,16 +67,24 @@ public class FlashcardServiceImpl implements IFlashcardService{
             throw new FlashcardNotFoundException("Nivel inválido!");
         }
 
-        List<FlashcardDTO> result = new ArrayList<>(findAllBySubjectId(userId, subjectId)
+        List<FlashcardDTO> result = new ArrayList<>(repository
+                .findAllByUserIdAndSubjectId(userId, subjectId)
                 .stream()
+                .map(FlashcardDTO::fromFlashcard)
                 .filter(p -> cardLevel.equals(CardLevel.valueOf(p.level())))
                 .toList());
         Collections.shuffle(result);
-        return result;
+
+        int total = result.size();
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), total);
+        List<FlashcardDTO> pageContent = start > end ? List.of() : result.subList(start, end);
+
+        return new PageImpl<>(pageContent, pageable, total);
     }
 
     @Override
-    public List<FlashcardDTO> findAllByGroupId(Integer userId, Integer groupId, String level) {
+    public Page<FlashcardDTO> findAllByGroupId(Integer userId, Integer groupId, String level, Pageable pageable) {
         groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new);
 
         CardLevel cardLevel = null;
@@ -81,13 +96,20 @@ public class FlashcardServiceImpl implements IFlashcardService{
             }
         }
 
-        List<FlashcardDTO> result = new ArrayList<>(repository
-                .findAllByUserIdAndGroupIdAndLevel(userId, groupId, cardLevel)
+        List<FlashcardDTO> result = new ArrayList<>((cardLevel == null
+                ? repository.findAllByUserIdAndGroupId(userId, groupId)
+                : repository.findAllByUserIdAndGroupIdAndLevel(userId, groupId, cardLevel))
                 .stream()
                 .map(FlashcardDTO::fromFlashcard)
                 .toList());
         Collections.shuffle(result);
-        return result;
+
+        int total = result.size();
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), total);
+        List<FlashcardDTO> pageContent = start > end ? List.of() : result.subList(start, end);
+
+        return new PageImpl<>(pageContent, pageable, total);
     }
 
     @Override

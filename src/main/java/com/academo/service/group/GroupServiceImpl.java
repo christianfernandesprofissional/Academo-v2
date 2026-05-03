@@ -3,6 +3,7 @@ package com.academo.service.group;
 import com.academo.controller.dtos.group.AssociateSubjectsDTO;
 import com.academo.controller.dtos.group.CreateGroupDTO;
 import com.academo.controller.dtos.group.GroupDTO;
+import com.academo.controller.dtos.group.GroupWithFlashcardDTO;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.model.Group;
@@ -65,6 +66,14 @@ public class GroupServiceImpl implements IGroupService {
         g.setDescription(createGroupDTO.description());
         g.setUser(user);
         return GroupDTO.fromGroup(groupRepository.save(g));
+    }
+
+    @Override
+    public List<GroupWithFlashcardDTO> findAllActiveWithFlashcards(Integer userId) {
+        return groupRepository.findAllActiveByUserIdWithActiveSubjectsAndFlashcards(userId)
+                .stream()
+                .map(g -> new GroupWithFlashcardDTO(g.getId(), g.getName()))
+                .toList();
     }
 
     @Override

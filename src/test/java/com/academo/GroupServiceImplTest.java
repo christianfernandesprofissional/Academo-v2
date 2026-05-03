@@ -71,7 +71,7 @@ class GroupServiceImplTest {
         PageRequest pageable = PageRequest.of(0, 10);
         when(groupRepository.findAllByUserId(1, pageable)).thenReturn(new PageImpl<>(List.of(group), pageable, 1));
 
-        Page<GroupDTO> page = service.findAll(1, null, pageable);
+        Page<GroupDTO> page = service.findAll(1, null, pageable, null);
 
         assertEquals(1, page.getTotalElements());
     }

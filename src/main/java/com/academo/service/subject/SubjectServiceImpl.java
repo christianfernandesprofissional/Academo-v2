@@ -3,6 +3,7 @@ package com.academo.service.subject;
 import com.academo.controller.dtos.period.SavePeriodDTO;
 import com.academo.controller.dtos.subject.CreateSubjectDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
+import com.academo.controller.dtos.subject.SubjectWithFlashcardDTO;
 import com.academo.controller.dtos.subject.UpdateSubjectDTO;
 import com.academo.model.Group;
 import com.academo.model.Subject;
@@ -63,6 +64,14 @@ public class SubjectServiceImpl implements ISubjectService {
     @Override
     public SubjectDTO findById(Integer subjectId, Integer userId) {
         return SubjectDTO.fromSubject(subjectRepository.findByIdAndUserId(subjectId, userId).orElseThrow(SubjectNotFoundException::new));
+    }
+
+    @Override
+    public List<SubjectWithFlashcardDTO> findAllActiveWithFlashcards(Integer userId) {
+        return subjectRepository.findAllActiveByUserIdWithFlashcards(userId)
+                .stream()
+                .map(s -> new SubjectWithFlashcardDTO(s.getId(), s.getName()))
+                .toList();
     }
 
     @Override

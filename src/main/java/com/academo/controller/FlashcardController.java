@@ -40,23 +40,24 @@ public class FlashcardController {
 
     @GetMapping("/all/{subjectId}")
     @PreAuthorize("hasRole('PREMIUM')")
-    public ResponseEntity<List<FlashcardDTO>> findAllBySubject(Authentication authentication, @PathVariable Integer subjectId) {
+    public ResponseEntity<Page<FlashcardDTO>> findAllBySubject(Authentication authentication, @PathVariable Integer subjectId, Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(service.findAllBySubjectId(userId, subjectId));
+        return ResponseEntity.ok(service.findAllBySubjectId(userId, subjectId, pageable));
     }
     @GetMapping("/all/{subjectId}/{level}")
     @PreAuthorize("hasRole('PREMIUM')")
-    public ResponseEntity<List<FlashcardDTO>> findAllBySubjectAndByLevel(Authentication authentication, @PathVariable Integer subjectId, @PathVariable String level) {
+    public ResponseEntity<Page<FlashcardDTO>> findAllBySubjectAndByLevel(Authentication authentication, @PathVariable Integer subjectId, @PathVariable String level, Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(service.findAllByLevel(userId, subjectId, level));
+        return ResponseEntity.ok(service.findAllByLevel(userId, subjectId, level, pageable));
     }
     @GetMapping("/in-group/{groupId}")
     @PreAuthorize("hasRole('PREMIUM')")
-    public ResponseEntity<List<FlashcardDTO>> findAllByGroup(Authentication authentication,
+    public ResponseEntity<Page<FlashcardDTO>> findAllByGroup(Authentication authentication,
                                                               @PathVariable Integer groupId,
-                                                              @RequestParam(required = false) String level) {
+                                                              @RequestParam(required = false) String level,
+                                                              Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(service.findAllByGroupId(userId, groupId, level));
+        return ResponseEntity.ok(service.findAllByGroupId(userId, groupId, level, pageable));
     }
     @GetMapping("/{flashcardId}")
     @PreAuthorize("hasRole('PREMIUM')")
