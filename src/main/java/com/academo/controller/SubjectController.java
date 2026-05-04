@@ -4,6 +4,7 @@ import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.controller.dtos.subject.CreateSubjectDTO;
 import com.academo.controller.dtos.subject.UpdateSubjectDTO;
 import com.academo.controller.dtos.subject.SubjectWithFlashcardDTO;
+import com.academo.controller.dtos.subject.SubjectWithPeriodDTO;
 import com.academo.service.activity.IActivityService;
 import com.academo.model.Activity;
 import com.academo.security.authuser.AuthUser;
@@ -69,10 +70,10 @@ public class SubjectController {
 
     @GetMapping("/{subjectId}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<SubjectDTO> findById(Authentication authentication, @PathVariable Integer subjectId) {
+    public ResponseEntity<SubjectWithPeriodDTO> findById(Authentication authentication, @PathVariable Integer subjectId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        SubjectDTO subjectDTO = service.findById(subjectId, userId);
-        return ResponseEntity.ok(subjectDTO);
+        SubjectWithPeriodDTO subjectWithPeriodDTO = service.findByIdWithPeriods(subjectId, userId);
+        return ResponseEntity.ok(subjectWithPeriodDTO);
     }
 
     @PutMapping("/{subjectId}")

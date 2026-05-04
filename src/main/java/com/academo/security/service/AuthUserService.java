@@ -30,7 +30,7 @@ public class AuthUserService implements UserDetailsService {
         if(user.getAccountActivated()) {
             return new AuthUser(user);
         } else {
-            throw  new UserIsNotActiveException("O usuário não está ativo", user);
+            throw  new UserIsNotActiveException("O usuário não está ativo. Um novo link de ativação foi enviado ao seu email.", user);
         }
     }
 
