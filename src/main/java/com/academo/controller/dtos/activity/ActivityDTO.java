@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record ActivityDTO(
-
         Integer id,
         LocalDate activityDate,
         String name,

@@ -11,9 +11,6 @@ public record UpdateActivityTypeDTO (
         @NotEmpty(message = "O nome do tipo de ativadade é obrigatório")
         String name,
         String description,
-        @Min(value = 1, message = "O valor mínimo de peso é 1%")
-        @Max(value = 100, message = "O valor máximo de peso e 100%")
-        Integer weight,
         Integer periodId
 ){
 

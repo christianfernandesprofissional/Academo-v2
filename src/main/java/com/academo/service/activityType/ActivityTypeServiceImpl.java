@@ -81,7 +81,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
         if (!inDb.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
 
 
-        BigDecimal normalizedWeight = BigDecimal.valueOf(activityTypeDTO.weight()).movePointLeft(2);
+//        BigDecimal normalizedWeight = BigDecimal.valueOf(activityTypeDTO.weight()).movePointLeft(2);
         //Verificação se os pesos dos tipos de atividade não ultrapassam 1
         List<BigDecimal> weights = new ArrayList<>();
         List<ActivityTypeDTO> periods = repository.findAllByPeriodIdAndUserId(activityTypeDTO.periodId(), userId).stream().map(ActivityTypeDTO::fromActivityType).toList();
@@ -90,7 +90,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
                 weights.add(atDTO.weight());
             }
         }
-        weights.add(normalizedWeight);
+//        weights.add(normalizedWeight);
         BigDecimal weightsSum = calculationService.sumWeights(weights);
         if(weightsSum.compareTo(BigDecimal.ONE) > 0){
             throw new NotAllowedInsertionException("Os pesos dos tipos de atividade ultrapassam 1");
@@ -99,7 +99,7 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
 
         inDb.setName(activityTypeDTO.name());
         inDb.setDescription(activityTypeDTO.description());
-        inDb.setWeight(normalizedWeight);
+//        inDb.setWeight(normalizedWeight);
         ActivityType updated = repository.save(inDb);
         logger.info("[DEBUG] ActivityType updated - createdAt: {}", updated.getCreatedAt());
 

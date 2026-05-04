@@ -12,6 +12,7 @@ public record SaveActivityDTO(
         @NotEmpty(message = "É obrigatório o nome da atividade")
         String name,
         String description,
+        @NotNull(message = "É obrigatório informar uma nota para atividade")
         @PositiveOrZero(message = "É obrigatório que a nota da atividade seja maior ou igual a zero")
         @DecimalMax(value = "10" ,message = "A nota máxima para uma atividade é 10")
         @Digits(integer = 2, fraction = 2, message = "Só é permitido 2 casas decimais")

@@ -12,8 +12,7 @@ public record PeriodDTO(
         Integer subjectId,
         String name,
         BigDecimal grade,
-        BigDecimal weight,
-        List<ActivityTypeDTO> activityTypeList
+        BigDecimal weight
         ) {
 
     public static PeriodDTO fromPeriod(Period period){
@@ -22,8 +21,7 @@ public record PeriodDTO(
                 period.getSubject().getId(),
                 period.getName(),
                 period.getGrade(),
-                period.getWeight(),
-                period.getActivityTypeList().stream().map(ActivityTypeDTO::fromActivityType).toList()
+                period.getWeight()
         );
     }
 }

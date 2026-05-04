@@ -11,6 +11,7 @@ import com.academo.repository.ActivityRepository;
 import com.academo.service.activityType.IActivityTypeService;
 import com.academo.service.calculation.CalculationService;
 import com.academo.service.calculation.ICalculationService;
+import com.academo.service.period.IPeriodService;
 import com.academo.service.subject.ISubjectService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
@@ -30,13 +31,15 @@ public class ActivityServiceImpl implements IActivityService{
     private final ISubjectService subjectService;
     private final IActivityTypeService activityTypeService;
     private final ICalculationService calculationService;
+    private final IPeriodService periodService;
 
-    public ActivityServiceImpl(ActivityRepository activityRepository, IUserService userService, ISubjectService subjectService, IActivityTypeService activityTypeService, ICalculationService calculationService) {
+    public ActivityServiceImpl(ActivityRepository activityRepository, IUserService userService, ISubjectService subjectService, IActivityTypeService activityTypeService, ICalculationService calculationService, IPeriodService periodService) {
         this.activityRepository = activityRepository;
         this.userService = userService;
         this.subjectService = subjectService;
         this.activityTypeService = activityTypeService;
         this.calculationService = calculationService;
+        this.periodService = periodService;
     }
 
     @Override
@@ -64,6 +67,7 @@ public class ActivityServiceImpl implements IActivityService{
         existingActivity.setName(activityDTO.name());
         existingActivity.setDescription(activityDTO.description());
         existingActivity.setGrade(activityDTO.grade());
+        existingActivity.setActivityType(activityTypeService.findById(activityDTO.activityTypeId(), userId));
         ActivityDTO dto =  ActivityDTO.fromActivity(activityRepository.save(existingActivity));
         calculationService.updatePeriodAverage(activityTypeService.findById(activityDTO.activityTypeId(), userId).getPeriod().getId());
         calculationService.updateSubjectAverage(activityDTO.subjectId());
@@ -94,6 +98,18 @@ public class ActivityServiceImpl implements IActivityService{
         // ao usuário da requisição, será lançada uma exceção
         SubjectDTO dto = subjectService.findById(subjectId, userId);
         return activityRepository.findAllBySubjectId(subjectId, pageable).map(ActivityDTO::fromActivity);
+    }
+
+    @Override
+    public Page<ActivityDTO> findAllByPeriodId(Integer userId, Integer periodId, List<String> activityTypeNames, Pageable pageable) {
+        periodService.findById(userId, periodId);
+
+        if (activityTypeNames == null || activityTypeNames.isEmpty()) {
+            return activityRepository.findAllByUserIdAndPeriodId(userId, periodId, pageable).map(ActivityDTO::fromActivity);
+        }
+
+        return activityRepository.findAllByUserIdAndPeriodIdAndActivityTypeNames(userId, periodId, activityTypeNames, pageable)
+                .map(ActivityDTO::fromActivity);
     }
 
     /**
