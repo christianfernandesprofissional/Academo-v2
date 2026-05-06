@@ -19,7 +19,7 @@ public interface IPaymentHistoryService {
     PaymentHistoryDTO findLastPayment(Integer userId);
     void updateDueDate(String paymentId, LocalDate dueDate);
     void verifyExpiredPayments(Integer userId);
-    void cancelPlan(Integer userId);
+    void cancelPaymentLink(Integer userId);
     void create(Integer userId, CreatePaymentHistoryDTO createPaymentHistoryDTO);
     void update(Integer paymentHistoryId, UpdatePaymentHistoryDTO updatePaymentHistoryDTO);
 

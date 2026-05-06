@@ -67,7 +67,7 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     }
 
     @Override
-    public void cancelPlan(Integer userId) {
+    public void cancelPaymentLink(Integer userId) {
         PaymentHistoryDTO paymentHistoryDTO = findLastPayment(userId);
         update(paymentHistoryDTO.paymentHistoryId(), new UpdatePaymentHistoryDTO(PaymentStatus.CANCELED, paymentHistoryDTO.planDueDate()));
 

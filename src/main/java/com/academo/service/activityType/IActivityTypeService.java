@@ -4,6 +4,7 @@ import com.academo.controller.dtos.activity.SaveActivityDTO;
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
 import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.controller.dtos.activityType.UpdateActivityTypeDTO;
+import com.academo.controller.dtos.activityType.UpdateActivityTypeWeightDTO;
 import com.academo.model.ActivityType;
 
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ public interface IActivityTypeService {
     ActivityTypeDTO findDTO(Integer ActivityTypeId, Integer userId);
     ActivityTypeDTO create(Integer userId, SaveActivityTypeDTO activityTypeDTO);
     ActivityTypeDTO update(Integer userId, Integer id, UpdateActivityTypeDTO activityTypeDTO);
+    void updateWeightsByPeriod(Integer userId, Integer periodId, UpdateActivityTypeWeightDTO weightsDTO);
     void delete(Integer userId, Integer activityId);
 
 }
