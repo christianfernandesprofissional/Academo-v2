@@ -1,10 +1,7 @@
 package com.academo.service.period;
 
 import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
-import com.academo.controller.dtos.period.PeriodDTO;
-import com.academo.controller.dtos.period.SavePeriodDTO;
-import com.academo.controller.dtos.period.UpdatePeriodDTO;
-import com.academo.controller.dtos.period.UpdateWeightDTO;
+import com.academo.controller.dtos.period.*;
 import com.academo.model.Period;
 import com.academo.model.Subject;
 import com.academo.model.User;
@@ -50,6 +47,7 @@ public class PeriodServiceImpl implements IPeriodService{
         return PeriodDTO.fromPeriod(repository.findByIdAndUserId(periodId, userId).orElseThrow(PeriodNotFoundException::new));
     }
 
+    @Transactional
     @Override
     public PeriodDTO create(Integer userId, SavePeriodDTO periodDTO) {
         PeriodName periodName;
@@ -69,6 +67,24 @@ public class PeriodServiceImpl implements IPeriodService{
         newPeriod.setName(periodName.name());
         newPeriod.setGrade(periodDTO.grade());
         newPeriod.setWeight(normalizedWeight);
+        newPeriod.setSubject(subject);
+        User user = new User();
+        user.setId(userId);
+        newPeriod.setUser(user);
+        repository.saveAndFlush(newPeriod);
+        PeriodDTO dto = PeriodDTO.fromPeriod(newPeriod);
+        calculationService.updateSubjectAverage(dto.subjectId());
+        return dto;
+    }
+
+    @Override
+    public PeriodDTO createExam(Integer userId, CreateExamDTO examDTO) {
+        Subject subject = subjectRepository.findById(examDTO.subjectId()).orElseThrow(SubjectNotFoundException::new);
+
+        verifyCreatedPeriodsFromSubject(subject, PeriodName.EXAME);
+        Period newPeriod = new Period();
+        newPeriod.setName("EXAME");
+        newPeriod.setGrade(BigDecimal.valueOf(0.0));
         newPeriod.setSubject(subject);
         User user = new User();
         user.setId(userId);
@@ -158,7 +174,7 @@ public class PeriodServiceImpl implements IPeriodService{
         }
         weights.add(normalizedWeight);
         BigDecimal weightsSum = calculationService.sumWeights(weights);
-        if(weightsSum.compareTo(BigDecimal.ONE) > 0){
+        if(!(PeriodName.valueOf(inDB.getName()) == PeriodName.EXAME) && weightsSum.compareTo(BigDecimal.ONE) > 0){
             throw new NotAllowedInsertionException("Os pesos do período ultrapassam 1");
         }
         // -----------------------------------------------------------------
@@ -178,6 +194,7 @@ public class PeriodServiceImpl implements IPeriodService{
         PeriodDTO periodDTO = findById(userId, periodId);
         if(!PeriodName.valueOf(periodDTO.name()).equals(PeriodName.EXAME)) throw new NotAllowedInsertionException("Só é permitido a deleção de EXAME!");
         repository.deleteByIdAndSubjectIdAndUserId(periodId, subjectId, userId);
+        repository.flush();
         calculationService.updateSubjectAverage(periodDTO.subjectId());
     }
 

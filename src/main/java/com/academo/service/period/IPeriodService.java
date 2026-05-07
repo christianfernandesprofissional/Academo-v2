@@ -1,11 +1,8 @@
 package com.academo.service.period;
 
 import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
-import com.academo.controller.dtos.period.SavePeriodDTO;
-import com.academo.controller.dtos.period.PeriodDTO;
+import com.academo.controller.dtos.period.*;
 import com.academo.controller.dtos.group.UpdateGroupDTO;
-import com.academo.controller.dtos.period.UpdatePeriodDTO;
-import com.academo.controller.dtos.period.UpdateWeightDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +14,7 @@ public interface IPeriodService {
     Page<PeriodDTO> findAll(Integer userId, Integer subjectId, Pageable pageable);
     PeriodDTO findById(Integer userId, Integer periodId);
     PeriodDTO create(Integer userId, SavePeriodDTO periodDTO);
+    PeriodDTO createExam(Integer userId, CreateExamDTO examDTO);
     PeriodDTO update(Integer userId,Integer periodId, UpdatePeriodDTO periodDTO);
     PeriodDTO updatePeriodsWeigth(Integer userId, Integer subjectId, UpdateWeightDTO updateWeightDTO);
     PeriodDTO addActivityType(Integer userId, SaveActivityTypeDTO activityTypeDTO);

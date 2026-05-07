@@ -2,8 +2,6 @@ package com.academo.service.payment.asaas;
 
 import com.academo.controller.PaymentController;
 import com.academo.controller.dtos.payment.*;
-import com.academo.model.enums.payment.BillingType;
-import com.academo.model.enums.payment.ChargeType;
 import com.academo.model.enums.payment.SubscriptionCycle;
 import com.academo.controller.dtos.paymentHistory.CreatePaymentHistoryDTO;
 import com.academo.controller.dtos.paymentHistory.UpdatePaymentHistoryDTO;

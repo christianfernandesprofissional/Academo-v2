@@ -31,7 +31,6 @@ public class CalculationService implements ICalculationService{
     @Override
     public void updateSubjectAverage(Integer subjectId){
         Subject subject = subjectRepository.findById(subjectId).orElseThrow(SubjectNotFoundException::new);
-        boolean subjectHasExam = subject.getPeriods().stream().anyMatch(p -> PeriodName.valueOf(p.getName()).equals(PeriodName.EXAME));
 
         switch (subject.getCalculationType()){
             case CalculationType.MEDIA_ARITMETICA -> averageFromSubject(subject);
@@ -59,8 +58,8 @@ public class CalculationService implements ICalculationService{
 
 
     private void weightedAverageFromSubject(Subject subject) {
-        boolean subjectHasExam = subject.getPeriods().stream().anyMatch(p -> PeriodName.valueOf(p.getName()).equals(PeriodName.EXAME));
-        List<Period> periods = new ArrayList<>(subject.getPeriods());
+        List<Period> periods =
+                new ArrayList<>(periodRepository.findAllByUserIdAndSubjectId(subject.getUser().getId(), subject.getId()));
 
         Optional<Period> exam = periods.stream()
                 .filter(p -> PeriodName.valueOf(p.getName()).equals(PeriodName.EXAME))
@@ -71,18 +70,22 @@ public class CalculationService implements ICalculationService{
         BigDecimal[][] notasEPesos = new BigDecimal[periods.size()][2];
 
         int i = 0;
+
         for(Period p: periods){
-               notasEPesos[i][0] = p.getGrade();
-               notasEPesos[i][1] = p.getWeight();
-               i++;
+            notasEPesos[i][0] = p.getGrade();
+            notasEPesos[i][1] = p.getWeight();
+            i++;
         }
+
         BigDecimal mediaFinal = Calc.mediaPonderada(notasEPesos);
-        if(subjectHasExam && exam.isPresent()){
-               mediaFinal = mediaFinal.add(exam.get().getGrade()).divide(new BigDecimal("2"), 2, RoundingMode.HALF_UP);
+
+        if(exam.isPresent()){
+            mediaFinal = mediaFinal
+                    .add(exam.get().getGrade())
+                    .divide(new BigDecimal("2"), 2, RoundingMode.HALF_UP);
         }
 
         subject.setFinalGrade(mediaFinal);
-
     }
 
     private void averageFromSubject(Subject subject) {

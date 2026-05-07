@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
 public record UpdatePeriodDTO(
+        @NotNull(message = "O período deve ter uma matéria")
         Integer subjectId,
         String name,
         @PositiveOrZero(message = "É obrigatório que a nota da atividade seja maior ou igual a zero")

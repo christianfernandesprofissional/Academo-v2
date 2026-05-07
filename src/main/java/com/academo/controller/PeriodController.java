@@ -1,9 +1,6 @@
 package com.academo.controller;
 
-import com.academo.controller.dtos.period.PeriodDTO;
-import com.academo.controller.dtos.period.SavePeriodDTO;
-import com.academo.controller.dtos.period.UpdatePeriodDTO;
-import com.academo.controller.dtos.period.UpdateWeightDTO;
+import com.academo.controller.dtos.period.*;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.period.IPeriodService;
 import jakarta.validation.Valid;
@@ -40,11 +37,11 @@ public class PeriodController {
         return ResponseEntity.ok(service.findById(userId, periodId));
     }
 
-    @PostMapping
+    @PostMapping("/exam")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<PeriodDTO> create(Authentication auth, @RequestBody @Valid SavePeriodDTO periodDTO){
+    public ResponseEntity<PeriodDTO> create(Authentication auth, @RequestBody @Valid CreateExamDTO examDTO){
         Integer userId = ((AuthUser)auth.getPrincipal()).getUser().getId();
-        PeriodDTO saved = service.create(userId, periodDTO);
+        PeriodDTO saved = service.createExam(userId, examDTO);
         URI uri = URI.create("/periods/"+saved.id());
         return ResponseEntity.created(uri).body(saved);
     }

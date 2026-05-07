@@ -16,6 +16,7 @@ import com.academo.service.subject.ISubjectService;
 import com.academo.service.user.IUserService;
 import com.academo.util.exceptions.NotAllowedInsertionException;
 import com.academo.util.exceptions.activity.ActivityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class ActivityServiceImpl implements IActivityService{
         return ActivityDTO.fromActivity(activityRepository.findByIdAndUserId(activityId, userId).orElseThrow(ActivityNotFoundException::new));
     }
 
+    @Transactional
     @Override
     public ActivityDTO create(Integer userId, SaveActivityDTO activityDTO) {
         ActivityDTO dto =  ActivityDTO.fromActivity(activityRepository.save(fillActivity(userId, activityDTO)));
