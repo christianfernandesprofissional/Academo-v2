@@ -85,11 +85,11 @@ public class GroupController {
         return ResponseEntity.ok(groupService.addSubject(userId, groupId, subjectId));
     }
 
-    @DeleteMapping("/delete-subject/{groupId}/{subjectId}")
+    @DeleteMapping("/remove-subject/{groupId}/{subjectId}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<GroupDTO> deleteSubject(Authentication authentication, @PathVariable Integer groupId, @PathVariable Integer subjectId){
+    public ResponseEntity<GroupDTO> removeSubject(Authentication authentication, @PathVariable Integer groupId, @PathVariable Integer subjectId){
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(groupService.deleteSubject(userId, groupId, subjectId));
+        return ResponseEntity.ok(groupService.removeSubject(userId, groupId, subjectId));
     }
 
     @PutMapping("associate-subjects/{groupId}")

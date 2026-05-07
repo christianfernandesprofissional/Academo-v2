@@ -41,6 +41,16 @@ public class ActivityController {
         return ResponseEntity.ok(activityService.findById(userId, activityId));
     }
 
+    @GetMapping("/by-period/{periodId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    public ResponseEntity<Page<ActivityDTO>> findAllByPeriod(Authentication authentication,
+                                                            @PathVariable Integer periodId,
+                                                            @RequestParam(required = false) List<String> activityTypeNames,
+                                                            Pageable pageable) {
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        return ResponseEntity.ok(activityService.findAllByPeriodId(userId, periodId, activityTypeNames, pageable));
+    }
+
 
     @GetMapping("/by-subject/{subjectId}")
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")

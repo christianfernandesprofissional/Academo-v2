@@ -3,6 +3,7 @@ package com.academo.service.subject;
 import com.academo.controller.dtos.subject.CreateSubjectDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.controller.dtos.subject.SubjectWithFlashcardDTO;
+import com.academo.controller.dtos.subject.SubjectWithPeriodDTO;
 import com.academo.controller.dtos.subject.UpdateSubjectDTO;
 
 import org.springframework.data.domain.Page;
@@ -12,8 +13,9 @@ import java.util.List;
 
 public interface ISubjectService {
 
-    Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards);
+    Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards, Integer groupId);
     SubjectDTO findById(Integer subjectId, Integer userId);
+    SubjectWithPeriodDTO findByIdWithPeriods(Integer subjectId, Integer userId);
     Page<SubjectDTO> findByGroup(Integer groupId, Pageable pageable);
     SubjectDTO create(Integer userId, CreateSubjectDTO createSubjectDTO);
     SubjectDTO update(Integer userId, Integer subjectId, UpdateSubjectDTO updateSubjectDTO);

@@ -3,6 +3,7 @@ package com.academo.controller;
 import com.academo.controller.dtos.period.PeriodDTO;
 import com.academo.controller.dtos.period.SavePeriodDTO;
 import com.academo.controller.dtos.period.UpdatePeriodDTO;
+import com.academo.controller.dtos.period.UpdateWeightDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.period.IPeriodService;
 import jakarta.validation.Valid;
@@ -14,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/periods")
@@ -47,6 +47,15 @@ public class PeriodController {
         PeriodDTO saved = service.create(userId, periodDTO);
         URI uri = URI.create("/periods/"+saved.id());
         return ResponseEntity.created(uri).body(saved);
+    }
+
+    @PatchMapping("/{subjectId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    public ResponseEntity<PeriodDTO> updatePeriodsWeigth(Authentication authentication,
+                                                        @PathVariable Integer subjectId,
+                                                        @RequestBody @Valid UpdateWeightDTO updateWeightDTO) {
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        return ResponseEntity.ok(service.updatePeriodsWeigth(userId, subjectId, updateWeightDTO));
     }
 
     @PutMapping("/{periodId}")

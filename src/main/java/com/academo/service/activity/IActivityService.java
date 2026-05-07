@@ -18,4 +18,5 @@ public interface IActivityService {
     // Isso pode ser substituído por um -> if(repository.findById(id).isPresent() throw new... -> Basta transformar o retorno de findById em Optional
     Boolean existsById(Integer id);
     Page<ActivityDTO> findAllBySubjectId(Integer userId, Integer subjectId, Pageable pageable);
+    Page<ActivityDTO> findAllByPeriodId(Integer userId, Integer periodId, List<String> activityTypeNames, Pageable pageable);
 }

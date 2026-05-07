@@ -4,6 +4,7 @@ import com.academo.controller.dtos.activity.SaveActivityDTO;
 import com.academo.controller.dtos.activityType.ActivityTypeDTO;
 import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.controller.dtos.activityType.UpdateActivityTypeDTO;
+import com.academo.controller.dtos.activityType.UpdateActivityTypeWeightDTO;
 import com.academo.security.authuser.AuthUser;
 import com.academo.service.activityType.IActivityTypeService;
 import jakarta.validation.Valid;
@@ -50,6 +51,14 @@ public class ActivityTypeController {
         ActivityTypeDTO createdActivityType = activityTypeService.create(userId, activityTypeDTO);
         URI uri = URI.create("/activity-types/" + createdActivityType.id());
         return ResponseEntity.created(uri).body(createdActivityType);
+    }
+
+    @PatchMapping("/{periodId}")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
+    public ResponseEntity<Void> updatePeriodWeights(Authentication authentication, @PathVariable Integer periodId, @RequestBody @Valid UpdateActivityTypeWeightDTO weightsDTO) {
+        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
+        activityTypeService.updateWeightsByPeriod(userId, periodId, weightsDTO);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}")

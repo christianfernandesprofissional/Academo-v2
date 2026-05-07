@@ -37,6 +37,7 @@ public class AsaasPaymentService implements IPaymentService {
     private static final BigDecimal YEARLY_RECURRENT = BigDecimal.valueOf(149.9);
     private static final BigDecimal IN_INSTALLMENTS = BigDecimal.valueOf(179.9);
 
+
     private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
     private final IPaymentHistoryService paymentHistoryService;
@@ -45,7 +46,7 @@ public class AsaasPaymentService implements IPaymentService {
     private String asaasUrl;
     private String apiKey;
 
-    private String successUrl = "www.pt.wikipedia.org/wiki/John_von_Neumann"; //Muito provavelmente esta variável estará no meu config.env
+    private String successUrl = "http://localhost:4200";
 
 
     public AsaasPaymentService(@Value("${payment.gateway.url}") String asaasUrl, @Value("${payment.gateway.api-key}") String apiKey, IPaymentHistoryService paymentHistoryService, IUserService userService) {
@@ -74,7 +75,13 @@ public class AsaasPaymentService implements IPaymentService {
 
         PaymentHistory paymentHistory = paymentHistoryService.findByPaymentId(paymentId);
         paymentHistory.setPaymentId(paymentId);
-        LocalDate planDueDate = LocalDate.now().plusDays(30);
+        LocalDate planDueDate;
+        if(paymentHistory.getPlanType() == PlanType.MONTHLY_RECURRENT) {
+            planDueDate = LocalDate.now().plusMonths(1);
+        } else {
+            planDueDate = LocalDate.now().plusYears(1);
+        }
+
         paymentHistoryService.update(paymentHistory.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.PAID, planDueDate));
         User user = userService.findById(paymentHistory.getUser().getId());
         user.setRole(UserRole.ROLE_PREMIUM);

@@ -104,7 +104,7 @@ public class GroupServiceImpl implements IGroupService {
 
     @Override
     @Transactional
-    public GroupDTO deleteSubject(Integer userId, Integer groupId, Integer subjectId) {
+    public GroupDTO removeSubject(Integer userId, Integer groupId, Integer subjectId) {
         Group group = groupRepository.findByIdAndUserId(groupId, userId).orElseThrow(GroupNotFoundException::new);
         Subject subject = SubjectDTO.toSubject(subjectId, subjectService.findById(subjectId, userId));
         group.getSubjects().remove(subject);

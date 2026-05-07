@@ -163,7 +163,6 @@ class ActivityTypeServiceImplTest {
         UpdateActivityTypeDTO dto = new UpdateActivityTypeDTO(
                 "Novo Nome",
                 "Nova Desc",
-                50,
                 1
         );
 
@@ -186,7 +185,6 @@ class ActivityTypeServiceImplTest {
         UpdateActivityTypeDTO dto = new UpdateActivityTypeDTO(
                 "Nome",
                 "Desc",
-                80,
                 1
         );
 
@@ -209,7 +207,6 @@ class ActivityTypeServiceImplTest {
         UpdateActivityTypeDTO dto = new UpdateActivityTypeDTO(
                 "Nome",
                 "Desc",
-                50,
                 1
         );
 

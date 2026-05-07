@@ -23,31 +23,62 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer> {
     List<Activity> findAllBySubjectId(Integer subjectId);
     Page<Activity> findAllBySubjectId(Integer subjectId, Pageable pageable);
 
+    @Query("""
+            SELECT a
+            FROM Activity a
+            WHERE a.user.id = :userId
+              AND a.activityType.period.id = :periodId
+            """)
+    List<Activity> findAllByUserIdAndPeriodId(@Param("userId") Integer userId,
+                                             @Param("periodId") Integer periodId);
+
+    @Query("""
+            SELECT a
+            FROM Activity a
+            WHERE a.user.id = :userId
+              AND a.activityType.period.id = :periodId
+            """)
+    Page<Activity> findAllByUserIdAndPeriodId(@Param("userId") Integer userId,
+                                             @Param("periodId") Integer periodId,
+                                             Pageable pageable);
+
+    @Query("""
+            SELECT a
+            FROM Activity a
+            WHERE a.user.id = :userId
+              AND a.activityType.period.id = :periodId
+              AND a.activityType.name IN :activityTypeNames
+            """)
+    Page<Activity> findAllByUserIdAndPeriodIdAndActivityTypeNames(@Param("userId") Integer userId,
+                                                                 @Param("periodId") Integer periodId,
+                                                                 @Param("activityTypeNames") List<String> activityTypeNames,
+                                                                 Pageable pageable);
+
     @Query(nativeQuery = true, value = """
             SELECT\s
-            	tu.email,
-            	json_agg(
-            		json_build_object(
-            			'name', ta.name,
-            			'description', ta.description,
-            			'subject', ts.name,
-            			'activityDate', ta.activity_date,
-            			'notificationDate', ta.notification_date
-            		)
-            	) as activities
+            \ttu.email,
+            \tjson_agg(
+            \t\tjson_build_object(
+            \t\t\t'name', ta.name,
+            \t\t\t'description', ta.description,
+            \t\t\t'subject', ts.name,
+            \t\t\t'activityDate', ta.activity_date,
+            \t\t\t'notificationDate', ta.notification_date
+            \t\t)
+            \t) as activities
             FROM
-            	tb_activities ta
+            \ttb_activities ta
             INNER JOIN
-            	tb_subjects ts
+            \ttb_subjects ts
             ON
-            	ta.subject_id = ts.id
+            \tta.subject_id = ts.id
             INNER JOIN
-            	tb_users tu
+            \ttb_users tu
             ON
-            	ta.user_id = tu.id
+            \tta.user_id = tu.id
             WHERE
-            	ta.notification_date = :date
+            \tta.notification_date = :date
             GROUP BY
-            	tu.email""")
+            \ttu.email""")
     List<NotificationDTO> searchNotificationByDate(@Param("date") LocalDate date);
 }

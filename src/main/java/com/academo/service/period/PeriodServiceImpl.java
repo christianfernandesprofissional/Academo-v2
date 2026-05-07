@@ -4,6 +4,7 @@ import com.academo.controller.dtos.activityType.SaveActivityTypeDTO;
 import com.academo.controller.dtos.period.PeriodDTO;
 import com.academo.controller.dtos.period.SavePeriodDTO;
 import com.academo.controller.dtos.period.UpdatePeriodDTO;
+import com.academo.controller.dtos.period.UpdateWeightDTO;
 import com.academo.model.Period;
 import com.academo.model.Subject;
 import com.academo.model.User;
@@ -98,6 +99,38 @@ public class PeriodServiceImpl implements IPeriodService{
         if (alreadyExists) {
             throw new PeriodAlreadyExistsException();
         }
+    }
+
+    @Override
+    @Transactional
+    public PeriodDTO updatePeriodsWeigth(Integer userId, Integer subjectId, UpdateWeightDTO updateWeightDTO) {
+        subjectRepository.findByIdAndUserId(subjectId, userId).orElseThrow(SubjectNotFoundException::new);
+
+        List<Period> periods = repository.findAllByUserIdAndSubjectId(userId, subjectId);
+
+        Period p1 = null;
+        Period p2 = null;
+
+        for (Period p : periods) {
+            PeriodName name = PeriodName.valueOf(p.getName());
+            if (name == PeriodName.P1) p1 = p;
+            if (name == PeriodName.P2) p2 = p;
+        }
+
+        if (p1 == null || p2 == null) {
+            throw new NotAllowedInsertionException("É necessário ter P1 e P2 cadastrados para atualizar os pesos");
+        }
+
+        BigDecimal normalizedP1 = BigDecimal.valueOf(updateWeightDTO.firstPeriodWeigth()).movePointLeft(2);
+        BigDecimal normalizedP2 = BigDecimal.valueOf(updateWeightDTO.secondPeriodWeigth()).movePointLeft(2);
+
+        p1.setWeight(normalizedP1);
+        p2.setWeight(normalizedP2);
+
+        repository.saveAll(List.of(p1, p2));
+        calculationService.updateSubjectAverage(subjectId);
+
+        return PeriodDTO.fromPeriod(repository.findById(p1.getId()).orElseThrow(PeriodNotFoundException::new));
     }
 
     @Override

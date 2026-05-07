@@ -22,6 +22,65 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
             select s
             from Subject s
             where s.user.id = :userId
+              and not exists (
+                    select 1
+                    from Group g
+                    join g.subjects gs
+                    where g.id = :groupId
+                      and gs = s
+              )
+            """,
+            countQuery = """
+            select count(s)
+            from Subject s
+            where s.user.id = :userId
+              and not exists (
+                    select 1
+                    from Group g
+                    join g.subjects gs
+                    where g.id = :groupId
+                      and gs = s
+              )
+            """)
+    Page<Subject> findAllByUserIdExcludingGroup(@Param("userId") Integer userId,
+                                               @Param("groupId") Integer groupId,
+                                               Pageable pageable);
+
+    @Query(value = """
+            select s
+            from Subject s
+            where s.user.id = :userId
+              and s.isActive = :isActive
+              and not exists (
+                    select 1
+                    from Group g
+                    join g.subjects gs
+                    where g.id = :groupId
+                      and gs = s
+              )
+            """,
+            countQuery = """
+            select count(s)
+            from Subject s
+            where s.user.id = :userId
+              and s.isActive = :isActive
+              and not exists (
+                    select 1
+                    from Group g
+                    join g.subjects gs
+                    where g.id = :groupId
+                      and gs = s
+              )
+            """)
+    Page<Subject> findAllByUserIdAndIsActiveExcludingGroup(@Param("userId") Integer userId,
+                                                          @Param("isActive") Boolean isActive,
+                                                          @Param("groupId") Integer groupId,
+                                                          Pageable pageable);
+
+    @Query(value = """
+            select s
+            from Subject s
+            where s.user.id = :userId
               and exists (
                     select 1
                     from Flashcard f
@@ -41,6 +100,46 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
               )
             """)
     Page<Subject> findAllByUserIdWithFlashcards(@Param("userId") Integer userId, Pageable pageable);
+
+    @Query(value = """
+            select s
+            from Subject s
+            where s.user.id = :userId
+              and exists (
+                    select 1
+                    from Flashcard f
+                    where f.subject = s
+                      and f.user.id = :userId
+              )
+              and not exists (
+                    select 1
+                    from Group g
+                    join g.subjects gs
+                    where g.id = :groupId
+                      and gs = s
+              )
+            """,
+            countQuery = """
+            select count(s)
+            from Subject s
+            where s.user.id = :userId
+              and exists (
+                    select 1
+                    from Flashcard f
+                    where f.subject = s
+                      and f.user.id = :userId
+              )
+              and not exists (
+                    select 1
+                    from Group g
+                    join g.subjects gs
+                    where g.id = :groupId
+                      and gs = s
+              )
+            """)
+    Page<Subject> findAllByUserIdWithFlashcardsExcludingGroup(@Param("userId") Integer userId,
+                                                             @Param("groupId") Integer groupId,
+                                                             Pageable pageable);
 
     @Query(value = """
             select s
@@ -69,6 +168,49 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     Page<Subject> findAllByUserIdAndIsActiveWithFlashcards(@Param("userId") Integer userId,
                                                           @Param("isActive") Boolean isActive,
                                                           Pageable pageable);
+
+    @Query(value = """
+            select s
+            from Subject s
+            where s.user.id = :userId
+              and s.isActive = :isActive
+              and exists (
+                    select 1
+                    from Flashcard f
+                    where f.subject = s
+                      and f.user.id = :userId
+              )
+              and not exists (
+                    select 1
+                    from Group g
+                    join g.subjects gs
+                    where g.id = :groupId
+                      and gs = s
+              )
+            """,
+            countQuery = """
+            select count(s)
+            from Subject s
+            where s.user.id = :userId
+              and s.isActive = :isActive
+              and exists (
+                    select 1
+                    from Flashcard f
+                    where f.subject = s
+                      and f.user.id = :userId
+              )
+              and not exists (
+                    select 1
+                    from Group g
+                    join g.subjects gs
+                    where g.id = :groupId
+                      and gs = s
+              )
+            """)
+    Page<Subject> findAllByUserIdAndIsActiveWithFlashcardsExcludingGroup(@Param("userId") Integer userId,
+                                                                        @Param("isActive") Boolean isActive,
+                                                                        @Param("groupId") Integer groupId,
+                                                                        Pageable pageable);
 
     @Query("""
             select distinct s

@@ -1,16 +1,20 @@
 package com.academo.service.subject;
 
 import com.academo.controller.dtos.period.SavePeriodDTO;
+import com.academo.controller.dtos.period.PeriodDTO;
 import com.academo.controller.dtos.subject.CreateSubjectDTO;
 import com.academo.controller.dtos.subject.SubjectDTO;
 import com.academo.controller.dtos.subject.SubjectWithFlashcardDTO;
+import com.academo.controller.dtos.subject.SubjectWithPeriodDTO;
 import com.academo.controller.dtos.subject.UpdateSubjectDTO;
 import com.academo.model.Group;
+import com.academo.model.Period;
 import com.academo.model.Subject;
 import com.academo.model.User;
 import com.academo.model.enums.period.CalculationType;
 import com.academo.model.enums.period.PeriodName;
 import com.academo.repository.GroupRepository;
+import com.academo.repository.PeriodRepository;
 import com.academo.repository.SubjectRepository;
 import com.academo.service.calculation.ICalculationService;
 import com.academo.service.period.IPeriodService;
@@ -34,19 +38,46 @@ public class SubjectServiceImpl implements ISubjectService {
     private final GroupRepository groupRepository;
     private final IUserService userService;
     private final IPeriodService periodService;
+    private final PeriodRepository periodRepository;
     private final ICalculationService calculationService;
 
-    public SubjectServiceImpl(SubjectRepository subjectRepository, GroupRepository groupRepository, IUserService userService, IPeriodService periodService, ICalculationService calculationService) {
+    public SubjectServiceImpl(SubjectRepository subjectRepository, GroupRepository groupRepository, IUserService userService, IPeriodService periodService, PeriodRepository periodRepository, ICalculationService calculationService) {
         this.subjectRepository = subjectRepository;
         this.groupRepository = groupRepository;
         this.userService = userService;
         this.periodService = periodService;
+        this.periodRepository = periodRepository;
         this.calculationService = calculationService;
     }
 
     @Override
-    public Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards) {
+    public Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards, Integer groupId) {
         boolean filterOnlyWithFlashcards = Boolean.TRUE.equals(onlyWithFlashcards);
+
+        if (groupId != null) {
+            Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
+            if (!group.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
+
+            if (filterOnlyWithFlashcards) {
+                if (isActive == null) {
+                    return subjectRepository
+                            .findAllByUserIdWithFlashcardsExcludingGroup(userId, groupId, pageable)
+                            .map(SubjectDTO::fromSubject);
+                }
+                return subjectRepository
+                        .findAllByUserIdAndIsActiveWithFlashcardsExcludingGroup(userId, isActive, groupId, pageable)
+                        .map(SubjectDTO::fromSubject);
+            }
+
+            if (isActive == null) {
+                return subjectRepository
+                        .findAllByUserIdExcludingGroup(userId, groupId, pageable)
+                        .map(SubjectDTO::fromSubject);
+            }
+            return subjectRepository
+                    .findAllByUserIdAndIsActiveExcludingGroup(userId, isActive, groupId, pageable)
+                    .map(SubjectDTO::fromSubject);
+        }
 
         if (filterOnlyWithFlashcards) {
             if (isActive == null) {
@@ -64,6 +95,17 @@ public class SubjectServiceImpl implements ISubjectService {
     @Override
     public SubjectDTO findById(Integer subjectId, Integer userId) {
         return SubjectDTO.fromSubject(subjectRepository.findByIdAndUserId(subjectId, userId).orElseThrow(SubjectNotFoundException::new));
+    }
+
+    @Override
+    public SubjectWithPeriodDTO findByIdWithPeriods(Integer subjectId, Integer userId) {
+        Subject subject = subjectRepository.findByIdAndUserId(subjectId, userId)
+                .orElseThrow(SubjectNotFoundException::new);
+
+        List<Period> periods = periodRepository.findAllByUserIdAndSubjectId(userId, subjectId);
+        List<PeriodDTO> periodsDTO = periods.stream().map(PeriodDTO::fromPeriod).toList();
+
+        return new SubjectWithPeriodDTO(SubjectDTO.fromSubject(subject), periodsDTO);
     }
 
     @Override
