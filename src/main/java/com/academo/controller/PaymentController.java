@@ -54,11 +54,11 @@ public class PaymentController {
         return ResponseEntity.ok(paymentHistoryService.findAll(userId, pageable));
     }
 
-    @PostMapping(value = "/cancel")
+    @PostMapping(value = "/cancel/{paymentId}")
     @PreAuthorize("hasRole('PREMIUM')")
-    public ResponseEntity<Void> cancelPlan(Authentication authentication) {
+    public ResponseEntity<Void> cancelPaymentLink(Authentication authentication, @PathVariable String paymentId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        paymentHistoryService.cancelPlan(userId);
+        paymentHistoryService.cancelPaymentLink(userId, paymentId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

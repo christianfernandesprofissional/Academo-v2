@@ -60,16 +60,16 @@ public class PaymentHistoryServiceImpl implements IPaymentHistoryService {
     public void verifyExpiredPayments(Integer userId) {
         List<PaymentHistory> allPayments = paymentHistoryRepository.findAllByUserId(userId);
         for(PaymentHistory p : allPayments) {
-            if(p.getCreatedAt().plusDays(10).isBefore(LocalDateTime.now()) && p.getStatus() == PaymentStatus.WAITING_PAYMENT) {
+            if(p.getCreatedAt().plusDays(2).isBefore(LocalDateTime.now()) && p.getStatus() == PaymentStatus.WAITING_PAYMENT) {
                 update(p.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.EXPIRED, p.getPlanDueDate()));
             }
         }
     }
 
     @Override
-    public void cancelPaymentLink(Integer userId) {
-        PaymentHistoryDTO paymentHistoryDTO = findLastPayment(userId);
-        update(paymentHistoryDTO.paymentHistoryId(), new UpdatePaymentHistoryDTO(PaymentStatus.CANCELED, paymentHistoryDTO.planDueDate()));
+    public void cancelPaymentLink(Integer userId, String paymentId) {
+        PaymentHistory paymentHistory = paymentHistoryRepository.findByPaymentId(paymentId).orElseThrow(PaymentHistoryNotFoundException::new);
+        update(paymentHistory.getId(), new UpdatePaymentHistoryDTO(PaymentStatus.CANCELED, paymentHistory.getPlanDueDate()));
 
     }
 

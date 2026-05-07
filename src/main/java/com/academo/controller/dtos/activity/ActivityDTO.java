@@ -13,7 +13,9 @@ public record ActivityDTO(
         String name,
         BigDecimal grade,
         String description,
+        Integer subjectId,
         String subjectName,
+        Integer periodId,
         String activityTypeName,
         @Past
         LocalDateTime createdAt,
@@ -27,7 +29,9 @@ public record ActivityDTO(
                 activity.getName(),
                 activity.getGrade(),
                 activity.getDescription(),
+                activity.getSubject().getId(),
                 activity.getSubject().getName(),
+                activity.getActivityType().getPeriod().getId(),
                 activity.getActivityType().getName(),
                 activity.getCreatedAt(),
                 activity.getUpdatedAt());

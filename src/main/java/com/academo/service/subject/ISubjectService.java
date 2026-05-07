@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ISubjectService {
 
-    Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards);
+    Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards, Integer groupId);
     SubjectDTO findById(Integer subjectId, Integer userId);
     SubjectWithPeriodDTO findByIdWithPeriods(Integer subjectId, Integer userId);
     Page<SubjectDTO> findByGroup(Integer groupId, Pageable pageable);

@@ -24,7 +24,7 @@ public record GetPaymentLinkDTO(
 ) {
 
     static final String END_DATE = LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    static final Integer DUE_DATE_LIMIT_DAYS = 10;
+    static final Integer DUE_DATE_LIMIT_DAYS = 2;
     static final Integer MAX_INSTALLMENT_COUNT = 1;
     static final boolean NOTIFICATION_ENABLED = false;
     static final boolean IS_ADDRESS_REQUIRED = false;

@@ -19,7 +19,7 @@ public interface IGroupService{
     GroupDTO update(Integer userId, Integer groupId, UpdateGroupDTO updateGroupDTO);
     void delete(Integer userId, Integer groupId);
     GroupDTO addSubject(Integer userId, Integer groupId, Integer SubjectId);
-    GroupDTO deleteSubject(Integer userId, Integer groupId, Integer SubjectId);
+    GroupDTO removeSubject(Integer userId, Integer groupId, Integer SubjectId);
     GroupDTO associateSubjects(Integer userId, Integer groupId, AssociateSubjectsDTO dto);
 
     List<GroupWithFlashcardDTO> findAllActiveWithFlashcards(Integer userId);

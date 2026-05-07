@@ -51,8 +51,33 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
-    public Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards) {
+    public Page<SubjectDTO> findAll(Integer userId, Boolean isActive, Pageable pageable, Boolean onlyWithFlashcards, Integer groupId) {
         boolean filterOnlyWithFlashcards = Boolean.TRUE.equals(onlyWithFlashcards);
+
+        if (groupId != null) {
+            Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
+            if (!group.getUser().getId().equals(userId)) throw new NotAllowedInsertionException();
+
+            if (filterOnlyWithFlashcards) {
+                if (isActive == null) {
+                    return subjectRepository
+                            .findAllByUserIdWithFlashcardsExcludingGroup(userId, groupId, pageable)
+                            .map(SubjectDTO::fromSubject);
+                }
+                return subjectRepository
+                        .findAllByUserIdAndIsActiveWithFlashcardsExcludingGroup(userId, isActive, groupId, pageable)
+                        .map(SubjectDTO::fromSubject);
+            }
+
+            if (isActive == null) {
+                return subjectRepository
+                        .findAllByUserIdExcludingGroup(userId, groupId, pageable)
+                        .map(SubjectDTO::fromSubject);
+            }
+            return subjectRepository
+                    .findAllByUserIdAndIsActiveExcludingGroup(userId, isActive, groupId, pageable)
+                    .map(SubjectDTO::fromSubject);
+        }
 
         if (filterOnlyWithFlashcards) {
             if (isActive == null) {

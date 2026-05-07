@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 public record SaveActivityDTO(
 
-        @Future(message = "É necessário que a data da atividade seja no futuro")
         LocalDate activityDate,
         @NotEmpty(message = "É obrigatório o nome da atividade")
         String name,

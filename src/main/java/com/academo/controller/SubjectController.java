@@ -56,9 +56,10 @@ public class SubjectController {
     public ResponseEntity<Page<SubjectDTO>> findAll(Authentication authentication,
                                                    @RequestParam(required = false) Boolean isActive,
                                                    @RequestParam(required = false) Boolean onlyWithFlashcards,
+                                                   @RequestParam(required = false) Integer groupId,
                                                    Pageable pageable) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-        return ResponseEntity.ok(service.findAll(userId, isActive, pageable, onlyWithFlashcards));
+        return ResponseEntity.ok(service.findAll(userId, isActive, pageable, onlyWithFlashcards, groupId));
     }
 
     @GetMapping("/with-flashcards")
