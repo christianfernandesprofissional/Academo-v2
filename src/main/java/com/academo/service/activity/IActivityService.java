@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface IActivityService {
-    Page<ActivityDTO> findAll(Integer userId, Pageable pageable);
+    Page<ActivityDTO> findAll(Integer userId, boolean onlyFuture, Pageable pageable);
     ActivityDTO findById(Integer userId, Integer activityId);
     ActivityDTO create(Integer userId, SaveActivityDTO activityDTO);
     ActivityDTO update(Integer userId, Integer activityId, SaveActivityDTO activityDTO);

@@ -90,19 +90,19 @@ public class ActivityTypeServiceImpl implements IActivityTypeService {
 
 //        BigDecimal normalizedWeight = BigDecimal.valueOf(activityTypeDTO.weight()).movePointLeft(2);
         //Verificação se os pesos dos tipos de atividade não ultrapassam 1
-        List<BigDecimal> weights = new ArrayList<>();
-        List<ActivityTypeDTO> periods = repository.findAllByPeriodIdAndUserId(activityTypeDTO.periodId(), userId).stream().map(ActivityTypeDTO::fromActivityType).toList();
-        for(ActivityTypeDTO atDTO : periods){
-            if(!Objects.equals(atDTO.id(), id)){
-                weights.add(atDTO.weight());
-            }
-        }
-//        weights.add(normalizedWeight);
-        BigDecimal weightsSum = calculationService.sumWeights(weights);
-        if(weightsSum.compareTo(BigDecimal.ONE) > 0){
-            throw new NotAllowedInsertionException("Os pesos dos tipos de atividade ultrapassam 1");
-        }
-        // -----------------------------------------------------------------
+//        List<BigDecimal> weights = new ArrayList<>();
+//        List<ActivityTypeDTO> periods = repository.findAllByPeriodIdAndUserId(activityTypeDTO.periodId(), userId).stream().map(ActivityTypeDTO::fromActivityType).toList();
+//        for(ActivityTypeDTO atDTO : periods){
+//            if(!Objects.equals(atDTO.id(), id)){
+//                weights.add(atDTO.weight());
+//            }
+//        }
+////        weights.add(normalizedWeight);
+//        BigDecimal weightsSum = calculationService.sumWeights(weights);
+//        if(weightsSum.compareTo(BigDecimal.ONE) > 0){
+//            throw new NotAllowedInsertionException("Os pesos dos tipos de atividade ultrapassam 1");
+//        }
+//        // -----------------------------------------------------------------
 
         inDb.setName(activityTypeDTO.name());
         inDb.setDescription(activityTypeDTO.description());

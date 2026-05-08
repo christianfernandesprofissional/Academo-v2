@@ -11,8 +11,8 @@ public class WeightsSumTo100Validator implements ConstraintValidator<WeightsSumT
     public boolean isValid(UpdateWeightDTO dto, ConstraintValidatorContext context) {
         if (dto == null) return true;
 
-        Integer first = dto.firstPeriodWeigth();
-        Integer second = dto.secondPeriodWeigth();
+        Integer first = dto.firstPeriodWeight();
+        Integer second = dto.secondPeriodWeight();
 
         boolean isValid = first != null && second != null && (first + second) == 100;
 

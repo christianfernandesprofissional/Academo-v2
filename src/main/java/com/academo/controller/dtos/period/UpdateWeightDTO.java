@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Min;
 public record UpdateWeightDTO(
         @Min(value = 1, message = "O valor mínimo de peso é 1%")
         @Max(value = 100, message = "O valor máximo de peso e 100%")
-        Integer firstPeriodWeigth,
+        Integer firstPeriodWeight,
         @Min(value = 1, message = "O valor mínimo de peso é 1%")
         @Max(value = 100, message = "O valor máximo de peso e 100%")
-        Integer secondPeriodWeigth
+        Integer secondPeriodWeight
 ) {
 }

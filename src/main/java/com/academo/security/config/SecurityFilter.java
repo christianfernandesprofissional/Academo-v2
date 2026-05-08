@@ -34,7 +34,6 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
         if (token != null) {
             var login = tokenService.validateLoginToken(token);
-            logger.info("[DEBUG] Informações de Login: {}", login);
             if (login != null && !login.isEmpty()) {
                 UserDetails userDetails = authUserService.loadUserByUsername(login);
                 var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

@@ -137,8 +137,8 @@ public class PeriodServiceImpl implements IPeriodService{
             throw new NotAllowedInsertionException("É necessário ter P1 e P2 cadastrados para atualizar os pesos");
         }
 
-        BigDecimal normalizedP1 = BigDecimal.valueOf(updateWeightDTO.firstPeriodWeigth()).movePointLeft(2);
-        BigDecimal normalizedP2 = BigDecimal.valueOf(updateWeightDTO.secondPeriodWeigth()).movePointLeft(2);
+        BigDecimal normalizedP1 = BigDecimal.valueOf(updateWeightDTO.firstPeriodWeight()).movePointLeft(2);
+        BigDecimal normalizedP2 = BigDecimal.valueOf(updateWeightDTO.secondPeriodWeight()).movePointLeft(2);
 
         p1.setWeight(normalizedP1);
         p2.setWeight(normalizedP2);

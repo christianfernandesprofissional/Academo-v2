@@ -18,6 +18,7 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer> {
 
     List<Activity> findAllByUserId(Integer userId);
     Page<Activity> findAllByUserId(Integer userId, Pageable pageable);
+    Page<Activity> findAllByUserIdAndActivityDateGreaterThanEqual(Integer userId, LocalDate date, Pageable pageable);
     Optional<Activity> findByIdAndUserId(Integer activityId, Integer userId);
     Boolean existsActivityByName(String activityName);
     List<Activity> findAllBySubjectId(Integer subjectId);

@@ -34,7 +34,6 @@ public class AuthUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        logger.info("[DEBUG] Username do AuthUser: {}", user.getEmail());
         return user.getEmail();
     }
 

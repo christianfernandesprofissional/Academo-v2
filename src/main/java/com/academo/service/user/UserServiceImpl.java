@@ -68,7 +68,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserDTO activateUser(String token) {
+    public void activateUser(String token) {
         logger.debug("[DEBUG] Token: {}", token);
         Integer userId = Integer.parseInt(tokenService.validateActivationToken(token));
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
@@ -76,7 +76,7 @@ public class UserServiceImpl implements IUserService {
             user.setAccountActivated(Boolean.TRUE);
             user.setActivationAccountTokenExpiration(LocalDateTime.now());
             mailService.sendWelcomeMail(new WelcomeMailDTO(user.getName(), user.getEmail()));
-            return UserDTO.fromUser(userRepository.save(user));
+            UserDTO.fromUser(userRepository.save(user));
         } else {
             throw new AlreadyActivatedUserException("Usuário já ativado na plataforma!");
         }

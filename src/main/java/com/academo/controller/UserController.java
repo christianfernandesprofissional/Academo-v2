@@ -46,9 +46,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     @PostMapping("/activate")
-    public ResponseEntity<UserDTO> activate(@RequestParam("token") String token) {
-        logger.debug("[DEBUG] Token: {}", token);
-        return ResponseEntity.status(HttpStatus.OK).body(userService.activateUser(token));
+    public ResponseEntity<Void> activate(@RequestParam("token") String token) {
+        userService.activateUser(token);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("forgot-password")

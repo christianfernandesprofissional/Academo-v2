@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,8 +45,13 @@ public class ActivityServiceImpl implements IActivityService{
     }
 
     @Override
-    public Page<ActivityDTO> findAll(Integer userId, Pageable pageable) {
-        return activityRepository.findAllByUserId(userId, pageable).map(ActivityDTO::fromActivity);
+    public Page<ActivityDTO> findAll(Integer userId, boolean onlyFuture, Pageable pageable) {
+        if (!onlyFuture) {
+            return activityRepository.findAllByUserId(userId, pageable).map(ActivityDTO::fromActivity);
+        }
+
+        return activityRepository.findAllByUserIdAndActivityDateGreaterThanEqual(userId, LocalDate.now(), pageable)
+                .map(ActivityDTO::fromActivity);
     }
 
     @Override

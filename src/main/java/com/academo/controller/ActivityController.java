@@ -29,9 +29,11 @@ public class ActivityController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
-    public ResponseEntity<Page<ActivityDTO>> findAll(Authentication authentication, Pageable pageable) {
+    public ResponseEntity<Page<ActivityDTO>> findAll(Authentication authentication,
+                                                    @RequestParam(required = false, defaultValue = "false") boolean onlyFuture,
+                                                    Pageable pageable) {
        Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
-       return ResponseEntity.ok(activityService.findAll(userId, pageable));
+       return ResponseEntity.ok(activityService.findAll(userId, onlyFuture, pageable));
     }
 
     @GetMapping("/{activityId}")

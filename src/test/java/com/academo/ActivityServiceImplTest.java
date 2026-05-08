@@ -82,7 +82,7 @@ class ActivityServiceImplTest {
         when(activityRepository.findAllByUserId(1, pageable))
                 .thenReturn(new PageImpl<>(List.of(activity), pageable, 1));
 
-        Page<ActivityDTO> result = service.findAll(1, pageable);
+        Page<ActivityDTO> result = service.findAll(1, false, pageable);
 
         assertEquals(1, result.getTotalElements());
         verify(activityRepository).findAllByUserId(1, pageable);

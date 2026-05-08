@@ -10,7 +10,7 @@ import com.academo.controller.dtos.security.RegisterDTO;
 public interface IUserService {
 
     void createUser(RegisterDTO registerDTO);
-    UserDTO activateUser(String token);
+    void activateUser(String token);
     User findById(Integer id);
     User findByEmail(String email);
     User login(String email);

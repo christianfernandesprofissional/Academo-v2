@@ -104,9 +104,9 @@ class UserServiceImplTest {
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
         when(userRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        UserDTO result = service.activateUser("token");
+        service.activateUser("token");
 
-        assertNotNull(result);
+
         verify(mailService).sendWelcomeMail(any());
         verify(userRepository).save(argThat(u -> u.getAccountActivated().equals(Boolean.TRUE)));
     }

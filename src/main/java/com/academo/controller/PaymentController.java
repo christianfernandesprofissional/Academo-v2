@@ -55,7 +55,7 @@ public class PaymentController {
     }
 
     @PostMapping(value = "/cancel/{paymentId}")
-    @PreAuthorize("hasRole('PREMIUM')")
+    @PreAuthorize("hasAnyRole('FREE', 'PREMIUM')")
     public ResponseEntity<Void> cancelPaymentLink(Authentication authentication, @PathVariable String paymentId) {
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUser().getId();
         paymentHistoryService.cancelPaymentLink(userId, paymentId);
