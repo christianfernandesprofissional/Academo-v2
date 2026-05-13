@@ -38,7 +38,7 @@ public class UserController {
         Authentication auth = authenticationManager.authenticate(userPass);
         var token = tokenService.generateLoginToken((AuthUser) auth.getPrincipal());
         User u = userService.login(user.email());
-        return ResponseEntity.ok(new LoginResponseDTO(token, u.getId(), u.getName()));
+        return ResponseEntity.ok(new LoginResponseDTO(token, u.getId(), u.getName(), u.getRole()));
     }
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO register) throws ExistingUserException {

@@ -35,7 +35,7 @@ public class Activity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user;  
 
     @ManyToOne
     @JoinColumn(name = "subject_id")
