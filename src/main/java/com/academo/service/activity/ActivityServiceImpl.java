@@ -85,9 +85,11 @@ public class ActivityServiceImpl implements IActivityService{
     @Override
     public void delete(Integer userId,Integer activityId) {
         Activity activity = activityRepository.findByIdAndUserId(activityId,userId).orElseThrow(ActivityNotFoundException::new);
-        calculationService.updatePeriodAverage(activity.getActivityType().getPeriod().getId());
-        calculationService.updateSubjectAverage(activity.getSubject().getId());
+        int periodId = activity.getActivityType().getPeriod().getId();
+        int subjectId = activity.getSubject().getId();
         activityRepository.deleteById(activityId);
+        calculationService.updatePeriodAverage(periodId);
+        calculationService.updateSubjectAverage(subjectId);
     }
 
     @Override
